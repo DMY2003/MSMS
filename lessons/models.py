@@ -27,6 +27,7 @@ class Instrument(models.Model):
 class Invoice(models.Model):
     price = models.IntegerField(blank=False)
     paid = models.BooleanField(default=False)
+    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, blank=False)
 
 class Request(models.Model):
     student_availability = models.DateTimeField(blank=False)
