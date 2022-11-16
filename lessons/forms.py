@@ -1,6 +1,5 @@
 from django import forms
 from lessons.models import User
-
 from django.core.validators import RegexValidator
 
 
@@ -11,7 +10,7 @@ class SignUpForm(forms.ModelForm):
 
     new_password = forms.CharField(
         label="Password",
-        widget=forms.PasswordInput,
+        widget=forms.PasswordInput(),
         validators=[
             RegexValidator(
                 regex=r'^(?=.*[A-Z](?=.*[a-z])(?=.*[0-9])).*$',
@@ -19,7 +18,7 @@ class SignUpForm(forms.ModelForm):
             )
         ]
     )
-    confirm_password = forms.CharField(label="Confirm password", widget=forms.PasswordInput)
+    confirm_password = forms.CharField(label="Confirm password", widget=forms.PasswordInput())
 
     def clean(self):
         super().clean()
