@@ -1,7 +1,8 @@
-from django import forms 
+from django import forms
 from lessons.models import User
 
 from django.core.validators import RegexValidator
+
 
 class SignUpForm(forms.ModelForm):
     class Meta:
@@ -9,7 +10,7 @@ class SignUpForm(forms.ModelForm):
         fields = {"first_name", "last_name", "email"}
 
     new_password = forms.CharField(
-        label="Password", 
+        label="Password",
         widget=forms.PasswordInput,
         validators=[
             RegexValidator(
@@ -37,7 +38,7 @@ class SignUpForm(forms.ModelForm):
         )
         return user
 
+
 class LogInForm(forms.Form):
     email = forms.CharField(label="Email")
     password = forms.CharField(label="Password", widget=forms.PasswordInput())
-
