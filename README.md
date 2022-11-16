@@ -2,11 +2,11 @@
 
 ## Team members
 The members of the team are:
-- *<name of team member 1>*
-- *<name of team member 2>*
-- *<name of team member 3>*
-- *<name of team member 4>*
-- *<name of team member 5>*
+- DAMIAN MITROFAN
+- GEORGE KORODIMOS
+- MOHAMMED CHOWDHURY
+- SAMIUL ISLAM
+- REIBJOK (Reb) OTHOW
 
 ## Project structure
 The project is called `msms` (Music School Management System).  It currently consists of a single app `lessons` where all functionality resides.
