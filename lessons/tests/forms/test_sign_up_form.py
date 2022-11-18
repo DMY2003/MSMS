@@ -16,6 +16,7 @@ class SignUpFormTestCase(TestCase):
             'new_password': 'Password123',
             'password_confirmation': 'Password123'
         }
+        
 
     # default test
     def test_valid_sign_up_form(self):
