@@ -5,7 +5,11 @@
 <form action="{% url 'log_in' %}" method="post">
     {% csrf_token %} 
     {% include 'partials/bootstrap_form.html' with form=form %}
-    <input type="submit" value="Log in" class="btn btn-primary"/>
+    <div class="d-flex justify-content-between align-items-center">
+        <input type="submit" value="Log in" class="btn btn-primary"/>
+        <div class="text-secondary">Don't have an account? <a href="{%  url 'sign_up' %}">Sign up</a> </div>
+    </div>  
+    
 </form>
 {% endblock %}
 {% block title %}
