@@ -3,10 +3,9 @@ body {
     background-image: url("/static/img/background.jpeg");
     background-repeat: no-repeat;
     background-attachment: fixed;
-    height: 1800px;
     background-size: cover;
   }
 
 .navbar-dark {
-    background-color: rgb(27, 27, 27) !important;
+    background-color: rgb(10, 10, 10) !important;
 }
