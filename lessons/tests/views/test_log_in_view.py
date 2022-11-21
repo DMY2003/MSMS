@@ -2,7 +2,7 @@
 from django.test import TestCase
 from django.urls import reverse
 from lessons.forms import LogInForm
-from lessons.models import User
+from lessons.models import User, Student
 from django.contrib import messages
 from lessons.tests.helper import LogInTester
 
@@ -12,7 +12,7 @@ class LogInViewTestCase(TestCase, LogInTester):
 
     def setUp(self):
         self.url = reverse('log_in')
-        self.user = User.objects.create_user(
+        self.user = Student.objects.create_user(
             email='johndoe@example.org',
             first_name='John',
             last_name='Doe',

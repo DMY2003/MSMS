@@ -1,11 +1,11 @@
 """Unit tests of the user model."""
 from django.core.exceptions import ValidationError
 from django.test import TestCase
-from lessons.models import User
+from lessons.models import User, Student
 
 
 def _create_second_user():
-    user = User.objects.create_user(
+    user = Student.objects.create_user(
         first_name='Jane',
         last_name='Doe',
         email='janedoe@example.org',
@@ -16,7 +16,7 @@ def _create_second_user():
 
 class UserModelTestCase(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(
+        self.user = Student.objects.create_user(
             first_name='John',
             last_name='Doe',
             email='johndoe@example.org',
