@@ -40,6 +40,7 @@ class UserManager(BaseUserManager):
 
         return self._create_user(email, password, **extra_fields)
 
+
 class User(AbstractUser):
     first_name = models.CharField(max_length=50, blank=False, unique=False)
     last_name = models.CharField(max_length=50, blank=False, unique=False)
@@ -47,6 +48,7 @@ class User(AbstractUser):
     USERNAME_FIELD = 'email'
     objects = UserManager()
     REQUIRED_FIELDS = []
+
 
 class Student(User):
     balance = models.IntegerField(default=0)
@@ -76,11 +78,22 @@ class Invoice(models.Model):
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, blank=False)
 
 
+# -----------Commented temporarily to test seeder----------------
+
+# class Request(models.Model):
+#     student_availability = models.DateTimeField(blank=False)
+#     lesson_count = models.IntegerField(blank=False)
+#     lesson_duration = models.IntegerField(blank=False)
+#     preferred_teacher = models.TextField()
+#     instrument = models.ForeignKey(Instrument, on_delete=models.CASCADE, blank=False)
+#     student = models.ForeignKey(Student, on_delete=models.CASCADE, blank=False)
+#     is_approved = models.BooleanField(default=False)
+
 class Request(models.Model):
     student_availability = models.DateTimeField(blank=False)
     lesson_count = models.IntegerField(blank=False)
     lesson_duration = models.IntegerField(blank=False)
     preferred_teacher = models.TextField()
-    instrument = models.ForeignKey(Instrument, on_delete=models.CASCADE, blank=False)
-    student = models.ForeignKey(Student, on_delete=models.CASCADE, blank=False)
+    instrument = models.ForeignKey(on_delete=models.CASCADE, blank=False)
+    student = models.ForeignKey(on_delete=models.CASCADE, blank=False)
     is_approved = models.BooleanField(default=False)
