@@ -39,3 +39,18 @@ def log_in(request):
 def log_out(request):
     logout(request)
     return redirect('home')
+
+def student_requests(request):
+    return render(request, 'student_requests_page.html')
+
+def student_lessons(request):
+    return render(request, 'student_lessons_page.html')
+
+def student_transactions(request):
+    return render(request, 'student_transactions_page.html')
+
+def admin_requests(request):
+    return render(request, 'admin_requests_page.html')
+
+def admin_transactions(request):
+    return render(request, 'admin_transactions_page.html')
