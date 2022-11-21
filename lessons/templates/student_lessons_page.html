@@ -1,0 +1,164 @@
+{% extends "student_dashboard_template.html" %}
+{% block content %}
+<!-- Lesson Details Modal  -->
+<!-- This pops up when an lesson cell is clicked -->
+<div class="modal fade" id="lessonDetailsModal" tabindex="-1" aria-labelledby="lessonDetailsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h1 class="modal-title fs-5" id="lessonDetailsModalLabel">Lesson Details</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <ul class="list-group list-group-flush border-0">
+                  <li class="list-group-item my-2 d-flex justify-content-between border-0">
+                      <div class="col">
+                          <h7>Lesson Id</h7>
+                      </div>
+                      <p class="text">001</p>
+                  </li>
+                  <li class="list-group-item my-2 d-flex justify-content-between border-0">
+                      <div class="col">
+                          <h7>Student Name</h7>
+                      </div>
+                      <p class="text">John Doe</p>
+                  </li>
+                  <li class="list-group-item my-2 d-flex justify-content-between border-0">
+                    <div class="col">
+                        <h7>Teacher Name</h7>
+                    </div>
+                    <p class="text">Tr.Jane Doe</p>
+                </li>
+                  <li class="list-group-item my-2 d-flex justify-content-between border-0">
+                    <div class="col">
+                        <h7>Lesson Type</h7>
+                    </div>
+                    <p class="text">Guitar</p>
+                  </li>
+                  <li class="list-group-item my-2 d-flex justify-content-between border-0">
+                      <div class="col">
+                          <h7>Date</h7>
+                      </div>
+                      <p class="text">30/11/2022</p>
+                  </li>
+                  <li class="list-group-item my-2 d-flex justify-content-between border-0">
+                      <div class="col">
+                          <h7>Time</h7>
+                      </div>
+                      <p class="text">13:00pm - 14:00pm</p>
+                  </li>
+              </ul>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">View Invoice</button>
+          </div>
+          </div>
+  </div>
+</div>
+
+
+<header class="pb-3 mb-4 border-bottom">
+    <a href="#" class="d-flex align-items-center text-dark text-decoration-none">
+        <span class="fs-4">My Lessons</span>
+    </a>
+</header>
+
+<div class="row align-items-md-stretch my-4">
+    <div class="col-md-6">
+      <div class="h-100 p-5 text-bg-light rounded-3">
+        <h2>Upcoming Lessons</h2>
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th scope="col">Lesson Type</th>
+              <th scope="col">Teacher</th>
+              <th scope="col">Date</th>
+              <th scope="col">Time</th>
+            </tr>
+            <tbody>
+              <tr data-bs-toggle="modal" data-bs-target="#lessonDetailsModal">
+                <th scope="col">Guitar</th>
+                <th scope="col">Tr.Jane Doe</th>
+                <th scope="col">30/11/2022</th>
+                <th scope="col">13:00pm</th>
+              </tr>
+              <tr data-bs-toggle="modal" data-bs-target="#lessonDetailsModal">
+                <th scope="col">Guitar</th>
+                <th scope="col">Tr.Jane Doe</th>
+                <th scope="col">30/11/2022</th>
+                <th scope="col">13:00pm</th>
+              </tr>
+              <tr data-bs-toggle="modal" data-bs-target="#lessonDetailsModal">
+                <th scope="col">Guitar</th>
+                <th scope="col">Tr.Jane Doe</th>
+                <th scope="col">30/11/2022</th>
+                <th scope="col">13:00pm</th>
+              </tr>
+            </tbody>
+        </thead>
+        </table>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="h-100 p-5 bg-light rounded-3 my-auto">
+        <h2>Help?</h2>
+        <p>Need help with something? <br> to change your Lessons?</p>
+        <button class="btn btn-outline-primary" type="button">Contact an administrator</button>
+      </div>
+    </div>
+</div>
+
+<!-- Lessons Table Container -->
+<div class="p-3 mb-4 bg-light rounded-3">
+  <div class="container-fluid py-3">
+    <h1 class="display-5 fw-bold">All Lessons</h1>
+    <table class="table table-hover">
+          <thead>
+              <tr>
+              <th scope="col">Lesson Id</th>
+              <th scope="col">Student Name</th>
+              <th scope="col">Teacher Name</th>
+              <th scope="col">Lesson Type</th>
+              <th scope="col">Date</th>
+              <th scope="col">Time</th>
+              </tr>
+          </thead>
+          <tbody>
+              <tr data-bs-toggle="modal" data-bs-target="#lessonDetailsModal">
+                <th scope="col">001</th>
+                <th scope="col">John Doe</th>
+                <th scope="col">Tr.Jane Doe</th>
+                <th scope="col">Guitar</th>
+                <th scope="col">30/11/2022</th>
+                <th scope="col">13:00pm</th>
+              </tr>
+              <tr data-bs-toggle="modal" data-bs-target="#lessonDetailsModal">
+                <th scope="col">001</th>
+                <th scope="col">John Doe</th>
+                <th scope="col">Tr.Jane Doe</th>
+                <th scope="col">Guitar</th>
+                <th scope="col">30/11/2022</th>
+                <th scope="col">13:00pm</th>
+              </tr>
+              <tr data-bs-toggle="modal" data-bs-target="#lessonDetailsModal">
+                <th scope="col">001</th>
+                <th scope="col">John Doe</th>
+                <th scope="col">Tr.Jane Doe</th>
+                <th scope="col">Guitar</th>
+                <th scope="col">30/11/2022</th>
+                <th scope="col">13:00pm</th>
+              </tr>
+              <tr data-bs-toggle="modal" data-bs-target="#lessonDetailsModal">
+                <th scope="col">001</th>
+                <th scope="col">John Doe</th>
+                <th scope="col">Tr.Jane Doe</th>
+                <th scope="col">Guitar</th>
+                <th scope="col">30/11/2022</th>
+                <th scope="col">13:00pm</th>
+              </tr>
+          </tbody>
+      </table>
+  </div>
+</div>
+{% endblock %}

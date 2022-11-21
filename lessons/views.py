@@ -39,3 +39,10 @@ def log_in(request):
 def log_out(request):
     logout(request)
     return redirect('home')
+
+
+def admin_dashboard(request):
+    return render(request, 'admin_requests_page.html')
+
+def admin_lessons(request):
+    return render(request, 'admin_lessons_page.html')
