@@ -24,6 +24,13 @@ class Provider(faker.providers.BaseProvider):
     def instrument(self):
         return self.random_element(instruments)
 
+def populate_users(fake):
+    for _ in range(20):
+        student_fname = fake.first_name()
+        student_lname = fake.last_name()
+        email = fake.free_email()
+
+        User.objects.create(first_name=student_fname, last_name=student_lname, email=email)
 
 # def populate_requests(fake):
 #     for _ in range(20):
@@ -46,12 +53,14 @@ class Provider(faker.providers.BaseProvider):
 #                                is_approved=is_approved)
 
 
+
+
 class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write('seeding data...')
         fake = Faker("en_GB")
         fake.add_provider(Provider)
 
-        populate_requests(fake)
+        populate_users(fake)
 
         self.stdout.write('done.')
