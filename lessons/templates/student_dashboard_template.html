@@ -26,19 +26,19 @@
             <div class="position-sticky pt-3 sidebar-sticky">
             <ul class="nav flex-column">
                 <li class="nav-item mb-2">
-                    <a class="nav-link active" aria-current="page" href="#">
+                    <a class="nav-link active" aria-current="page" href="{% url 'student_requests' %}">
                         <i class="fa-regular fa-list-check"></i>
                         Requests
                     </a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="{% url 'student_lessons' %}">
                         <i class="fa-solid fa-person-chalkboard"></i>
                         Lessons
                     </a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="{% url 'student_transactions' %}">
                         <i class="fa-regular fa-receipt"></i>
                         Transactions
                     </a>
