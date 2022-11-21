@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from faker import Faker
 import faker.providers
-from lessons.models import User, Student, Lesson, Instrument, Invoice, Request
+from lessons.models import User, Student, Teacher, Administrator, Invoice, Request
 import random
 
 teachers = ["John Doe",
@@ -31,8 +31,42 @@ def populate_student(fake):
         student_lname = fake.last_name()
         email = fake.free_email()
         balance = fake.random_int(min=0, max=500)
+        password = fake.password(length=12)
+        last_lgn = fake.past_datetime()
 
-        Student.objects.create(first_name=student_fname, last_name=student_lname, email=email, balance=balance)
+        Student.objects.create(first_name=student_fname,
+                               last_name=student_lname,
+                               email=email,
+                               balance=balance,
+                               password=password,
+                               last_login=last_lgn)
+
+
+def populate_teacher(fake):
+    for _ in range(20):
+        teacher_fname = fake.first_name()
+        teacher_lname = fake.last_name()
+        email = fake.free_email()
+        Teacher.objects.create(first_name=teacher_fname,
+                               last_name=teacher_lname,
+                               email=email,
+                               is_staff=1)
+
+
+def populate_admin(fake):
+    for _ in range(10):
+        admin_fname = fake.first_name()
+        admin_lname = fake.last_name()
+        email = fake.free_email()
+        password = fake.password(length=12)
+        last_lgn = fake.past_datetime()
+        Administrator.objects.create(first_name=admin_fname,
+                                     last_name=admin_lname,
+                                     email=email,
+                                     password=password,
+                                     last_login=last_lgn,
+                                     is_staff=1,
+                                     is_superuser=1)
 
 
 # def populate_requests(fake):
@@ -62,6 +96,11 @@ class Command(BaseCommand):
         fake = Faker("en_GB")
         fake.add_provider(Provider)
 
+        self.stdout.write('seeding admin...')
+        populate_admin(fake)
+        self.stdout.write('seeding teacher...')
+        populate_teacher(fake)
+        self.stdout.write('seeding student...')
         populate_student(fake)
 
         self.stdout.write('done.')
