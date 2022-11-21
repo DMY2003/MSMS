@@ -14,7 +14,7 @@ class SignUpFormTestCase(TestCase):
             'last_name': 'Doe',
             'email': 'janedoe@example.org',
             'new_password': 'Password123',
-            'password_confirmation': 'Password123'
+            'confirm_password': 'Password123'
         }
         
 
@@ -33,8 +33,8 @@ class SignUpFormTestCase(TestCase):
         self.assertIn('new_password', form.fields)
         new_password_widget = form.fields['new_password'].widget
         self.assertTrue(isinstance(new_password_widget, forms.PasswordInput))
-        self.assertIn('password_confirmation', form.fields)
-        password_confirmation_widget = form.fields['password_confirmation'].widget
+        self.assertIn('confirm_password', form.fields)
+        password_confirmation_widget = form.fields['confirm_password'].widget
         self.assertTrue(isinstance(password_confirmation_widget, forms.PasswordInput))
 
     def test_form_uses_model_validation(self):
@@ -44,24 +44,24 @@ class SignUpFormTestCase(TestCase):
 
     def test_password_must_contain_uppercase_character(self):
         self.form_input['new_password'] = 'password123'
-        self.form_input['password_confirmation'] = 'password123'
+        self.form_input['confirm_password'] = 'password123'
         form = SignUpForm(data=self.form_input)
         self.assertFalse(form.is_valid())
 
     def test_password_must_contain_lowercase_character(self):
         self.form_input['new_password'] = 'PASSWORD123'
-        self.form_input['password_confirmation'] = 'PASSWORD123'
+        self.form_input['confirm_password'] = 'PASSWORD123'
         form = SignUpForm(data=self.form_input)
         self.assertFalse(form.is_valid())
 
     def test_password_must_contain_number(self):
         self.form_input['new_password'] = 'PasswordABC'
-        self.form_input['password_confirmation'] = 'PasswordABC'
+        self.form_input['confirm_password'] = 'PasswordABC'
         form = SignUpForm(data=self.form_input)
         self.assertFalse(form.is_valid())
 
     def test_new_password_and_password_confirmation_are_identical(self):
-        self.form_input['password_confirmation'] = 'WrongPassword123'
+        self.form_input['confirm_password'] = 'WrongPassword123'
         form = SignUpForm(data=self.form_input)
         self.assertFalse(form.is_valid())
 
