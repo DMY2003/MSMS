@@ -28,12 +28,8 @@ class LogInViewTestCase(TestCase, LogInTester):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'log_in.html')
         form = response.context['form']
-        #next = response.context['next']
         self.assertTrue(isinstance(form, LogInForm))
         self.assertFalse(form.is_bound)
-        # self.assertFalse(next)
-        # messages_list = list(response.context['messages'])
-        # self.assertEqual(len(messages_list), 0)
 
     def test_unsuccessful_log_in(self):
         form_input = {'email': 'johndoe@example.com', 'password': 'WrongPassword123'}
