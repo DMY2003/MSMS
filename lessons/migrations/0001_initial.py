@@ -51,7 +51,7 @@ class Migration(migrations.Migration):
                         },
                         help_text="Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.",
                         max_length=150,
-                        unique=True,
+                        unique=False,
                         validators=[
                             django.contrib.auth.validators.UnicodeUsernameValidator()
                         ],
