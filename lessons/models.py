@@ -40,13 +40,16 @@ class UserManager(BaseUserManager):
 
         return self._create_user(email, password, **extra_fields)
 
+
 class User(AbstractUser):
+    username = None
     first_name = models.CharField(max_length=50, blank=False, unique=False)
     last_name = models.CharField(max_length=50, blank=False, unique=False)
     email = models.EmailField(unique=True, blank=False)
     USERNAME_FIELD = 'email'
     objects = UserManager()
     REQUIRED_FIELDS = []
+
 
 class Student(User):
     balance = models.IntegerField(default=0)
