@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from .forms import SignUpForm, LogInForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from .models import Request
 
 
 def home(request):
@@ -50,7 +51,16 @@ def student_transactions(request):
     return render(request, 'student_transactions_page.html')
 
 def admin_requests(request):
-    return render(request, 'admin_requests_page.html')
+
+
+    response_data = {
+        "requests": {
+            "fulfilled": Request.objects.filter(is_approved=True),
+            "unfulfilled": Request.objects.filter(is_approved=False)
+        }
+    }
+    return render(request, 'admin_requests_page.html', response_data)
 
 def admin_transactions(request):
+
     return render(request, 'admin_transactions_page.html')
