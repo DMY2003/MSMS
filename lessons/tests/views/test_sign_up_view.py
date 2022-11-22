@@ -3,7 +3,7 @@ from django.contrib.auth.hashers import check_password
 from django.test import TestCase
 from django.urls import reverse
 from lessons.forms import SignUpForm
-from lessons.models import User
+from lessons.models import User, Student
 from lessons.tests.helper import LogInTester
 
 
@@ -34,9 +34,9 @@ class SignUpViewTestCase(TestCase, LogInTester):
 
     def test_unsuccessful_sign_up(self):
         self.form_input['email'] = 'BAD_USERNAME'
-        before_count = User.objects.count()
+        before_count = Student.objects.count()
         response = self.client.post(self.url, self.form_input)
-        after_count = User.objects.count()
+        after_count = Student.objects.count()
         self.assertEqual(after_count, before_count)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'sign_up.html')
@@ -46,14 +46,14 @@ class SignUpViewTestCase(TestCase, LogInTester):
         self.assertFalse(self._is_logged_in())
 
     def test_successful_sign_up(self):
-        before_count = User.objects.count()
+        before_count = Student.objects.count()
         response = self.client.post(self.url, self.form_input, follow=True)
-        after_count = User.objects.count()
+        after_count = Student.objects.count()
         self.assertEqual(after_count, before_count + 1)
         response_url = reverse('home')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'home.html')
-        user = User.objects.get(email='janedoe@example.org')
+        user = Student.objects.get(email='janedoe@example.org')
         self.assertEqual(user.first_name, 'Jane')
         self.assertEqual(user.last_name, 'Doe')
         is_password_correct = check_password('Password123', user.password)
@@ -70,9 +70,9 @@ class SignUpViewTestCase(TestCase, LogInTester):
 
     # def test_post_sign_up_redirects_when_logged_in(self):
     #     self.client.login(email=self.form_input['email'], password="Password123")
-    #     before_count = User.objects.count()
+    #     before_count = Student.objects.count()
     #     response = self.client.post(self.url, self.form_input, follow=True)
-    #     after_count = User.objects.count()
+    #     after_count = Student.objects.count()
     #     self.assertEqual(after_count, before_count)
     #     redirect_url = reverse('home')
     #     self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
