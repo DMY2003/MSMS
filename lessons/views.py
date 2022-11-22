@@ -3,24 +3,28 @@ from .forms import SignUpForm, LogInForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import user_passes_test
 
 
+
+@user_passes_test(lambda user: not user.username, login_url='../requests', redirect_field_name=None)
 def home(request):
     return render(request, 'home.html')
 
-
+@user_passes_test(lambda user: not user.username, login_url='../requests', redirect_field_name=None)
 def sign_up(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('home')
+            return redirect('requests')
     else:
         form = SignUpForm()
     return render(request, 'sign_up.html', {'form': form})
 
 
+@user_passes_test(lambda user: not user.username, login_url='../requests', redirect_field_name=None)
 def log_in(request):
     if request.method == 'POST':
         form = LogInForm(request.POST)
@@ -30,7 +34,7 @@ def log_in(request):
             user = authenticate(email=email, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('home')
+                return redirect('requests')
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
     form = LogInForm()
     return render(request, 'log_in.html', {'form': form})
@@ -42,20 +46,20 @@ def log_out(request):
 
 @login_required(login_url='../log_in/')
 def requests(request):
-    if request.user.type == 'Student':
+    if request.user.role == 'Student':
         return render(request, 'student_requests_page.html')
-    elif  request.user.type == 'Administrator':
+    elif  request.user.role == 'Administrator':
         return render(request, 'admin_requests_page.html')
 
 @login_required(login_url='../log_in/')
 def transactions(request):
-    if request.user.type == 'Student':
+    if request.user.role == 'Student':
         return render(request, 'student_transactions_page.html')
-    elif request.user.type == 'Administrator':
+    elif request.user.role == 'Administrator':
         return render(request, 'admin_transactions_page.html')
 
 @login_required(login_url='../log_in/')
 def lessons(request):
-    if request.user.type == 'Student':
+    if request.user.role == 'Student':
         return render(request, 'student_lessons_page.html')
 
