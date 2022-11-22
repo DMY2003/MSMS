@@ -3,8 +3,7 @@ from .forms import SignUpForm, LogInForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .models import Student, Administrator
-from copy import deepcopy
+
 
 def home(request):
     return render(request, 'home.html')
@@ -19,7 +18,6 @@ def sign_up(request):
             return redirect('home')
     else:
         form = SignUpForm()
-
     return render(request, 'sign_up.html', {'form': form})
 
 
@@ -37,27 +35,27 @@ def log_in(request):
     form = LogInForm()
     return render(request, 'log_in.html', {'form': form})
 
-
+@login_required(login_url='../log_in/')
 def log_out(request):
     logout(request)
     return redirect('home')
 
 @login_required(login_url='../log_in/')
 def requests(request):
-    if type(request.user).__class__ == Student:
+    if request.user.type == 'Student':
         return render(request, 'student_requests_page.html')
-    elif type(request.user) == Administrator:
+    elif  request.user.type == 'Administrator':
         return render(request, 'admin_requests_page.html')
 
 @login_required(login_url='../log_in/')
 def transactions(request):
-    if type(request.user) == Student:
+    if request.user.type == 'Student':
         return render(request, 'student_transactions_page.html')
-    elif type(request.user) == Administrator:
+    elif request.user.type == 'Administrator':
         return render(request, 'admin_transactions_page.html')
 
 @login_required(login_url='../log_in/')
 def lessons(request):
-    if type(request.user) == Student:
+    if request.user.type == 'Student':
         return render(request, 'student_lessons_page.html')
 

@@ -53,14 +53,13 @@ class User(AbstractUser):
 
 class Student(User):
     balance = models.IntegerField(default=0)
-
+    type = models.CharField(max_length=50, blank=False, unique=False, default='Student')
 
 class Administrator(User):
-    pass
-
+    type = 'Administrator'
 
 class Teacher(User):
-    pass
+    type = 'Teacher'
 
 
 class Lesson(models.Model):
