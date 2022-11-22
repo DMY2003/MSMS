@@ -1,7 +1,7 @@
 """Tests of the log-out view."""
 from django.test import TestCase
 from django.urls import reverse
-from lessons.models import User
+from lessons.models import User, Student
 from lessons.tests.helper import LogInTester
 
 class LogOutViewTestCase(TestCase, LogInTester):
@@ -9,7 +9,7 @@ class LogOutViewTestCase(TestCase, LogInTester):
 
     def setUp(self):
         self.url = reverse('log_out')
-        self.user = User.objects.create_user(
+        self.user = Student.objects.create_user(
             email='johndoe@example.org',
             first_name='John',
             last_name='Doe',

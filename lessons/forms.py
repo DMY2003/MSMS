@@ -1,11 +1,11 @@
 from django import forms
-from lessons.models import User
+from lessons.models import User, Student
 from django.core.validators import RegexValidator
 
 
 class SignUpForm(forms.ModelForm):
     class Meta:
-        model = User
+        model = Student
         fields = {"first_name", "last_name", "email"}
 
     new_password = forms.CharField(
@@ -29,7 +29,8 @@ class SignUpForm(forms.ModelForm):
 
     def save(self):
         super().save(commit=False)
-        user = User.objects.create_user(
+        user = Student.objects.create_user(
+            username=self.cleaned_data.get("email"),
             first_name=self.cleaned_data.get("first_name"),
             last_name=self.cleaned_data.get("last_name"),
             email=self.cleaned_data.get("email"),
