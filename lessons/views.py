@@ -52,7 +52,11 @@ def student_transactions(request):
 
 def admin_requests(request):
     if request.method == "POST":
-        pass
+        form = AdminRequestForm(request.POST)
+        if form.is_valid():
+            fulfilled_request = form.save()
+            fulfilled_request.is_approved = True 
+            fulfilled_request.save()
 
     response_data = {
         "form": AdminRequestForm(),
