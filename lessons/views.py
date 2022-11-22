@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .forms import SignUpForm, LogInForm
+from .forms import SignUpForm, LogInForm, AdminRequestForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .models import Request
@@ -39,7 +39,7 @@ def log_in(request):
 
 def log_out(request):
     logout(request)
-    return redirect('home')
+    return redirect('sign_up')
 
 def student_requests(request):
     return render(request, 'student_requests_page.html')
@@ -51,9 +51,11 @@ def student_transactions(request):
     return render(request, 'student_transactions_page.html')
 
 def admin_requests(request):
-
+    if request.method == "POST":
+        pass
 
     response_data = {
+        "form": AdminRequestForm(),
         "requests": {
             "fulfilled": Request.objects.filter(is_approved=True),
             "unfulfilled": Request.objects.filter(is_approved=False)

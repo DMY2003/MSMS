@@ -38,7 +38,12 @@ class SignUpForm(forms.ModelForm):
         )
         return user
 
+    field_order=["first_name", "last_name", "email", "new_password", "confirm_password"]
 
 class LogInForm(forms.Form):
     email = forms.CharField(label="Email")
     password = forms.CharField(label="Password", widget=forms.PasswordInput())
+
+
+class AdminRequestForm(forms.Form):
+    pass
