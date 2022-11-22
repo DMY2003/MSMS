@@ -2,9 +2,7 @@ from django.shortcuts import render, redirect
 from .forms import SignUpForm, LogInForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.decorators import user_passes_test
-
+from django.contrib.auth.decorators import login_required, user_passes_test, user_passes_test
 
 
 @user_passes_test(lambda user: not user.username, login_url='../requests', redirect_field_name=None)
@@ -39,7 +37,6 @@ def log_in(request):
     form = LogInForm()
     return render(request, 'log_in.html', {'form': form})
 
-@login_required(login_url='../log_in/')
 def log_out(request):
     logout(request)
     return redirect('home')
@@ -50,6 +47,8 @@ def requests(request):
         return render(request, 'student_requests_page.html')
     elif  request.user.role == 'Administrator':
         return render(request, 'admin_requests_page.html')
+    else:
+        return render(request, 'home.html')
 
 @login_required(login_url='../log_in/')
 def transactions(request):
@@ -57,9 +56,13 @@ def transactions(request):
         return render(request, 'student_transactions_page.html')
     elif request.user.role == 'Administrator':
         return render(request, 'admin_transactions_page.html')
+    else:
+        return render(request, 'home.html')
 
 @login_required(login_url='../log_in/')
 def lessons(request):
     if request.user.role == 'Student':
         return render(request, 'student_lessons_page.html')
+    else:
+        return render(request, 'home.html')
 
