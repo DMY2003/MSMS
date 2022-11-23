@@ -46,6 +46,7 @@ class User(AbstractUser):
     first_name = models.CharField(max_length=50, blank=False, unique=False)
     last_name = models.CharField(max_length=50, blank=False, unique=False)
     email = models.EmailField(unique=True, blank=False)
+    role = models.CharField(max_length=50, blank=False, unique=False, default="User")
     USERNAME_FIELD = 'email'
     objects = UserManager()
     REQUIRED_FIELDS = []
@@ -53,11 +54,10 @@ class User(AbstractUser):
 
 class Student(User):
     balance = models.IntegerField(default=0)
-
+    
 
 class Administrator(User):
     pass
-
 
 class Teacher(User):
     pass

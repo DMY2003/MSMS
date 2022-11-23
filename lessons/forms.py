@@ -36,6 +36,8 @@ class SignUpForm(forms.ModelForm):
             email=self.cleaned_data.get("email"),
             password=self.cleaned_data.get("new_password"),
         )
+        user.role = "Student"
+        user.save()
         return user
 
 
