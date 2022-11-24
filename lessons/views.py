@@ -45,24 +45,18 @@ def log_out(request):
 def requests(request):
     if request.user.role == 'Student':
         return render(request, 'student_requests_page.html')
-    elif  request.user.role == 'Administrator':
+    elif  request.user.role == 'Administrator' or request.user.role == 'Director':
         return render(request, 'admin_requests_page.html')
-    else:
-        return render(request, 'home.html')
 
 @login_required(login_url='../log_in/')
 def transactions(request):
     if request.user.role == 'Student':
         return render(request, 'student_transactions_page.html')
-    elif request.user.role == 'Administrator':
+    elif request.user.role == 'Administrator' or request.user.role == 'Director':
         return render(request, 'admin_transactions_page.html')
-    else:
-        return render(request, 'home.html')
 
 @login_required(login_url='../log_in/')
 def lessons(request):
     if request.user.role == 'Student':
         return render(request, 'student_lessons_page.html')
-    else:
-        return render(request, 'home.html')
 

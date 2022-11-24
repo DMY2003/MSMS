@@ -55,11 +55,13 @@ class User(AbstractUser):
 class Student(User):
     balance = models.IntegerField(default=0)
     
+class Teacher(User):
+    pass
 
 class Administrator(User):
     pass
 
-class Teacher(User):
+class Director(User):
     pass
 
 
