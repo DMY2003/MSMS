@@ -41,7 +41,7 @@ def log_out(request):
     logout(request)
     return redirect('home')
 
-@login_required(login_url='../log_in/')
+@login_required
 def requests(request):
     if request.user.role == 'Student':
         return render(request, 'student_requests_page.html')
@@ -50,7 +50,7 @@ def requests(request):
     else:
         return render(request, 'home.html')
 
-@login_required(login_url='../log_in/')
+@login_required
 def transactions(request):
     if request.user.role == 'Student':
         return render(request, 'student_transactions_page.html')
@@ -59,7 +59,7 @@ def transactions(request):
     else:
         return render(request, 'home.html')
 
-@login_required(login_url='../log_in/')
+@login_required
 def lessons(request):
     if request.user.role == 'Student':
         return render(request, 'student_lessons_page.html')
