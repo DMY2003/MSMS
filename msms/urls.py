@@ -26,6 +26,6 @@ urlpatterns = [
     path('student_requests/', views.student_requests, name='student_requests'),
     path('student_lessons/', views.student_lessons, name='student_lessons'),
     path('student_transactions/', views.student_transactions, name='student_transactions'),
-    path('administrator/requests', views.admin_requests, name='admin_requests'),
+    path('administrator/requests', views.admin_request_list, name='admin_requests'),
     path('administrator/transactions', views.admin_transactions, name='admin_transactions'),
 ]

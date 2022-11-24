@@ -72,18 +72,21 @@ class Lesson(models.Model):
 class Instrument(models.Model):
     name = models.TextField(blank=False)
 
-
-class Invoice(models.Model):
-    price = models.IntegerField(blank=False)
-    paid = models.BooleanField(default=False)
-    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, blank=False)
-
-
 class Request(models.Model):
-    student_availability = models.DateTimeField(blank=False)
+    time_availability = models.TimeField(blank=False)
+    day_availability = models.CharField(blank=False, max_length=10)
+    lesson_interval = models.IntegerField(default=1)
     lesson_count = models.IntegerField(blank=False)
     lesson_duration = models.IntegerField(blank=False)
     preferred_teacher = models.TextField()
     instrument = models.ForeignKey(Instrument, on_delete=models.CASCADE, blank=False)
     student = models.ForeignKey(Student, on_delete=models.CASCADE, blank=False)
     is_approved = models.BooleanField(default=False)
+
+class Invoice(models.Model):
+    price = models.IntegerField(blank=False)
+    paid = models.BooleanField(default=False)
+    request = models.ForeignKey(Request, on_delete=models.CASCADE, blank=False)
+
+
+

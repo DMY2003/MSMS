@@ -46,4 +46,23 @@ class LogInForm(forms.Form):
 
 
 class AdminRequestForm(forms.Form):
-    pass
+    """Handles the creation of lessons through the help of a lesson request"""
+    day = forms.CharField(label="Day of the week")
+    time = forms.TimeField(label="Time")
+    teacher = forms.CharField(label="Teacher")
+    lesson_count = forms.IntegerField(label="Number of lessons")
+    lesson_duration = forms.IntegerField(label="Lesson duration")
+    lesson_interval = forms.IntegerField(label="Lesson interval")
+
+
+   
+    def save(self):
+        """Overrides save method in order to approve the request and generate the associated lessons"""
+        request = super().save(commit=False)
+        request.is_approved = True
+        self.generate_lessons()
+        request.save()
+        return request
+
+    def generate_lessons(self):
+        pass

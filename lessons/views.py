@@ -50,14 +50,17 @@ def student_lessons(request):
 def student_transactions(request):
     return render(request, 'student_transactions_page.html')
 
-def admin_requests(request):
+def admin_request(request):
     if request.method == "POST":
         form = AdminRequestForm(request.POST)
         if form.is_valid():
             fulfilled_request = form.save()
-            fulfilled_request.is_approved = True 
-            fulfilled_request.save()
+            return redirect("admin_request_list")
+        messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
+    form = AdminRequestForm()
+    return render(request, 'admin_.html', {'form': form})
 
+def admin_request_list(request):
     response_data = {
         "form": AdminRequestForm(),
         "requests": {
@@ -68,5 +71,4 @@ def admin_requests(request):
     return render(request, 'admin_requests_page.html', response_data)
 
 def admin_transactions(request):
-
     return render(request, 'admin_transactions_page.html')
