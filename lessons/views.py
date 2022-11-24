@@ -2,14 +2,23 @@ from django.shortcuts import render, redirect
 from .forms import SignUpForm, LogInForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required, user_passes_test, user_passes_test
+from django.contrib.auth.decorators import login_required, user_passes_test
 
+def login_prohibited(function):
+    def wrap(request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('requests')
+        else:
+            return function(request, *args, **kwargs)
+    wrap.__doc__=function.__doc__
+    wrap.__name__=function.__name__
+    return wrap
 
-@user_passes_test(lambda user: not user.username, login_url='../requests', redirect_field_name=None)
+@login_prohibited
 def home(request):
     return render(request, 'home.html')
 
-@user_passes_test(lambda user: not user.username, login_url='../requests', redirect_field_name=None)
+@login_prohibited
 def sign_up(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -22,7 +31,7 @@ def sign_up(request):
     return render(request, 'sign_up.html', {'form': form})
 
 
-@user_passes_test(lambda user: not user.username, login_url='../requests', redirect_field_name=None)
+@login_prohibited
 def log_in(request):
     if request.method == 'POST':
         form = LogInForm(request.POST)
