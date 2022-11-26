@@ -1,0 +1,40 @@
+<div class="card p-3 mb-5">
+    <h3>
+        {{request_type}}
+    </h3> 
+    <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Student name</th>
+            <th scope="col">Lesson Type</th>
+            <th scope="col">No. of lessons</th>
+            <th scope="col">Interval</th>
+            <th scope="col">Duration</th>
+            <th scope="col">Preferred teacher</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            {% for request in requests %}
+                <th scope="row">{{request.id}}</th>
+                <td>{{request.student.full_name}}</td>
+                <td>{{request.instrument.name}}</td>
+                <td>{{request.lesson_count}}</td>
+                <td>{{request.lesson_interval}} week(s)</td>
+                <td>{{request.lesson_duration}} minutes</td>
+                <td>{{request.preferred_teacher}}</td>
+                <td>
+                    <button class="btn btn-primary btn-sm">
+                        Approve
+                    </button>
+                    <button class="btn btn-danger btn-sm">
+                        Delete
+                    </button>
+                </td>
+            {% endfor %}
+          </tr>
+        </tbody>
+    </table>
+</div>

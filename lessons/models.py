@@ -50,6 +50,11 @@ class User(AbstractUser):
     objects = UserManager()
     REQUIRED_FIELDS = []
 
+    @property
+    def full_name(self):
+        """Gets the full name of a user"""
+        return "%s %s" % (self.first_name, self.last_name)
+
 
 class Student(User):
     balance = models.IntegerField(default=0)
@@ -70,7 +75,7 @@ class Lesson(models.Model):
 
 
 class Instrument(models.Model):
-    name = models.TextField(blank=False)
+    name = models.CharField(max_length=30, blank=False)
 
 class Request(models.Model):
     time_availability = models.TimeField(null=True)

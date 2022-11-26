@@ -2,45 +2,7 @@
 
 {% block content %}
 <div class="container-sm mt-5">
-    <div class="card p-3">
-        <h3>
-            Unfulfilled Requests
-        </h3> 
-        <table class="table">
-            <thead>
-              <tr>
-                <th scope="col">ID</th>
-                <th scope="col">Student name</th>
-                <th scope="col">Lesson Type</th>
-                <th scope="col">No. of lessons</th>
-                <th scope="col">Interval</th>
-                <th scope="col">Duration</th>
-                <th scope="col">Preferred teacher</th>
-                <th scope="col">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                {% for request in unfulfilled_requests %}
-                    <th scope="row">001</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>6</td>
-                    <td>2 week(s)</td>
-                    <td>45 minutes</td>
-                    <td>John Doe</td>
-                    <td>
-                        <button class="btn btn-primary btn-sm">
-                            Approve
-                        </button>
-                        <button class="btn btn-danger btn-sm">
-                            Delete
-                        </button>
-                    </td>
-                {% endfor %}
-              </tr>
-            </tbody>
-        </table>
-    </div>
+    {% include 'partials/admin_request_table.html' with requests=unfulfilled_requests request_type="Unfulfilled requests" %}
+    {% include 'partials/admin_request_table.html' with requests=fulfilled_requests request_type="Fulfilled requests" %}
 </div>
 {% endblock %}
