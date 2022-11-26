@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from lessons import views
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -23,10 +24,13 @@ urlpatterns = [
     path('sign_up/', views.sign_up, name='sign_up'),
     path('log_in/', views.log_in, name='log_in'),
     path('log_out/', views.log_out, name='log_out'),
-    path('student_requests/', views.student_requests, name='student_requests'),
-    path('student_lessons/', views.student_lessons, name='student_lessons'),
-    path('student_transactions/', views.student_transactions, name='student_transactions'),
+    # path('student_requests/', views.student_requests, name='student_requests'),
+    # path('student_lessons/', views.student_lessons, name='student_lessons'),
+    # path('student_transactions/', views.student_transactions, name='student_transactions'),
     path('administrator/requests', views.admin_requests, name='admin_requests'),
     path('administrator/requests/<int:request_id>', views.admin_request, name='admin_request'),
-    path('administrator/transactions', views.admin_transactions, name='admin_transactions'),
+    # path('administrator/transactions', views.admin_transactions, name='admin_transactions'),
+    path('requests/', views.requests, name='requests'),
+    path('lessons/', views.lessons, name='lessons'),
+    path('transactions/', views.transactions, name='transactions'),
 ]
