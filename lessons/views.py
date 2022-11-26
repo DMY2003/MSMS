@@ -51,8 +51,9 @@ def student_transactions(request):
     return render(request, 'student_transactions_page.html')
 
 def admin_request(request, request_id):
-    if request.method == "PATCH":
-        form = AdminRequestForm(request.PATCH)
+    lesson_request = Request.objects.get(id=request_id)
+    if request.method == "PUT":
+        form = AdminRequestForm(request.PUT)
         if form.is_valid():
             form.save()
             return redirect("admin_requests")
@@ -62,7 +63,8 @@ def admin_request(request, request_id):
         return redirect("admin_requests")
     else:
         form = AdminRequestForm()
-    return render(request, 'admin_request.html', {'form': form})
+    
+    return render(request, 'admin_request.html', {'form': form, 'request': lesson_request})
 
 def admin_requests(request):
     response_data = {
