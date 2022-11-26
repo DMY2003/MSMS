@@ -73,7 +73,7 @@ class Instrument(models.Model):
     name = models.TextField(blank=False)
 
 class Request(models.Model):
-    time_availability = models.TimeField(auto_now=True)
+    time_availability = models.TimeField(null=True)
     day_availability = models.CharField(max_length=10, blank=True)
     lesson_interval = models.IntegerField(default=1)
     lesson_count = models.IntegerField(blank=False)

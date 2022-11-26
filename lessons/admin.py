@@ -1,6 +1,6 @@
 """Configuration of the admin interface for microblogs."""
 from django.contrib import admin
-from .models import User, Request, Lesson
+from .models import User, Request, Lesson, Instrument
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
@@ -19,6 +19,11 @@ class RequestAdmin(admin.ModelAdmin):
         "lesson_count", "lesson_duration", "preferred_teacher",
         "instrument", "student", "is_approved"
     ]
+
+@admin.register(Instrument)
+class RequestAdmin(admin.ModelAdmin):
+    """Configuration of the admin interface for requests."""
+    pass
 
 @admin.register(Lesson)
 class RequestAdmin(admin.ModelAdmin):

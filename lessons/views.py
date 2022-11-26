@@ -50,13 +50,16 @@ def student_lessons(request):
 def student_transactions(request):
     return render(request, 'student_transactions_page.html')
 
-def admin_request(request):
+def admin_request(request, request_id):
     if request.method == "POST":
         form = AdminRequestForm(request.POST)
         if form.is_valid():
-            fulfilled_request = form.save()
-            return redirect("admin_request_list")
+            form.save()
+            return redirect("admin_requests")
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
+    if request.method == "DELETE":
+        request = Request.objects.get(id=request_id).delete()
+        return redirect("admin_requests")
     form = AdminRequestForm()
     return render(request, 'admin_request.html', {'form': form})
 
