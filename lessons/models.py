@@ -51,6 +51,11 @@ class User(AbstractUser):
     objects = UserManager()
     REQUIRED_FIELDS = []
 
+    @property
+    def full_name(self):
+        """Gets the full name of a user"""
+        return "%s %s" % (self.first_name, self.last_name)
+
 
 class Student(User):
     balance = models.IntegerField(default=0)
@@ -72,8 +77,18 @@ class Lesson(models.Model):
 
 
 class Instrument(models.Model):
-    name = models.TextField(blank=False)
+    name = models.CharField(max_length=30, blank=False)
 
+class Request(models.Model):
+    time_availability = models.TimeField(null=True)
+    day_availability = models.CharField(max_length=10, blank=True)
+    lesson_interval = models.IntegerField(default=1)
+    lesson_count = models.IntegerField(blank=False)
+    lesson_duration = models.IntegerField(blank=False)
+    preferred_teacher = models.TextField()
+    instrument = models.ForeignKey(Instrument, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, blank=False)
+    is_approved = models.BooleanField(default=False)
 
 class Invoice(models.Model):
     price = models.IntegerField(blank=False)
@@ -81,11 +96,4 @@ class Invoice(models.Model):
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, blank=False)
 
 
-class Request(models.Model):
-    student_availability = models.DateTimeField(blank=False)
-    lesson_count = models.IntegerField(blank=False)
-    lesson_duration = models.IntegerField(blank=False)
-    preferred_teacher = models.TextField()
-    instrument = models.ForeignKey(Instrument, on_delete=models.CASCADE, blank=False)
-    student = models.ForeignKey(Student, on_delete=models.CASCADE, blank=False)
-    is_approved = models.BooleanField(default=False)
+

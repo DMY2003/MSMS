@@ -40,7 +40,29 @@ class SignUpForm(forms.ModelForm):
         user.save()
         return user
 
+    field_order=["first_name", "last_name", "email", "new_password", "confirm_password"]
 
 class LogInForm(forms.Form):
     email = forms.CharField(label="Email")
     password = forms.CharField(label="Password", widget=forms.PasswordInput())
+
+
+class AdminRequestForm(forms.Form):
+    """Handles the creation of lessons through the help of a lesson request"""
+    start_date = forms.CharField(label="Day of the week")
+    time = forms.TimeField(label="Time")
+    teacher = forms.CharField(label="Teacher")
+    lesson_count = forms.IntegerField(label="Number of lessons")
+    lesson_duration = forms.IntegerField(label="Lesson duration")
+    lesson_interval = forms.IntegerField(label="Lesson interval")
+   
+    def save(self):
+        """Overrides save method in order to approve the request and generate the associated lessons"""
+        request = super().save(commit=False)
+        request.is_approved = True
+        self.generate_lessons()
+        request.save()
+        return request
+
+    def generate_lessons(self):
+        pass

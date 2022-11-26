@@ -2,7 +2,9 @@
     <div class="container">
         <a class="navbar-brand" href="{% url 'home' %}"><i class="bi bi-file-music-fill"></i>&nbsp;MSMS</a>
         {% if user.is_authenticated %}
-            {% include 'partials/menu.html' %}
+            <a class="ms-auto" href="{% url 'log_out' %}">
+                Log out
+            </a>
         {% endif %}
     </div>
 </nav>
