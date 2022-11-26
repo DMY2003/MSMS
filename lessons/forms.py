@@ -1,5 +1,5 @@
 from django import forms
-from lessons.models import User, Student
+from lessons.models import User, Student, Request
 from django.core.validators import RegexValidator
 
 
@@ -44,3 +44,29 @@ class SignUpForm(forms.ModelForm):
 class LogInForm(forms.Form):
     email = forms.CharField(label="Email")
     password = forms.CharField(label="Password", widget=forms.PasswordInput())
+
+
+INSTRUMENTS = [("guitar", "Guitar"),
+               ("ukulele", "Ukulele"),
+               ("violin", "Violin"),
+               ("recorder", "Recorder"),
+               ("piano", "Piano"),
+               ("triangle", "Triangle")]
+
+
+class RequestForm(forms.ModelForm):
+    class Meta:
+        model = Request
+        fields = ['student_availability',
+                  'lesson_count',
+                  'lesson_duration',
+                  'lesson_interval',
+                  'preferred_teacher',
+                  'instrument']
+
+    student_availability = forms.DateTimeField(label="Availability")
+    lesson_count = forms.IntegerField(label="Number of Lessons")
+    lesson_duration = forms.IntegerField(label="Duration")
+    lesson_interval = forms.CharField(label='Interval', widget=forms.Select(choices=[(1, 1), (2, 2)]))
+    preferred_teacher = forms.CharField(label="Preferred Teacher")
+    instrument = forms.CharField(label='Instrument', widget=forms.Select(choices=INSTRUMENTS))

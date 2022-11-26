@@ -82,10 +82,11 @@ class Invoice(models.Model):
 
 
 class Request(models.Model):
-    student_availability = models.DateTimeField(blank=False)
+    instrument = models.ForeignKey(Instrument, on_delete=models.CASCADE, blank=False)
     lesson_count = models.IntegerField(blank=False)
     lesson_duration = models.IntegerField(blank=False)
+    student_availability = models.DateTimeField(blank=False)
     preferred_teacher = models.TextField()
-    instrument = models.ForeignKey(Instrument, on_delete=models.CASCADE, blank=False)
+
     student = models.ForeignKey(Student, on_delete=models.CASCADE, blank=False)
     is_approved = models.BooleanField(default=False)

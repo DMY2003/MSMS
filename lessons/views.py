@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
-from .forms import SignUpForm, LogInForm
+from .forms import SignUpForm, LogInForm, RequestForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
+
 
 def login_prohibited(function):
     def wrap(request, *args, **kwargs):
@@ -10,13 +11,16 @@ def login_prohibited(function):
             return redirect('requests')
         else:
             return function(request, *args, **kwargs)
-    wrap.__doc__=function.__doc__
-    wrap.__name__=function.__name__
+
+    wrap.__doc__ = function.__doc__
+    wrap.__name__ = function.__name__
     return wrap
+
 
 @login_prohibited
 def home(request):
     return render(request, 'home.html')
+
 
 @login_prohibited
 def sign_up(request):
@@ -46,16 +50,19 @@ def log_in(request):
     form = LogInForm()
     return render(request, 'log_in.html', {'form': form})
 
+
 def log_out(request):
     logout(request)
     return redirect('home')
+
 
 @login_required
 def requests(request):
     if request.user.role == 'Student':
         return render(request, 'student_requests_page.html')
-    elif  request.user.role == 'Administrator' or request.user.role == 'Director':
+    elif request.user.role == 'Administrator' or request.user.role == 'Director':
         return render(request, 'admin_requests_page.html')
+
 
 @login_required
 def transactions(request):
@@ -64,8 +71,14 @@ def transactions(request):
     elif request.user.role == 'Administrator' or request.user.role == 'Director':
         return render(request, 'admin_transactions_page.html')
 
+
 @login_required
 def lessons(request):
     if request.user.role == 'Student':
         return render(request, 'student_lessons_page.html')
 
+
+# -------------------------------NEW--------------------------------------
+def new_request(request):
+    form = RequestForm
+    return render(request, 'request_test.html', {'form': form})

@@ -14,7 +14,8 @@
             </div>
             
             <div class="modal-body p-5 pt-0">
-                <form method="post" action="#">
+                <form method=POST action="{}">
+                    {% csrf_token %}
                     <div class="mb-1">
                         <small><span style="color:#FF0000">*</span> represents a required field</small>
                     </div>

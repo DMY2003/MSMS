@@ -27,4 +27,6 @@ urlpatterns = [
     path('requests/', views.requests, name='requests'),
     path('lessons/', views.lessons, name='lessons'),
     path('transactions/', views.transactions, name='transactions'),
+    path('newrequest/', views.new_request, name='new-request'),
+
 ]
