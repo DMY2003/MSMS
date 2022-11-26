@@ -13,8 +13,9 @@ class UserAdmin(admin.ModelAdmin):
 @admin.register(Request)
 class RequestAdmin(admin.ModelAdmin):
     """Configuration of the admin interface for requests."""
-
+    
     list_display = [
+        "day_availability", "time_availability",
         "lesson_count", "lesson_duration", "preferred_teacher",
         "instrument", "student", "is_approved"
     ]

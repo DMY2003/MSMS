@@ -58,17 +58,16 @@ def admin_request(request):
             return redirect("admin_request_list")
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
     form = AdminRequestForm()
-    return render(request, 'admin_.html', {'form': form})
+    return render(request, 'admin_request.html', {'form': form})
 
-def admin_request_list(request):
+def admin_requests(request):
     response_data = {
         "form": AdminRequestForm(),
-        "requests": {
-            "fulfilled": Request.objects.filter(is_approved=True),
-            "unfulfilled": Request.objects.filter(is_approved=False)
-        }
+        "fulfilled_requests": Request.objects.filter(is_approved=True),
+        "unfulfilled_requests": Request.objects.filter(is_approved=False)
     }
-    return render(request, 'admin_requests_page.html', response_data)
+
+    return render(request, 'admin_requests.html', response_data)
 
 def admin_transactions(request):
     return render(request, 'admin_transactions_page.html')
