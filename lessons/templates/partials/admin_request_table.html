@@ -26,12 +26,10 @@
                 <td>{{request.lesson_duration}} minutes</td>
                 <td>{{request.preferred_teacher}}</td>
                 <td>
-                    <button class="btn btn-primary btn-sm">
+                    <a class="btn btn-primary btn-sm" href="{% url 'admin_request' request.id %}">
                         Approve
-                    </button>
-                    <button class="btn btn-danger btn-sm">
-                        Delete
-                    </button>
+                    </a>
+                    <input type="submit" class="btn btn-danger btn-sm" value="Delete">
                 </td>
             {% endfor %}
           </tr>

@@ -1,0 +1,20 @@
+{% extends 'base_content.html' %} 
+
+{% block content %}
+<div class="container-sm mt-5">
+    <div class="row">
+        <div class="col-sm-12 col-md-6 offset-md-3">
+            <div class="card p-3">
+                <form action="PATCH">
+                    <a href="{% url 'admin_requests' %}">Go back</a>
+                    <h3>
+                        Approve request  
+                    </h3>
+                    {% include 'partials/bootstrap_form.html' with form=form %}
+                    <input type="submit" value="Approve" class="btn btn-primary">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
