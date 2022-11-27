@@ -24,12 +24,14 @@ def populate_student(fake):
 
 
 def populate_teacher(fake):
-    for _ in range(20):
-        teacher_fname = fake.first_name()
-        teacher_lname = fake.last_name()
+    teacher_list = [["Sarah", "Palmer"],
+                    ["Jessica", "Swift"],
+                    ["John", "Smith"]]
+
+    for each in teacher_list:
         email = fake.free_email()
-        Teacher.objects.create(first_name=teacher_fname,
-                               last_name=teacher_lname,
+        Teacher.objects.create(first_name=each[0],
+                               last_name=each[1],
                                email=email,
                                is_staff=1)
 
@@ -69,30 +71,33 @@ def populate_requests(fake):
 
     for each in student_ids:
         req_made = bool(random.getrandbits(1))
-        num_reqs = random.randint(1, 5)
 
         if req_made:
-            for _ in range(num_reqs):
-                avail = fake.future_datetime()
-                duration = random.choice(range(30, 240, 30))
+            time = fake.time_object()
 
-                pref_teacher = Teacher.objects.get(id=random.choice(teacher_ids))
+            day = fake.day_of_week()
 
-                student = Student.objects.get(id=each)
+            duration = random.choice(range(30, 240, 30))
 
-                chosen_inst = Instrument.objects.get(id=random.choice(instruments))
+            pref_teacher = Teacher.objects.get(id=random.choice(teacher_ids))
 
-                approved = bool(random.getrandbits(1))
+            student = Student.objects.get(id=each)
 
-                les_count = random.randint(1, 5)
+            chosen_inst = Instrument.objects.get(id=random.choice(instruments))
 
-                Request.objects.create(student_availability=avail,
-                                       lesson_count=les_count,
-                                       lesson_duration=duration,
-                                       preferred_teacher=pref_teacher,
-                                       instrument=chosen_inst,
-                                       student=student,
-                                       is_approved=approved)
+            approved = bool(random.getrandbits(1))
+
+            les_count = random.randint(1, 5)
+
+            Request.objects.create(time_availability=time,
+                                   day_availability=day,
+                                   lesson_count=les_count,
+                                   lesson_duration=duration,
+                                   lesson_interval=random.randint(1, 2),
+                                   preferred_teacher=pref_teacher,
+                                   instrument=chosen_inst,
+                                   student=student,
+                                   is_approved=approved)
 
 
 def populate_lessons():
@@ -100,7 +105,8 @@ def populate_lessons():
         if request.is_approved:
             pref_teacher = Teacher.objects.get(email=request.preferred_teacher)
             student = Student.objects.get(email=request.student)
-            Lesson.objects.create(time=request.student_availability,
+            Lesson.objects.create(time=request.time_availability,
+                                  day=request.day_availability,
                                   teacher=pref_teacher,
                                   student=student)
 
