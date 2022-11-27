@@ -84,6 +84,7 @@ class Instrument(models.Model):
     name = models.CharField(max_length=30, blank=False)
 
 
+
 class Request(models.Model):
     time_availability = models.TimeField(null=True)
     day_availability = models.CharField(max_length=10, blank=True)

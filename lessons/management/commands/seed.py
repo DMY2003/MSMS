@@ -100,6 +100,7 @@ def populate_requests(fake):
                                    is_approved=approved)
 
 
+
 def populate_lessons():
     for request in Request.objects.all():
         if request.is_approved:
