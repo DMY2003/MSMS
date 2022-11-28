@@ -6,6 +6,7 @@
     </a>
 </header>
 
+
 <div class="container pt-2 pb-4">
     <div class="card w-75" role="document">
         <div class="card-body rounded-4 shadow">
@@ -23,7 +24,7 @@
                     <div class="mb-3">
                         <label for="ticketTitle" class="form-label">Lesson type<span style="color:#FF0000">*</span></label>
                         <select class="form-select" aria-label="Default select example" id="ticketPriority"
-                            name="priority" required>
+                            name="instrument" required>
                             <option value="guitar" selected>Guitar</option>
                             <option value="piano">Piano</option>
                             <option value="saxophone">Saxophone</option>
@@ -33,7 +34,7 @@
 
                     <div class="mb-3">
                         <label for="deadline" class="form-label">Number of Lessons<span style="color:#FF0000">*</span></label>
-                        <input type="text" class="form-control" id="no_of_lessons" name="no_of_lessons"
+                        <input type="text" class="form-control" id="no_of_lessons" name="lesson_count"
                             placeholder="Number of lessons" required>
                         <div class="valid-feedback">
                             Looks good!
@@ -64,25 +65,27 @@
                         </div>
 
                         <div class="mb-3">
-                            <select class="form-select mb-2" aria-label="Default select example" id="weekDay" name="day">
+                            <select class="form-select mb-2" aria-label="Default select example" id="weekDay" name="day_availability">
                                     <option value="Monday" selected>Monday</option>
                                     <option value="Tuesday">Tuesday</option>
                                     <option value="Wednesday">Wednesday</option>
                                     <option value="Thursday">Thursday</option>
                                     <option value="Friday">Friday</option>
+                                    <option value="Saturday">Saturday</option>
+                                    <option value="Sunday">Sunday</option>
                                 </select>
 
 
 
                                 <div class="col mb-2">
-                                    <input type="time" id="timeFrom" name="time">
+                                    <input type="time" id="timeFrom" name="time_availability">
                                 </div>
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <label for="deadline" class="form-label">Preferred teacher</label>
-                        <input type="text" class="form-control" id="teacher" name="teacher"
+                        <input type="text" class="form-control" id="teacher" name="preferred_teacher"
                             placeholder="Leave this blank if none" required>
                         <div class="valid-feedback">
                             Looks good!

@@ -79,6 +79,20 @@ def lessons(request):
 
 
 # -------------------------------NEW--------------------------------------
-def new_request(request):
-    form = RequestForm
-    return render(request, 'request_test.html', {'form': form})
+def make_request(request, form=None):
+    if request.method == 'POST':
+        print("Hello")
+        form = RequestForm(request.POST)
+
+        if not form.is_valid():
+            form_data = form.cleaned_data
+            details = [form_data.get("time_availability"), form_data.get("day_availability"),
+                       form_data.get("lesson_interval"), form_data.get("lesson_count"),
+                       form_data.get("lesson_duration"), form_data.get("preferred_teacher"),
+                       form_data.get("instrument")]
+
+            print(details)
+
+            return redirect('new-request')
+
+    return render(request, 'student_request_form2.html', {'form': form})
