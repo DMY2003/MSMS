@@ -47,9 +47,8 @@ class LogInForm(forms.Form):
 
 
 class RequestForm(forms.ModelForm):
-    instrument_choices = [(i['name'], i['name']) for i in Instrument.objects.values('name').distinct()]
-    instrument = forms.ChoiceField(choices=instrument_choices)
     student = forms.IntegerField()
+    instrument = forms.CharField()
 
     class Meta:
         model = Request
