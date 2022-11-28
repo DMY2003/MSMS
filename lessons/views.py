@@ -78,8 +78,7 @@ def lessons(request):
         return render(request, 'student_lessons_page.html')
 
 
-# -------------------------------NEW--------------------------------------
-
+@login_required
 def make_request(request, form=None):
     if request.method == 'POST':
         user = request.user
@@ -94,6 +93,6 @@ def make_request(request, form=None):
         if form.is_valid():
             form.save()
 
-            return redirect('new-request')
+            return redirect('requests')
 
     return render(request, 'student_request_form2.html', {'form': form})

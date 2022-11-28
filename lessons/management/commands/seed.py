@@ -1,3 +1,4 @@
+from django.contrib.auth.hashers import make_password
 from django.core.management.base import BaseCommand, CommandError
 from faker import Faker
 import faker.providers
@@ -19,7 +20,7 @@ def populate_student(fake):
                                email=email,
                                username=email,
                                balance=balance,
-                               password=password,
+                               password=make_password(password, salt=None, hasher='default'),
                                last_login=last_lgn)
 
 
@@ -47,7 +48,7 @@ def populate_admin(fake):
                                      last_name=admin_lname,
                                      email=email,
                                      username=email,
-                                     password=password,
+                                     password=make_password(password, salt=None, hasher='default'),
                                      last_login=last_lgn,
                                      is_staff=1,
                                      is_superuser=1)
