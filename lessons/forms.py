@@ -47,7 +47,15 @@ class LogInForm(forms.Form):
 
 
 class RequestForm(forms.ModelForm):
+    instrument_choices = [(i['name'], i['name']) for i in Instrument.objects.values('name').distinct()]
+    instrument = forms.ChoiceField(choices=instrument_choices)
+
     class Meta:
         model = Request
-        exclude = ['student', 'is_approved']
+        exclude = ['is_approved']
 
+    def clean(self):
+        cleaned_data = super(RequestForm, self).clean()
+        requested = self.data.get("instrument")
+        cleaned_data["instrument"] = Instrument.objects.get(name=requested)
+        return cleaned_data

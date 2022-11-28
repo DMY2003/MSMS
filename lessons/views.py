@@ -79,19 +79,21 @@ def lessons(request):
 
 
 # -------------------------------NEW--------------------------------------
+
 def make_request(request, form=None):
     if request.method == 'POST':
-        print("Hello")
-        form = RequestForm(request.POST)
+        user = request.user
+        post_values = request.POST.copy()
 
-        if not form.is_valid():
-            form_data = form.cleaned_data
-            details = [form_data.get("time_availability"), form_data.get("day_availability"),
-                       form_data.get("lesson_interval"), form_data.get("lesson_count"),
-                       form_data.get("lesson_duration"), form_data.get("preferred_teacher"),
-                       form_data.get("instrument")]
+        post_values['student'] = user
+        form = RequestForm(post_values)
 
-            print(details)
+        for field in form:
+            print("Field Error:", field.name, field.errors)
+
+        if form.is_valid():
+            print("running save")
+            form.save()
 
             return redirect('new-request')
 

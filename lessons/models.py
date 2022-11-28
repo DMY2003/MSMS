@@ -84,7 +84,6 @@ class Instrument(models.Model):
     name = models.CharField(max_length=30, blank=False)
 
 
-
 class Request(models.Model):
     time_availability = models.TimeField(null=True)
     day_availability = models.CharField(max_length=10, blank=True)
@@ -101,5 +100,3 @@ class Invoice(models.Model):
     price = models.IntegerField(blank=False)
     paid = models.BooleanField(default=False)
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, blank=False)
-
-
