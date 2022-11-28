@@ -85,14 +85,13 @@ def make_request(request, form=None):
         user = request.user
         post_values = request.POST.copy()
 
-        post_values['student'] = user
+        post_values['student'] = user.id
         form = RequestForm(post_values)
 
-        for field in form:
-            print("Field Error:", field.name, field.errors)
+        # for field in form:
+        #     print("Field Error:", field.name, field.errors)
 
         if form.is_valid():
-            print("running save")
             form.save()
 
             return redirect('new-request')
