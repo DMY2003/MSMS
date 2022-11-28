@@ -1,7 +1,7 @@
 from django import forms
 from lessons.models import User, Student, Teacher
 from django.core.validators import RegexValidator
-
+from django.conf import settings
 
 class SignUpForm(forms.ModelForm):
     class Meta:
@@ -53,15 +53,7 @@ class AdminRequestForm(forms.Form):
     day = forms.ChoiceField(
         label="Day of the week",
         widget=forms.Select(),
-        choices = [
-            ("Monday", "Monday"), 
-            ("Tuesday", "Tuesday"),
-            ("Wednesday", "Wednesday"), 
-            ("Thursday", "Thursday"),
-            ("Friday", "Friday"), 
-            ("Saturday", "Saturday"),
-            ("Sunday", "Sunday"), 
-        ],
+        choices = settings.DAYS_OF_THE_WEEK,
     )   
 
     time = forms.TimeField(label="Time")
@@ -72,9 +64,17 @@ class AdminRequestForm(forms.Form):
     )
 
     lesson_count = forms.IntegerField(label="Number of lessons")
-    lesson_duration = forms.IntegerField(label="Lesson duration")
-    lesson_interval = forms.IntegerField(label="Lesson interval")
-   
+    lesson_duration = forms.ChoiceField(
+        label="Lesson duration",
+        widget=forms.Select(),
+        choices = settings.LESSON_DURATIONS,
+    )   
+
+    lesson_interval = forms.ChoiceField(
+        label="Lesson intervals",
+        widget=forms.Select(),
+        choices = settings.LESSON_INTERVALS,
+    )   
     def save(self):
         """Overrides save method in order to approve the request and generate the associated lessons"""
         request = super().save(commit=False)

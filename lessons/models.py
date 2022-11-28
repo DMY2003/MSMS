@@ -60,14 +60,8 @@ class User(AbstractUser):
 class Student(User):
     balance = models.IntegerField(default=0)
     
-class Teacher(models.Model):
-    first_name = models.CharField(max_length=50, blank=False, unique=False)
-    last_name = models.CharField(max_length=50, blank=False, unique=False)
-
-    @property
-    def full_name(self):
-        """Gets the full name of a teacher"""
-        return "%s %s" % (self.first_name, self.last_name)
+class Teacher(User):
+    pass
 
 class Administrator(User):
     pass
@@ -98,7 +92,7 @@ class Request(models.Model):
 
     @property
     def availability(self):
-        """Gets the availability in full form"""
+        """Gets the availability in full"""
         return "%s %s" % (self.day_availability, self.time_availability)
 
 class Invoice(models.Model):
