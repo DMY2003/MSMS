@@ -1,5 +1,5 @@
 from django import forms
-from lessons.models import User, Student
+from lessons.models import User, Student, Teacher
 from django.core.validators import RegexValidator
 
 
@@ -51,7 +51,7 @@ class AdminRequestForm(forms.Form):
     """Handles the creation of lessons through the help of a lesson request"""
 
     day = forms.ChoiceField(
-        label="Day",
+        label="Day of the week",
         widget=forms.Select(),
         choices = [
             ("Monday", "Monday"), 
@@ -61,10 +61,16 @@ class AdminRequestForm(forms.Form):
             ("Friday", "Friday"), 
             ("Saturday", "Saturday"),
             ("Sunday", "Sunday"), 
-        ]
+        ],
     )   
+
     time = forms.TimeField(label="Time")
-    teacher = forms.CharField(label="Teacher")
+
+    teacher = forms.ModelChoiceField(
+        label="Assigned teacher",
+        queryset=Teacher.objects.all()
+    )
+
     lesson_count = forms.IntegerField(label="Number of lessons")
     lesson_duration = forms.IntegerField(label="Lesson duration")
     lesson_interval = forms.IntegerField(label="Lesson interval")
