@@ -8,10 +8,10 @@
             <th scope="col">ID</th>
             <th scope="col">Student name</th>
             <th scope="col">Lesson Type</th>
-            <th scope="col">No. of lessons</th>
+            <th scope="col"># Lessons</th>
             <th scope="col">Interval</th>
             <th scope="col">Duration</th>
-            <th scope="col">Preferred teacher</th>
+            <th scope="col">Availabiity</th>
             <th scope="col">Action</th>
           </tr>
         </thead>
@@ -24,7 +24,7 @@
                 <td>{{request.lesson_count}}</td>
                 <td>{{request.lesson_interval}} week(s)</td>
                 <td>{{request.lesson_duration}} minutes</td>
-                <td>{{request.preferred_teacher}}</td>
+                <td>{{request.day_availability}} {{request.time_availability}}</td>
                 <td>
                     <a class="btn btn-primary btn-sm" href="{% url 'admin_request' request.id %}">
                         Approve

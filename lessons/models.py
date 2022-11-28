@@ -90,6 +90,11 @@ class Request(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE, blank=False)
     is_approved = models.BooleanField(default=False)
 
+    @property
+    def availability(self):
+        """Gets the availability in full form"""
+        return "%s %s" % (self.day_availability, self.time_availability)
+
 class Invoice(models.Model):
     price = models.IntegerField(blank=False)
     paid = models.BooleanField(default=False)
