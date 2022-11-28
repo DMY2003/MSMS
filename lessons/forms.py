@@ -46,29 +46,6 @@ class LogInForm(forms.Form):
     password = forms.CharField(label="Password", widget=forms.PasswordInput())
 
 
-INSTRUMENTS = [("guitar", "Guitar"),
-               ("ukulele", "Ukulele"),
-               ("violin", "Violin"),
-               ("recorder", "Recorder"),
-               ("piano", "Piano"),
-               ("triangle", "Triangle")]
-
-DURATIONS = [(30, 30),
-             (60, 60),
-             (90, 90),
-             (120, 120),
-             (150, 150),
-             (180, 180)]
-
-DAYS = [("monday", "Monday"),
-        ("tuesday", "Tuesday"),
-        ("wednesday", "Wednesday"),
-        ("thursday", "Thursday"),
-        ("friday", "Friday"),
-        ("saturday", "Saturday"),
-        ("sunday", "Sunday")]
-
-
 class RequestForm(forms.ModelForm):
     class Meta:
         model = Request
