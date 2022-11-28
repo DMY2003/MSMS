@@ -1,5 +1,5 @@
 from django import forms
-from lessons.models import User, Student, Request
+from lessons.models import User, Student, Request, Instrument
 from django.core.validators import RegexValidator
 
 
@@ -53,20 +53,24 @@ INSTRUMENTS = [("guitar", "Guitar"),
                ("piano", "Piano"),
                ("triangle", "Triangle")]
 
+DURATIONS = [(30, 30),
+             (60, 60),
+             (90, 90),
+             (120, 120),
+             (150, 150),
+             (180, 180)]
+
+DAYS = [("monday", "Monday"),
+        ("tuesday", "Tuesday"),
+        ("wednesday", "Wednesday"),
+        ("thursday", "Thursday"),
+        ("friday", "Friday"),
+        ("saturday", "Saturday"),
+        ("sunday", "Sunday")]
+
 
 class RequestForm(forms.ModelForm):
     class Meta:
         model = Request
-        fields = ['student_availability',
-                  'lesson_count',
-                  'lesson_duration',
-                  'lesson_interval',
-                  'preferred_teacher',
-                  'instrument']
+        exclude = ['student', 'is_approved']
 
-    student_availability = forms.DateTimeField(label="Availability")
-    lesson_count = forms.IntegerField(label="Number of Lessons")
-    lesson_duration = forms.IntegerField(label="Duration")
-    lesson_interval = forms.CharField(label='Interval', widget=forms.Select(choices=[(1, 1), (2, 2)]))
-    preferred_teacher = forms.CharField(label="Preferred Teacher")
-    instrument = forms.CharField(label='Instrument', widget=forms.Select(choices=INSTRUMENTS))
