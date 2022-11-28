@@ -49,7 +49,20 @@ class LogInForm(forms.Form):
 
 class AdminRequestForm(forms.Form):
     """Handles the creation of lessons through the help of a lesson request"""
-    start_date = forms.CharField(label="Day of the week")
+
+    day = forms.ChoiceField(
+        label="Day",
+        widget=forms.Select(),
+        choices = [
+            ("Monday", "Monday"), 
+            ("Tuesday", "Tuesday"),
+            ("Wednesday", "Wednesday"), 
+            ("Thursday", "Thursday"),
+            ("Friday", "Friday"), 
+            ("Saturday", "Saturday"),
+            ("Sunday", "Sunday"), 
+        ]
+    )   
     time = forms.TimeField(label="Time")
     teacher = forms.CharField(label="Teacher")
     lesson_count = forms.IntegerField(label="Number of lessons")
