@@ -57,14 +57,12 @@ class AdminRequestForm(forms.Form):
         choices = settings.DAYS_OF_THE_WEEK,
     )   
 
-    time = forms.TimeField(
-        label="Time",
-        widget=forms.TimeInput()
-    )
+    time = forms.DateTimeField(widget=forms.DateTimeInput())
 
     teacher = forms.ModelChoiceField(
         label="Assigned teacher",
-        queryset=Teacher.objects.all()
+        queryset=Teacher.objects.all(),
+
     )
 
     lesson_count = forms.IntegerField(label="Number of lessons")

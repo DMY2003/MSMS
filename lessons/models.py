@@ -61,7 +61,8 @@ class Student(User):
     balance = models.IntegerField(default=0)
     
 class Teacher(User):
-    pass 
+    def __str__(self):
+        return self.full_name
 
 class Administrator(User):
     pass
@@ -110,7 +111,7 @@ class Request(models.Model):
         lesson_interval = int(form.cleaned_data.get("lesson_interval"))
 
         lesson_datetime = self.get_date_from_weekday(day)
-        
+
         for i in range(lesson_count):
             lesson = Lesson(teacher=teacher, student=self.student, time=lesson_datetime)
             lesson.save()
