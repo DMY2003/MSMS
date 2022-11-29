@@ -70,15 +70,19 @@ class Administrator(User):
 class Director(User):
     pass
 
+class Instrument(models.Model):
+    name = models.CharField(max_length=30, blank=False)
+
+    def __str__(self):
+        return self.name
 
 class Lesson(models.Model):
     time = models.DateTimeField(blank=False)
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, blank=False)
     student = models.ForeignKey(Student, on_delete=models.CASCADE, blank=False)
+    instrument = models.ForeignKey(Instrument, on_delete=models.CASCADE, blank=False)
 
 
-class Instrument(models.Model):
-    name = models.CharField(max_length=30, blank=False)
 
 class Request(models.Model):
     time_availability = models.TimeField(null=True, default=datetime.datetime.now().time())
@@ -107,13 +111,18 @@ class Request(models.Model):
         self.is_approved = True
         teacher = form.cleaned_data.get("teacher")
         day = int(form.cleaned_data.get("day"))
+        instrument = form.cleaned_data.get("instrument")
         lesson_count = int(form.cleaned_data.get("lesson_count"))
         lesson_interval = int(form.cleaned_data.get("lesson_interval"))
-
         lesson_datetime = self.get_date_from_weekday(day)
 
         for i in range(lesson_count):
-            lesson = Lesson(teacher=teacher, student=self.student, time=lesson_datetime)
+            lesson = Lesson(
+                teacher=teacher, 
+                student=self.student, 
+                time=lesson_datetime, 
+                instrument=instrument
+            )
             lesson.save()
             
             lesson_datetime += datetime.timedelta(weeks=lesson_interval)

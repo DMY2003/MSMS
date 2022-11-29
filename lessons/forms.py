@@ -1,5 +1,5 @@
 from django import forms
-from lessons.models import User, Student, Teacher, Lesson
+from lessons.models import User, Student, Teacher, Instrument
 from django.core.validators import RegexValidator
 from django.conf import settings
 import datetime
@@ -57,12 +57,19 @@ class AdminRequestForm(forms.Form):
         choices = settings.DAYS_OF_THE_WEEK,
     )   
 
-    time = forms.DateTimeField(widget=forms.DateTimeInput())
+    time = forms.TimeField(
+        widget=forms.TimeInput(attrs={'type': 'time'})
+    )
 
     teacher = forms.ModelChoiceField(
         label="Assigned teacher",
         queryset=Teacher.objects.all(),
 
+    )
+
+    instrument = forms.ModelChoiceField(
+        label="Assigned instrument",
+        queryset=Instrument.objects.all(),       
     )
 
     lesson_count = forms.IntegerField(label="Number of lessons")
@@ -73,7 +80,7 @@ class AdminRequestForm(forms.Form):
     )   
 
     lesson_interval = forms.ChoiceField(
-        label="Lesson intervals",
+        label="Lesson interval",
         widget=forms.Select(),
         choices = settings.LESSON_INTERVALS,
     )   
