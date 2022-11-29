@@ -30,9 +30,11 @@
                 {% if requests == unfulfilled_requests %}
                 <td>
                     <a class="btn btn-primary btn-sm" href="{% url 'admin_request' request.id %}">
-                        Approve
+                      Approve
                     </a>
-                    <input type="submit" class="btn btn-danger btn-sm" value="Delete">
+                    <a class="btn btn-danger btn-sm" href="{% url 'admin_request_delete' request.id  %}">
+                      Delete
+                    </a>
                 </td>
                 {% endif %}
             {% endfor %}

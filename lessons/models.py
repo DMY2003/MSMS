@@ -81,6 +81,7 @@ class Lesson(models.Model):
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, blank=False)
     student = models.ForeignKey(Student, on_delete=models.CASCADE, blank=False)
     instrument = models.ForeignKey(Instrument, on_delete=models.CASCADE, blank=False)
+    duration = models.IntegerField(blank=False)
 
 
 class Request(models.Model):
@@ -115,6 +116,7 @@ class Request(models.Model):
         instrument = form.cleaned_data.get("instrument")
         lesson_count = int(form.cleaned_data.get("lesson_count"))
         lesson_interval = int(form.cleaned_data.get("lesson_interval"))
+        lesson_duration = int(form.cleaned_data.get("lesson_duration"))
 
         lesson_datetime = self.get_date_from_weekday(day, time)
 
@@ -123,7 +125,8 @@ class Request(models.Model):
                 teacher=teacher, 
                 student=self.student, 
                 time=lesson_datetime, 
-                instrument=instrument
+                instrument=instrument,
+                duration=lesson_duration
             )
             lesson.save()
             
