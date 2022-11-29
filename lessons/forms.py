@@ -57,7 +57,10 @@ class AdminRequestForm(forms.Form):
         choices = settings.DAYS_OF_THE_WEEK,
     )   
 
-    time = forms.TimeField(label="Time")
+    time = forms.TimeField(
+        label="Time",
+        widget=forms.TimeInput()
+    )
 
     teacher = forms.ModelChoiceField(
         label="Assigned teacher",
@@ -76,23 +79,3 @@ class AdminRequestForm(forms.Form):
         widget=forms.Select(),
         choices = settings.LESSON_INTERVALS,
     )   
-    def save(self):
-        """Overrides save method in order to approve the request and generate the associated lessons"""
-        request = super().save(commit=False)
-        self.is_approved = True 
-        self.generate_lessons()
-        request.save()
-        return request
-
-    def get_date_from_weekday(self, weekday):
-        """Gets the date from the weekday"""
-        today = datetime.date.today().weekday()
-        return today + datetime.timedelta(days=today - weekday)
-
-    def generate_lessons(self):
-        """Generates lessons on the provided day/time at weekly intervals"""
-        teacher = Teacher.objects.get(email=self.teacher)
-        lesson_datetime = self.get_date_from_weekday(self.day)
-        for i in range(self.lesson_count):
-            Lesson(teacher=teacher, student=self.student, time=lesson_datetime)
-            lesson_datetime += datetime.timedelta(weeks=self.lesson_interval)

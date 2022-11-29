@@ -2,7 +2,7 @@ from django.db import models
 from django.core.validators import RegexValidator
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.base_user import BaseUserManager
-
+import datetime
 
 class UserManager(BaseUserManager):
     use_in_migrations = True
@@ -80,7 +80,7 @@ class Instrument(models.Model):
     name = models.CharField(max_length=30, blank=False)
 
 class Request(models.Model):
-    time_availability = models.TimeField(null=True)
+    time_availability = models.TimeField(null=True, default=datetime.datetime.now().time())
     day_availability = models.CharField(max_length=10, blank=True)
     lesson_interval = models.IntegerField(default=1)
     lesson_count = models.IntegerField(blank=False)
@@ -94,6 +94,28 @@ class Request(models.Model):
     def availability(self):
         """Gets the availability in full"""
         return "%s %s" % (self.day_availability, self.time_availability)
+
+    def get_date_from_weekday(self, weekday):
+        """Gets the date from the weekday"""
+        today = datetime.date.today()   
+
+        return today + datetime.timedelta(days=today.weekday() - weekday)
+
+    def generate_lessons(self, form):
+        """Generates lessons on the provided day/time at weekly intervals"""
+        self.is_approved = True
+        teacher = form.cleaned_data.get("teacher")
+        day = int(form.cleaned_data.get("day"))
+        lesson_count = int(form.cleaned_data.get("lesson_count"))
+        lesson_interval = int(form.cleaned_data.get("lesson_interval"))
+
+        lesson_datetime = self.get_date_from_weekday(day)
+        
+        for i in range(lesson_count):
+            lesson = Lesson(teacher=teacher, student=self.student, time=lesson_datetime)
+            lesson.save()
+            
+            lesson_datetime += datetime.timedelta(weeks=lesson_interval)
 
 
         

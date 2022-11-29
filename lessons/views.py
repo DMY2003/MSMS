@@ -69,7 +69,8 @@ def admin_request(request, request_id):
     if request.method == "POST":
         form = AdminRequestForm(request.POST)
         if form.is_valid():
-            form.save()
+            lesson_request.generate_lessons(form)
+            lesson_request.save()
             return redirect("admin_requests")
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
     elif request.method == "DELETE":
