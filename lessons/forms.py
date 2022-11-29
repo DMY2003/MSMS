@@ -1,7 +1,8 @@
 from django import forms
-from lessons.models import User, Student, Teacher
+from lessons.models import User, Student, Teacher, Lesson
 from django.core.validators import RegexValidator
 from django.conf import settings
+import datetime
 
 class SignUpForm(forms.ModelForm):
     class Meta:
@@ -78,10 +79,20 @@ class AdminRequestForm(forms.Form):
     def save(self):
         """Overrides save method in order to approve the request and generate the associated lessons"""
         request = super().save(commit=False)
-        request.is_approved = True
+        self.is_approved = True 
         self.generate_lessons()
         request.save()
         return request
 
+    def get_date_from_weekday(self, weekday):
+        """Gets the date from the weekday"""
+        today = datetime.date.today().weekday()
+        return today + datetime.timedelta(days=today - weekday)
+
     def generate_lessons(self):
-        pass
+        """Generates lessons on the provided day/time at weekly intervals"""
+        teacher = Teacher.objects.get(email=self.teacher)
+        lesson_datetime = self.get_date_from_weekday(self.day)
+        for i in range(self.lesson_count):
+            Lesson(teacher=teacher, student=self.student, time=lesson_datetime)
+            lesson_datetime += datetime.timedelta(weeks=self.lesson_interval)

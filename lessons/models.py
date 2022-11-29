@@ -61,7 +61,7 @@ class Student(User):
     balance = models.IntegerField(default=0)
     
 class Teacher(User):
-    pass
+    pass 
 
 class Administrator(User):
     pass
@@ -94,6 +94,9 @@ class Request(models.Model):
     def availability(self):
         """Gets the availability in full"""
         return "%s %s" % (self.day_availability, self.time_availability)
+
+
+        
 
 class Invoice(models.Model):
     price = models.IntegerField(blank=False)
