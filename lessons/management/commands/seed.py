@@ -21,7 +21,8 @@ def populate_student(fake):
                                username=email,
                                balance=balance,
                                password=make_password(password, salt=None, hasher='default'),
-                               last_login=last_lgn)
+                               last_login=last_lgn,
+                               role="Student")
 
 
 def populate_teacher(fake):
@@ -34,7 +35,8 @@ def populate_teacher(fake):
         Teacher.objects.create(first_name=each[0],
                                last_name=each[1],
                                email=email,
-                               is_staff=1)
+                               is_staff=1,
+                               role="Teacher")
 
 
 def populate_admin(fake):
@@ -51,7 +53,8 @@ def populate_admin(fake):
                                      password=make_password(password, salt=None, hasher='default'),
                                      last_login=last_lgn,
                                      is_staff=1,
-                                     is_superuser=1)
+                                     is_superuser=1,
+                                     role="Administrator")
 
 
 def populate_invoices():

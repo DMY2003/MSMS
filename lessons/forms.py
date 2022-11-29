@@ -49,6 +49,7 @@ class LogInForm(forms.Form):
 class RequestForm(forms.ModelForm):
     student = forms.IntegerField()
     instrument = forms.CharField()
+    preferred_teacher = forms.CharField(required=False)
 
     class Meta:
         model = Request
