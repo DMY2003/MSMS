@@ -36,7 +36,7 @@
 
                     <div class="mb-3">
                         <label for="deadline" class="form-label">Number of Lessons<span style="color:#FF0000">*</span></label>
-                        <input type="text" class="form-control" id="no_of_lessons" name="lesson_count"
+                        <input type='number' max=30 class="form-control" id="no_of_lessons" name="lesson_count"
                             placeholder="Number of lessons" required>
                         <div class="valid-feedback">
                             Looks good!
@@ -45,7 +45,7 @@
 
                     <div class="mb-3">
                         <label for="deadline" class="form-label">Interval between lessons<span style="color:#FF0000">*</span></label>
-                        <input type="text" class="form-control" id="lesson_interval" name="lesson_interval"
+                        <input type='number' max=2 class="form-control" id="lesson_interval" name="lesson_interval"
                             placeholder="e.g. 2 for 2 weeks" required>
                         <div class="valid-feedback">
                             Looks good!
@@ -54,8 +54,8 @@
 
                     <div class="mb-3">
                         <label for="deadline" class="form-label">Duration of lessons<span style="color:#FF0000">*</span></label>
-                        <input type="text" class="form-control" id="lesson_duration" name="lesson_duration"
-                            placeholder="e.g. 60 for 60 minutes" required>
+                        <input type='number' max=240 class="form-control" id="lesson_duration" name="lesson_duration"
+                            placeholder="e.g. 60 for 60 minutes. Max is 240 minutes" required>
                         <div class="valid-feedback">
                             Looks good!
                         </div>
@@ -87,7 +87,7 @@
 
                     <div class="mb-3">
                         <label for="deadline" class="form-label">Preferred teacher</label>
-                        <input type="text" class="form-control" id="teacher" name="preferred_teacher"
+                        <input type='text' pattern='[A-Za-z\\s]*' oninvalid="this.setCustomValidity('Please enter letters only')" class="form-control" id="teacher" name="preferred_teacher"
                             placeholder="Leave this blank if none">
                         <div class="valid-feedback">
                             Looks good!
