@@ -80,12 +80,14 @@ class Instrument(models.Model):
         return self.name
 
 class Lesson(models.Model):
-    time = models.TimeField(null=True)
-    day = models.CharField(max_length=10, blank=True)
+    date = models.DateTimeField(null=True)
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, blank=False)
     student = models.ForeignKey(Student, on_delete=models.CASCADE, blank=False)
     instrument = models.ForeignKey(Instrument, on_delete=models.CASCADE, blank=False)
     duration = models.IntegerField(blank=False)
+
+    class Meta:
+        ordering = ('date',)
 
 
 class Request(models.Model):
@@ -128,7 +130,7 @@ class Request(models.Model):
             lesson = Lesson(
                 teacher=teacher, 
                 student=self.student, 
-                time=lesson_datetime, 
+                date=lesson_datetime, 
                 instrument=instrument,
                 duration=lesson_duration
             )

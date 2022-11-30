@@ -105,7 +105,7 @@ def populate_lessons():
             instrument = random.choice(instruments)
             student = Student.objects.get(email=request.student)
             datetime_obj = datetime.datetime.combine(datetime.datetime.now(), request.time_availability)
-            Lesson.objects.create(time=datetime_obj,
+            Lesson.objects.create(date=datetime_obj,
                                   teacher=pref_teacher,
                                   student=student,
                                   instrument=instrument,
