@@ -3,6 +3,8 @@ from faker import Faker
 import faker.providers
 from lessons.models import User, Student, Teacher, Administrator, Lesson, Invoice, Instrument, Request
 import random
+from django.conf import settings
+import datetime
 
 
 def populate_student(fake):
@@ -73,8 +75,9 @@ def populate_requests(fake):
 
         if req_made:
             for _ in range(num_reqs):
-                avail = fake.future_datetime()
-                duration = random.choice(range(30, 240, 30))
+                time_availability = fake.future_datetime().time()
+                day_availability = random.choice(settings.DAYS_OF_THE_WEEK)[0]
+                duration = random.choice(settings.LESSON_DURATIONS)[0]
 
                 pref_teacher = Teacher.objects.get(id=random.choice(teacher_ids))
 
@@ -86,7 +89,8 @@ def populate_requests(fake):
 
                 les_count = random.randint(1, 5)
 
-                Request.objects.create(student_availability=avail,
+                Request.objects.create(time_availability=time_availability,
+                                       day_availability=day_availability,
                                        lesson_count=les_count,
                                        lesson_duration=duration,
                                        preferred_teacher=pref_teacher,
@@ -96,13 +100,19 @@ def populate_requests(fake):
 
 
 def populate_lessons():
+    teachers = list(Teacher.objects.all())
+    instruments = list(Instrument.objects.all())
     for request in Request.objects.all():
         if request.is_approved:
-            pref_teacher = Teacher.objects.get(email=request.preferred_teacher)
+            pref_teacher = random.choice(teachers)
+            instrument = random.choice(instruments)
             student = Student.objects.get(email=request.student)
-            Lesson.objects.create(time=request.student_availability,
+            datetime_obj = datetime.datetime.combine(datetime.datetime.now(), request.time_availability)
+            Lesson.objects.create(time=datetime_obj,
                                   teacher=pref_teacher,
-                                  student=student)
+                                  student=student,
+                                  instrument=instrument,
+                                  duration=request.lesson_duration)
 
 
 def populate_instruments():
