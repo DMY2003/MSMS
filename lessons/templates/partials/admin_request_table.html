@@ -18,27 +18,29 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            {% for request in requests %}
-                <th scope="row">{{request.id}}</th>
-                <td>{{request.student.full_name}}</td>
-                <td>{{request.instrument.name}}</td>
-                <td>{{request.lesson_count}}</td>
-                <td>{{request.lesson_interval}} week(s)</td>
-                <td>{{request.lesson_duration}} minutes</td>
-                <td>{{request.day_availability}} {{request.time_availability}}</td>
-                {% if requests == unfulfilled_requests %}
-                <td>
-                    <a class="btn btn-primary btn-sm" href="{% url 'admin_request' request.id %}">
-                      Approve
-                    </a>
-                    <a class="btn btn-danger btn-sm" href="{% url 'admin_request_delete' request.id  %}">
-                      Delete
-                    </a>
-                </td>
-                {% endif %}
-            {% endfor %}
-          </tr>
+          {% for request in requests %}
+            <tr>
+            
+              <th scope="row">{{request.id}}</th>
+              <td>{{request.student.full_name}}</td>
+              <td>{{request.instrument.name}}</td>
+              <td>{{request.lesson_count}}</td>
+              <td>{{request.lesson_interval}} week(s)</td>
+              <td>{{request.lesson_duration}} minutes</td>
+              <td>{{request.day_availability}} {{request.time_availability}}</td>
+              {% if requests == unfulfilled_requests %}
+              <td>
+                  <a class="btn btn-primary btn-sm" href="{% url 'admin_request' request.id %}">
+                    Approve
+                  </a>
+                  <a class="btn btn-danger btn-sm" href="{% url 'admin_request_delete' request.id  %}">
+                    Delete
+                  </a>
+              </td>
+              {% endif %}
+            
+            </tr>
+          {% endfor %}
         </tbody>
     </table>
 </div>
