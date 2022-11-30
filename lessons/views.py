@@ -138,44 +138,6 @@ def lessons(request):
         return render(request, 'student_lessons_page.html')
 
 
-# def student_request(request, form=None):
-#     if request.method == 'POST':
-#         user = request.user
-#         post_values = request.POST.copy()
-#
-#         post_values['student'] = user.id
-#         form = RequestForm(post_values)
-#
-#         # for field in form:
-#         #     print("Field Error:", field.name, field.errors)
-#
-#         if form.is_valid():
-#             form.save()
-#
-#             return redirect('requests')
-#
-#     return render(request, 'student_request_form.html', {'form': form})
-
-# def student_request(request, form=None):
-#     form = RequestForm
-#
-#     if request.method == 'POST':
-#         print("Hello")
-#         form = RequestForm(request.POST)
-#
-#         if not form.is_valid():
-#             form_data = form.cleaned_data
-#             details = [form_data.get("time_availability"), form_data.get("day_availability"),
-#                        form_data.get("lesson_interval"), form_data.get("lesson_count"),
-#                        form_data.get("lesson_duration"), form_data.get("preferred_teacher"),
-#                        form_data.get("instrument")]
-#
-#             print(details)
-#
-#             return redirect('new-request')
-#
-#     return render(request, 'student_request_form.html', {'form': form})
-
 def student_request(request, form=None):
     form = RequestForm
     if request.method == 'POST':
@@ -185,9 +147,6 @@ def student_request(request, form=None):
 
         post_values['student'] = user.id
         form = RequestForm(post_values)
-
-        # for field in form:
-        #     print("Field Error:", field.name, field.errors)
 
         if form.is_valid():
             form.save()

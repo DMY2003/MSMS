@@ -105,31 +105,6 @@ class AdminRequestForm(forms.Form):
         pass
 
 
-# class RequestForm(forms.ModelForm):
-#
-#     student = forms.IntegerField()
-#     instrument = forms.CharField()
-#     preferred_teacher = forms.CharField(required=False)
-#     lesson_count = forms.IntegerField(label="Number of lessons")
-#     lesson_duration = forms.IntegerField(label="Lesson duration")
-#     lesson_interval = forms.IntegerField(label="Lesson interval")
-#
-#     class Meta:
-#         model = Request
-#         exclude = ['is_approved']
-#
-#     def clean(self):
-#         cleaned_data = super(RequestForm, self).clean()
-#
-#         requested = self.data.get("instrument")
-#         cleaned_data["instrument"] = Instrument.objects.get(name=requested)
-#
-#         student_id = self.data.get("student")
-#         cleaned_data["student"] = Student.objects.get(id=student_id)
-#
-#         return cleaned_data
-
-
 class MyModelChoiceField(ModelChoiceField):
     def label_from_instance(self, obj):
         return obj.name
