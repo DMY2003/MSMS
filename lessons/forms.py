@@ -86,7 +86,7 @@ class LogInForm(forms.Form):
 
 
 class AdminRequestForm(forms.Form):
-    """Handles the creation of lessons through the help of a lesson request"""=
+    """Handles the creation of lessons through the help of a lesson request"""
 
     day = forms.ChoiceField(
         label="Day of the week",
