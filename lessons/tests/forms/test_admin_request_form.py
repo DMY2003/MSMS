@@ -10,7 +10,7 @@ from lessons.models import Teacher, Student
 class AdminRequestFormTestCase(TestCase):
     """Unit tests of the admin request form."""
     def setUp(self):
-
+        
 
         self.form_input = {
             "day": 0,

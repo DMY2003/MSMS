@@ -1,0 +1,37 @@
+{% extends 'base_content.html' %} 
+
+{% block content %}
+<div class="container-sm">
+    <div class="card p-3">
+        <div class="d-flex justify-content-between w-100 align-items-center">
+            <div>
+                <h3>Lesson Bookings</h3>
+                <h6 class="text-muted">Showing {{lesson_count}} results</h6>
+            </div>
+            
+            <div>
+                <form action="{% url 'admin_lessons' %}" method="get">
+                    <div class="d-flex align-items-center">
+                        <input 
+                            class="form-control mr-3" 
+                            type="text" 
+                            name="lesson_search" 
+                            required
+                            placeholder="Search for booking by student name"
+                            style="width: 350px"
+                        >
+                        <input class="btn btn-primary" type="submit" value="Search">
+                    </div>
+                </form>
+            </div>  
+        </div>
+    </div>
+    <div class="lesson-grid mt-4">
+        {% for lesson in lessons %}
+            {% include 'partials/admin_lesson_card.html' with lesson=lesson %}
+        {% endfor %}
+    </div>
+
+</div>
+
+{% endblock %}

@@ -81,6 +81,29 @@ class LogInForm(forms.Form):
     email = forms.CharField(label="Email")
     password = forms.CharField(label="Password", widget=forms.PasswordInput())
 
+class AdminLessonForm(forms.Form):
+    """Handles the input for updating a lesson"""
+
+    time = forms.TimeField(
+        widget=forms.TimeInput(attrs={'type': 'time'})
+    ) 
+
+    teacher = forms.ModelChoiceField(
+        label="Assigned teacher",
+        queryset=Teacher.objects.all(),
+
+    )
+
+    instrument = forms.ModelChoiceField(
+        label="Assigned instrument",
+        queryset=Instrument.objects.all(),       
+    )
+
+    lesson_duration = forms.ChoiceField(
+        label="Lesson duration",
+        widget=forms.Select(),
+        choices = settings.LESSON_DURATIONS,
+    )   
 
 
 class AdminRequestForm(forms.Form):

@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .models import Request
+from .models import Request, Lesson
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
 
@@ -131,6 +131,21 @@ def admin_requests(request):
 
     return render(request, 'admin_requests.html', response_data)
 
+def admin_lessons(request):
+    lessons = Lesson.objects.all()
+
+    response_data = {
+        "lessons": lessons,
+        "lesson_count": len(lessons)
+    }
+    return render(request, 'admin_lessons.html', response_data)
+
+def admin_lesson(request, lesson_id):
+    lesson = Lesson.objects.get(id=lesson_id)
+
+
+    response_data = {}
+    return render(request, 'admin_lesson.html', response_data)
 
 @login_required
 def lessons(request):
