@@ -1,4 +1,36 @@
 <div class="card p-3">
-    {{lesson.student.full_name}}
-    <div>{{lesson.date}}</div>
+    <div class="d-flex w-100 justify-content-between mb-2 align-items-center">
+        <div>
+            <div>Lesson booked at</div>
+            <div class="d-flex align-items-baseline align-items-baseline">
+                
+                <h5 class="mr-1">{{lesson.date|date:"d/m/y"}}</h5>
+                <span>{{lesson.date|date:"h:m"}}</span>
+            </div>
+        </div>
+
+        <button class="btn btn-primary btn-xs">
+            Edit
+        </button>
+    </div>
+
+    <table>
+        <tr>
+            <th>Student</th>
+            <td>{{lesson.student.full_name}}</td>
+        </tr>
+        <tr>
+            <th>Teacher</th>
+            <td>{{lesson.teacher.full_name}}</td>
+        </tr>
+        <tr>
+            <th>Instrument</th>
+            <td>{{lesson.instrument.name}}</td>
+        </tr>
+
+    </table>
+    <!-- <span><b class="mr-2">Student</b>{{lesson.student.full_name}}</span>
+    <span><b class="mr-2">Teacher</b>{{lesson.teacher.full_name}}</span>
+    <span><b class="mr-2">Instrument</b>{{lesson.instrument.name}}</span> -->
+    <div></div>
 </div>
