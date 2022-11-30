@@ -1,0 +1,110 @@
+{% extends "student_dashboard_template.html" %}
+{% block content %}
+<header class="pb-3 mb-4 border-bottom">
+    <a href="#" class="d-flex align-items-center text-dark text-decoration-none">
+        <span class="fs-4">Create Request</span>
+    </a>
+</header>
+
+
+<div class="container pt-2 pb-4">
+    <div class="card w-75" role="document">
+        <div class="card-body rounded-4 shadow">
+            <div class="modal-header p-5 pb-3 border-bottom-0">
+                <h1>New Request</h1>
+            </div>
+            
+            <div class="modal-body p-5 pt-0">
+                <form method=POST action="">
+                    {% csrf_token %}
+                    <div class="mb-1">
+                        <small><span style="color:#FF0000">*</span> represents a required field</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="ticketTitle" class="form-label">Lesson type<span style="color:#FF0000">*</span></label>
+                        <select class="form-select" aria-label="Default select example" id="ticketPriority"
+                            name="instrument" required>
+                            <option value="Guitar" selected>Guitar</option>
+                            <option value="Ukulele" selected>Ukulele</option>
+                            <option value="Piano">Piano</option>
+                            <option value="Saxophone">Saxophone</option>
+                            <option value="Trumpet">Trumpet</option>
+                            <option value="Triangle">Triangle</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="deadline" class="form-label">Number of Lessons<span style="color:#FF0000">*</span></label>
+                        <input type='number' max=30 class="form-control" id="no_of_lessons" name="lesson_count"
+                            placeholder="Number of lessons" required>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="deadline" class="form-label">Interval between lessons<span style="color:#FF0000">*</span></label>
+                        <input type='number' max=2 class="form-control" id="lesson_interval" name="lesson_interval"
+                            placeholder="e.g. 2 for 2 weeks" required>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="deadline" class="form-label">Duration of lessons<span style="color:#FF0000">*</span></label>
+                        <input type='number' max=240 class="form-control" id="lesson_duration" name="lesson_duration"
+                            placeholder="e.g. 60 for 60 minutes. Max is 240 minutes" required>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label  class="form-label">Availability<span style="color:#FF0000">*</span></label>
+                        <div id="timeContainer">
+                        </div>
+
+                        <div class="mb-3">
+                            <select class="form-select mb-2" aria-label="Default select example" id="weekDay" name="day_availability">
+                                    <option value="Monday" selected>Monday</option>
+                                    <option value="Tuesday">Tuesday</option>
+                                    <option value="Wednesday">Wednesday</option>
+                                    <option value="Thursday">Thursday</option>
+                                    <option value="Friday">Friday</option>
+                                    <option value="Saturday">Saturday</option>
+                                    <option value="Sunday">Sunday</option>
+                                </select>
+
+
+
+                                <div class="col mb-2">
+                                    <input type="time" id="timeFrom" name="time_availability">
+                                </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="deadline" class="form-label">Preferred teacher</label>
+                        <input type='text' pattern='[A-Za-z\\s]*' oninvalid="this.setCustomValidity('Please enter letters only')" class="form-control" id="teacher" name="preferred_teacher"
+                            placeholder="Leave this blank if none">
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
+                    </div>
+
+
+
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="button" class="btn btn-secondary">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+{% endblock %}

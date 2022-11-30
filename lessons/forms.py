@@ -1,5 +1,5 @@
 from django import forms
-from lessons.models import User, Student
+from lessons.models import User, Student, Request, Instrument
 from django.core.validators import RegexValidator
 
 
@@ -81,6 +81,7 @@ class LogInForm(forms.Form):
     password = forms.CharField(label="Password", widget=forms.PasswordInput())
 
 
+
 class AdminRequestForm(forms.Form):
     """Handles the creation of lessons through the help of a lesson request"""
     start_date = forms.CharField(label="Day of the week")
@@ -100,3 +101,24 @@ class AdminRequestForm(forms.Form):
 
     def generate_lessons(self):
         pass
+
+class RequestForm(forms.ModelForm):
+    student = forms.IntegerField()
+    instrument = forms.CharField()
+    preferred_teacher = forms.CharField(required=False)
+
+    class Meta:
+        model = Request
+        exclude = ['is_approved']
+
+    def clean(self):
+        cleaned_data = super(RequestForm, self).clean()
+
+        requested = self.data.get("instrument")
+        cleaned_data["instrument"] = Instrument.objects.get(name=requested)
+
+        student_id = self.data.get("student")
+        cleaned_data["student"] = Student.objects.get(id=student_id)
+
+        return cleaned_data
+

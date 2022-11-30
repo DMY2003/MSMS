@@ -6,19 +6,23 @@ from .models import Request
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
 
+
 def login_prohibited(function):
     def wrap(request, *args, **kwargs):
         if request.user.is_authenticated:
             return redirect('requests')
         else:
             return function(request, *args, **kwargs)
-    wrap.__doc__=function.__doc__
-    wrap.__name__=function.__name__
+
+    wrap.__doc__ = function.__doc__
+    wrap.__name__ = function.__name__
     return wrap
+
 
 @login_prohibited
 def home(request):
     return render(request, 'home.html')
+
 
 @login_prohibited
 def sign_up(request):
@@ -47,6 +51,7 @@ def log_in(request):
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
     form = LogInForm()
     return render(request, 'log_in.html', {'form': form})
+
 
 def log_out(request):
     logout(request)
@@ -81,12 +86,14 @@ def updateProile(request):
         form = UserForm(instance=current_user)
     return render(request, 'update_profile.html', {'form': form})
 
+
 @login_required
 def requests(request):
     if request.user.role == 'Student':
         return render(request, 'student_requests_page.html')
-    elif  request.user.role == 'Administrator' or request.user.role == 'Director':
+    elif request.user.role == 'Administrator' or request.user.role == 'Director':
         return render(request, 'admin_requests_page.html')
+
 
 @login_required
 def transactions(request):
@@ -126,3 +133,22 @@ def lessons(request):
     if request.user.role == 'Student':
         return render(request, 'student_lessons_page.html')
 
+
+@login_required
+def make_request(request, form=None):
+    if request.method == 'POST':
+        user = request.user
+        post_values = request.POST.copy()
+
+        post_values['student'] = user.id
+        form = RequestForm(post_values)
+
+        # for field in form:
+        #     print("Field Error:", field.name, field.errors)
+
+        if form.is_valid():
+            form.save()
+
+            return redirect('requests')
+
+    return render(request, 'student_request_form2.html', {'form': form})
