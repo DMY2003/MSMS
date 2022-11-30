@@ -6,7 +6,16 @@
         <div class="d-flex justify-content-between w-100 align-items-center">
             <div>
                 <h3>Lesson Bookings</h3>
-                <h6 class="text-muted">Showing {{lesson_count}} results</h6>
+                <h6 class="text-muted">
+                    Showing {{lesson_count}} results
+                    
+                    {% if name_search %}
+                    for
+                    <b>
+                    "{{name_search}}"
+                    {% endif %}
+                    </b>
+                </h6>
             </div>
             
             <div>
@@ -15,8 +24,7 @@
                         <input 
                             class="form-control mr-3" 
                             type="text" 
-                            name="lesson_search" 
-                            required
+                            name="name_search" 
                             placeholder="Search for booking by student name"
                             style="width: 350px"
                         >

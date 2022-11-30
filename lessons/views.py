@@ -132,17 +132,26 @@ def admin_requests(request):
     return render(request, 'admin_requests.html', response_data)
 
 def admin_lessons(request):
+    name_search = request.GET.get('name_search', None)
     lessons = Lesson.objects.all()
+    if name_search:
+        names = name_search.split()
+        first_name = names[0] if len(names) >= 1 else ''
+        second_name = names[1] if len(names) >= 2 else ''
+        lessons = Lesson.objects.filter(
+            student__first_name__contains=first_name, 
+            student__last_name__contains=second_name
+        )
 
     response_data = {
         "lessons": lessons,
-        "lesson_count": len(lessons)
+        "lesson_count": len(lessons),
+        "name_search": name_search
     }
     return render(request, 'admin_lessons.html', response_data)
 
 def admin_lesson(request, lesson_id):
     lesson = Lesson.objects.get(id=lesson_id)
-
 
     response_data = {}
     return render(request, 'admin_lesson.html', response_data)
