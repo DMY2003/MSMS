@@ -142,7 +142,6 @@ def student_request(request, form=None):
     form = RequestForm
     if request.method == 'POST':
         user = request.user
-        print(user.id)
         post_values = request.POST.copy()
 
         post_values['student'] = user.id
