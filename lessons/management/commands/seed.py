@@ -1,3 +1,4 @@
+from django.contrib.auth.hashers import make_password
 from django.core.management.base import BaseCommand, CommandError
 from faker import Faker
 import faker.providers
@@ -21,19 +22,23 @@ def populate_student(fake):
                                email=email,
                                username=email,
                                balance=balance,
-                               password=password,
-                               last_login=last_lgn)
+                               password=make_password(password, salt=None, hasher='default'),
+                               last_login=last_lgn,
+                               role="Student")
 
 
 def populate_teacher(fake):
-    for i in range(20):
-        teacher_fname = fake.first_name()
-        teacher_lname = fake.last_name()
-        email = str(i) + fake.free_email()
-        Teacher.objects.create(first_name=teacher_fname,
-                               last_name=teacher_lname,
+    teacher_list = [["Sarah", "Palmer"],
+                    ["Jessica", "Swift"],
+                    ["John", "Smith"]]
+
+    for each in teacher_list:
+        email = fake.free_email()
+        Teacher.objects.create(first_name=each[0],
+                               last_name=each[1],
                                email=email,
-                               is_staff=1)
+                               is_staff=1,
+                               role="Teacher")
 
 
 def populate_admin(fake):
@@ -47,10 +52,11 @@ def populate_admin(fake):
                                      last_name=admin_lname,
                                      email=email,
                                      username=email,
-                                     password=password,
+                                     password=make_password(password, salt=None, hasher='default'),
                                      last_login=last_lgn,
                                      is_staff=1,
-                                     is_superuser=1)
+                                     is_superuser=1,
+                                     role="Administrator")
 
 
 def populate_invoices():
@@ -65,38 +71,29 @@ def populate_invoices():
 
 
 def populate_requests(fake):
-    student_ids = Student.objects.values_list('id', flat=True).distinct()
-    teacher_ids = Teacher.objects.values_list('id', flat=True).distinct()
-    instruments = Instrument.objects.values_list('id', flat=True).distinct()
+    students = list(Student.objects.all())
+    teachers = list(Teacher.objects.all())
+    instruments = list(Instrument.objects.all())
 
-    for each in student_ids:
+    for each in students:
         req_made = bool(random.getrandbits(1))
-        num_reqs = random.randint(1, 5)
 
         if req_made:
-            for _ in range(num_reqs):
+            for _ in range(5):
                 time_availability = fake.future_datetime().time()
                 day_availability = random.choice(settings.DAYS_OF_THE_WEEK)[0]
                 duration = random.choice(settings.LESSON_DURATIONS)[0]
-
-                pref_teacher = Teacher.objects.get(id=random.choice(teacher_ids))
-
-                student = Student.objects.get(id=each)
-
-                chosen_inst = Instrument.objects.get(id=random.choice(instruments))
-
-                approved = bool(random.getrandbits(1))
-
-                les_count = random.randint(1, 5)
+                preferred_teacher = fake.first_name() + " " + fake.last_name()
+                les_count = 3 + random.randrange(4)
 
                 Request.objects.create(time_availability=time_availability,
                                        day_availability=day_availability,
                                        lesson_count=les_count,
                                        lesson_duration=duration,
-                                       preferred_teacher=pref_teacher,
-                                       instrument=chosen_inst,
-                                       student=student,
-                                       is_approved=approved)
+                                       preferred_teacher=preferred_teacher,
+                                       instrument=random.choice(instruments),
+                                       student=random.choice(students),
+                                       is_approved=bool(random.getrandbits(1)))
 
 
 def populate_lessons():

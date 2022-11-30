@@ -59,13 +59,16 @@ class User(AbstractUser):
 
 class Student(User):
     balance = models.IntegerField(default=0)
-    
+
+
 class Teacher(User):
     def __str__(self):
         return self.full_name
 
+
 class Administrator(User):
     pass
+
 
 class Director(User):
     pass
@@ -77,7 +80,8 @@ class Instrument(models.Model):
         return self.name
 
 class Lesson(models.Model):
-    time = models.DateTimeField(blank=False)
+    time = models.TimeField(null=True)
+    day = models.CharField(max_length=10, blank=True)
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, blank=False)
     student = models.ForeignKey(Student, on_delete=models.CASCADE, blank=False)
     instrument = models.ForeignKey(Instrument, on_delete=models.CASCADE, blank=False)
@@ -137,6 +141,3 @@ class Invoice(models.Model):
     price = models.IntegerField(blank=False)
     paid = models.BooleanField(default=False)
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, blank=False)
-
-
-
