@@ -93,7 +93,7 @@ def requests(request):
         return render(request, 'student_requests_page.html')
     elif request.user.role == 'Administrator' or request.user.role == 'Director':
         return redirect('admin_requests')
-        
+
 @login_required
 def transactions(request):
     if request.user.role == 'Student':
@@ -102,12 +102,11 @@ def transactions(request):
         return render(request, 'admin_transactions_page.html')
 
 def admin_request_delete(request, request_id):
-    print("delete")
     lesson_request = Request.objects.get(id=request_id)
     if lesson_request:
         lesson_request.delete()
     messages.add_message(request, messages.ERROR, "The request has been successfully deleted!")
-    return redirect(request, "admin_requests")
+    return redirect("admin_requests")
 
 def admin_request(request, request_id):
     lesson_request = Request.objects.get(id=request_id)
