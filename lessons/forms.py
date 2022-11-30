@@ -1,4 +1,5 @@
 from django import forms
+from django.forms import ModelChoiceField
 from lessons.models import User, Student, Request, Instrument
 from django.core.validators import RegexValidator
 
@@ -40,7 +41,8 @@ class SignUpForm(forms.ModelForm):
         user.save()
         return user
 
-    field_order=["first_name", "last_name", "email", "new_password", "confirm_password"]
+    field_order = ["first_name", "last_name", "email", "new_password", "confirm_password"]
+
 
 class UserForm(forms.ModelForm):
     """Form to update user profiles."""
@@ -63,7 +65,7 @@ class PasswordForm(forms.Form):
             regex=r'^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).*$',
             message='Password must contain an uppercase character, a lowercase '
                     'character and a number'
-            )]
+        )]
     )
     password_confirmation = forms.CharField(label='Password confirmation', widget=forms.PasswordInput())
 
@@ -76,10 +78,10 @@ class PasswordForm(forms.Form):
         if new_password != password_confirmation:
             self.add_error('password_confirmation', 'Confirmation does not match password.')
 
+
 class LogInForm(forms.Form):
     email = forms.CharField(label="Email")
     password = forms.CharField(label="Password", widget=forms.PasswordInput())
-
 
 
 class AdminRequestForm(forms.Form):
@@ -90,7 +92,7 @@ class AdminRequestForm(forms.Form):
     lesson_count = forms.IntegerField(label="Number of lessons")
     lesson_duration = forms.IntegerField(label="Lesson duration")
     lesson_interval = forms.IntegerField(label="Lesson interval")
-   
+
     def save(self):
         """Overrides save method in order to approve the request and generate the associated lessons"""
         request = super().save(commit=False)
@@ -102,10 +104,54 @@ class AdminRequestForm(forms.Form):
     def generate_lessons(self):
         pass
 
+
+# class RequestForm(forms.ModelForm):
+#
+#     student = forms.IntegerField()
+#     instrument = forms.CharField()
+#     preferred_teacher = forms.CharField(required=False)
+#     lesson_count = forms.IntegerField(label="Number of lessons")
+#     lesson_duration = forms.IntegerField(label="Lesson duration")
+#     lesson_interval = forms.IntegerField(label="Lesson interval")
+#
+#     class Meta:
+#         model = Request
+#         exclude = ['is_approved']
+#
+#     def clean(self):
+#         cleaned_data = super(RequestForm, self).clean()
+#
+#         requested = self.data.get("instrument")
+#         cleaned_data["instrument"] = Instrument.objects.get(name=requested)
+#
+#         student_id = self.data.get("student")
+#         cleaned_data["student"] = Student.objects.get(id=student_id)
+#
+#         return cleaned_data
+
+
+class MyModelChoiceField(ModelChoiceField):
+    def label_from_instance(self, obj):
+        return obj.name
+
+
+class NoInput(forms.Widget):
+    input_type = "hidden"
+    template_name = ""
+
+    def render(self, name, value, attrs=None, renderer=None):
+        return ""
+
+
 class RequestForm(forms.ModelForm):
-    student = forms.IntegerField()
-    instrument = forms.CharField()
-    preferred_teacher = forms.CharField(required=False)
+    time_availability = forms.TimeField(widget=forms.TimeInput(attrs={'type': 'time'}))
+    day_availability = forms.CharField(label="Day of the week")
+    lesson_interval = forms.CharField(label='Interval', widget=forms.Select(choices=[(1, 1), (2, 2)]))
+    lesson_count = forms.IntegerField(label="Number of Lessons")
+    lesson_duration = forms.IntegerField(label="Duration")
+    preferred_teacher = forms.CharField(label="Preferred Teacher")
+    instrument = MyModelChoiceField(queryset=Instrument.objects.all(), required=True)
+    student = forms.CharField(label="", required=False, widget=NoInput)
 
     class Meta:
         model = Request
@@ -114,11 +160,7 @@ class RequestForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super(RequestForm, self).clean()
 
-        requested = self.data.get("instrument")
-        cleaned_data["instrument"] = Instrument.objects.get(name=requested)
-
         student_id = self.data.get("student")
         cleaned_data["student"] = Student.objects.get(id=student_id)
 
         return cleaned_data
-
