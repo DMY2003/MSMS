@@ -1,0 +1,8 @@
+{% extends 'base_content.html' %} 
+
+{% block content %}
+<div class="container-sm mt-5">
+    {% include 'partials/admin_request_table.html' with requests=unfulfilled_requests request_type="Unfulfilled requests" %}
+    {% include 'partials/admin_request_table.html' with requests=fulfilled_requests request_type="Fulfilled requests" %}
+</div>
+{% endblock %}

@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect
-from .forms import SignUpForm, LogInForm, RequestForm
+from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required, user_passes_test
+from .models import Request
+from django.contrib.auth.hashers import check_password
+from django.contrib.auth.decorators import login_required
 
 
 def login_prohibited(function):
@@ -53,7 +55,36 @@ def log_in(request):
 
 def log_out(request):
     logout(request)
-    return redirect('home')
+    return redirect('sign_up')
+
+@login_required
+def password(request):
+    current_user = request.user
+    if request.method == 'POST':
+        form = PasswordForm(data=request.POST)
+        if form.is_valid():
+            password = form.cleaned_data.get('password')
+            if check_password(password, current_user.password):
+                new_password = form.cleaned_data.get('new_password')
+                current_user.set_password(new_password)
+                current_user.save()
+                login(request, current_user)
+                messages.add_message(request, messages.SUCCESS, "Password updated!")
+                return redirect('requests')
+    form = PasswordForm()
+    return render(request, 'password.html', {'form': form})
+
+@login_required
+def updateProile(request):
+    current_user = request.user
+    if request.method == 'POST':
+        form = UserForm(request.POST, instance=current_user)
+        if form.is_valid():
+            form.save()
+            return redirect('requests')
+    else:
+        form = UserForm(instance=current_user)
+    return render(request, 'update_profile.html', {'form': form})
 
 
 @login_required
@@ -70,6 +101,31 @@ def transactions(request):
         return render(request, 'student_transactions_page.html')
     elif request.user.role == 'Administrator' or request.user.role == 'Director':
         return render(request, 'admin_transactions_page.html')
+
+def admin_request(request, request_id):
+    lesson_request = Request.objects.get(id=request_id)
+    if request.method == "PUT":
+        form = AdminRequestForm(request.PUT)
+        if form.is_valid():
+            form.save()
+            return redirect("admin_requests")
+        messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
+    elif request.method == "DELETE":
+        request = Request.objects.get(id=request_id).delete()
+        return redirect("admin_requests")
+    else:
+        form = AdminRequestForm()
+    
+    return render(request, 'admin_request.html', {'form': form, 'request': lesson_request})
+
+def admin_requests(request):
+    response_data = {
+        "form": AdminRequestForm(),
+        "fulfilled_requests": Request.objects.filter(is_approved=True),
+        "unfulfilled_requests": Request.objects.filter(is_approved=False)
+    }
+
+    return render(request, 'admin_requests.html', response_data)
 
 
 @login_required
