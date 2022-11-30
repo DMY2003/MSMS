@@ -4,13 +4,15 @@ from faker import Faker
 import faker.providers
 from lessons.models import User, Student, Teacher, Administrator, Lesson, Invoice, Instrument, Request
 import random
+from django.conf import settings
+import datetime
 
 
 def populate_student(fake):
-    for _ in range(100):
+    for i in range(100):
         student_fname = fake.first_name()
         student_lname = fake.last_name()
-        email = fake.free_email()
+        email = str(i) + fake.free_email()
         balance = fake.random_int(min=0, max=500)
         password = fake.password(length=12)
         last_lgn = fake.past_datetime()
@@ -40,10 +42,10 @@ def populate_teacher(fake):
 
 
 def populate_admin(fake):
-    for _ in range(10):
+    for i in range(10):
         admin_fname = fake.first_name()
         admin_lname = fake.last_name()
-        email = fake.free_email()
+        email = str(i) + fake.free_email()
         password = fake.password(length=12)
         last_lgn = fake.past_datetime()
         Administrator.objects.create(first_name=admin_fname,
@@ -69,51 +71,45 @@ def populate_invoices():
 
 
 def populate_requests(fake):
-    student_ids = Student.objects.values_list('id', flat=True).distinct()
-    teacher_ids = Teacher.objects.values_list('id', flat=True).distinct()
-    instruments = Instrument.objects.values_list('id', flat=True).distinct()
+    students = list(Student.objects.all())
+    teachers = list(Teacher.objects.all())
+    instruments = list(Instrument.objects.all())
 
-    for each in student_ids:
+    for each in students:
         req_made = bool(random.getrandbits(1))
 
         if req_made:
-            time = fake.time_object()
+            for _ in range(5):
+                time_availability = fake.future_datetime().time()
+                day_availability = random.choice(settings.DAYS_OF_THE_WEEK)[0]
+                duration = random.choice(settings.LESSON_DURATIONS)[0]
+                preferred_teacher = fake.first_name() + " " + fake.last_name()
+                les_count = 3 + random.randrange(4)
 
-            day = fake.day_of_week()
-
-            duration = random.choice(range(30, 240, 30))
-
-            pref_teacher = Teacher.objects.get(id=random.choice(teacher_ids))
-
-            student = Student.objects.get(id=each)
-
-            chosen_inst = Instrument.objects.get(id=random.choice(instruments))
-
-            approved = bool(random.getrandbits(1))
-
-            les_count = random.randint(1, 5)
-
-            Request.objects.create(time_availability=time,
-                                   day_availability=day,
-                                   lesson_count=les_count,
-                                   lesson_duration=duration,
-                                   lesson_interval=random.randint(1, 2),
-                                   preferred_teacher=pref_teacher,
-                                   instrument=chosen_inst,
-                                   student=student,
-                                   is_approved=approved)
-
+                Request.objects.create(time_availability=time_availability,
+                                       day_availability=day_availability,
+                                       lesson_count=les_count,
+                                       lesson_duration=duration,
+                                       preferred_teacher=preferred_teacher,
+                                       instrument=random.choice(instruments),
+                                       student=random.choice(students),
+                                       is_approved=bool(random.getrandbits(1)))
 
 
 def populate_lessons():
+    teachers = list(Teacher.objects.all())
+    instruments = list(Instrument.objects.all())
     for request in Request.objects.all():
         if request.is_approved:
-            pref_teacher = Teacher.objects.get(email=request.preferred_teacher)
+            pref_teacher = random.choice(teachers)
+            instrument = random.choice(instruments)
             student = Student.objects.get(email=request.student)
-            Lesson.objects.create(time=request.time_availability,
-                                  day=request.day_availability,
+            datetime_obj = datetime.datetime.combine(datetime.datetime.now(), request.time_availability)
+            Lesson.objects.create(time=datetime_obj,
                                   teacher=pref_teacher,
-                                  student=student)
+                                  student=student,
+                                  instrument=instrument,
+                                  duration=request.lesson_duration)
 
 
 def populate_instruments():

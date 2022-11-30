@@ -1,7 +1,8 @@
 from django import forms
-from lessons.models import User, Student, Request, Instrument
+from lessons.models import User, Student, Teacher, Instrument, Request
 from django.core.validators import RegexValidator
-
+from django.conf import settings
+import datetime
 
 class SignUpForm(forms.ModelForm):
     class Meta:
@@ -84,23 +85,40 @@ class LogInForm(forms.Form):
 
 class AdminRequestForm(forms.Form):
     """Handles the creation of lessons through the help of a lesson request"""
-    start_date = forms.CharField(label="Day of the week")
-    time = forms.TimeField(label="Time")
-    teacher = forms.CharField(label="Teacher")
-    lesson_count = forms.IntegerField(label="Number of lessons")
-    lesson_duration = forms.IntegerField(label="Lesson duration")
-    lesson_interval = forms.IntegerField(label="Lesson interval")
-   
-    def save(self):
-        """Overrides save method in order to approve the request and generate the associated lessons"""
-        request = super().save(commit=False)
-        request.is_approved = True
-        self.generate_lessons()
-        request.save()
-        return request
 
-    def generate_lessons(self):
-        pass
+    day = forms.ChoiceField(
+        label="Day of the week",
+        widget=forms.Select(),
+        choices = settings.DAYS_OF_THE_WEEK,
+    )   
+
+    time = forms.TimeField(
+        widget=forms.TimeInput(attrs={'type': 'time'})
+    )
+
+    teacher = forms.ModelChoiceField(
+        label="Assigned teacher",
+        queryset=Teacher.objects.all(),
+
+    )
+
+    instrument = forms.ModelChoiceField(
+        label="Assigned instrument",
+        queryset=Instrument.objects.all(),       
+    )
+
+    lesson_count = forms.IntegerField(label="Number of lessons")
+    lesson_duration = forms.ChoiceField(
+        label="Lesson duration",
+        widget=forms.Select(),
+        choices = settings.LESSON_DURATIONS,
+    )   
+
+    lesson_interval = forms.ChoiceField(
+        label="Lesson interval",
+        widget=forms.Select(),
+        choices = settings.LESSON_INTERVALS,
+    )   
 
 class RequestForm(forms.ModelForm):
     student = forms.IntegerField()

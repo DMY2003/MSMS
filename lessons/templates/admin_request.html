@@ -3,10 +3,17 @@
 {% block content %}
 <div class="container-sm mt-5">
     <div class="row">
-        <div class="col-sm-12 col-md-6 offset-md-3">
+        <div class="col-md-6">
             <div class="card p-3">
-                <form action="{% url 'admin_request' request.id %}" method="PUT">
-                    <a href="{% url 'admin_requests' %}">Go back</a>
+                <a href="{% url 'admin_requests' %}">Go back</a>
+                {% include 'partials/admin_request_details.html' %}
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card p-3">
+                <form action="{% url 'admin_request' request.id %}" method="post">
+                    {% csrf_token %}
+                    
                     <h3>
                         Approve request  
                     </h3>

@@ -92,8 +92,7 @@ def requests(request):
     if request.user.role == 'Student':
         return render(request, 'student_requests_page.html')
     elif request.user.role == 'Administrator' or request.user.role == 'Director':
-        return render(request, 'admin_requests_page.html')
-
+        return redirect('admin_requests')
 
 @login_required
 def transactions(request):
@@ -102,17 +101,22 @@ def transactions(request):
     elif request.user.role == 'Administrator' or request.user.role == 'Director':
         return render(request, 'admin_transactions_page.html')
 
+def admin_request_delete(request, request_id):
+    lesson_request = Request.objects.get(id=request_id)
+    if lesson_request:
+        lesson_request.delete()
+    messages.add_message(request, messages.ERROR, "The request has been successfully deleted!")
+    return redirect("admin_requests")
+
 def admin_request(request, request_id):
     lesson_request = Request.objects.get(id=request_id)
-    if request.method == "PUT":
-        form = AdminRequestForm(request.PUT)
+    if request.method == "POST":
+        form = AdminRequestForm(request.POST)
         if form.is_valid():
-            form.save()
+            lesson_request.generate_lessons(form)
+            lesson_request.save()
             return redirect("admin_requests")
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
-    elif request.method == "DELETE":
-        request = Request.objects.get(id=request_id).delete()
-        return redirect("admin_requests")
     else:
         form = AdminRequestForm()
     
