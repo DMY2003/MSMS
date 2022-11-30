@@ -8,10 +8,10 @@ import datetime
 
 
 def populate_student(fake):
-    for _ in range(100):
+    for i in range(100):
         student_fname = fake.first_name()
         student_lname = fake.last_name()
-        email = fake.free_email()
+        email = str(i) + fake.free_email()
         balance = fake.random_int(min=0, max=500)
         password = fake.password(length=12)
         last_lgn = fake.past_datetime()
@@ -26,10 +26,10 @@ def populate_student(fake):
 
 
 def populate_teacher(fake):
-    for _ in range(20):
+    for i in range(20):
         teacher_fname = fake.first_name()
         teacher_lname = fake.last_name()
-        email = fake.free_email()
+        email = str(i) + fake.free_email()
         Teacher.objects.create(first_name=teacher_fname,
                                last_name=teacher_lname,
                                email=email,
@@ -37,10 +37,10 @@ def populate_teacher(fake):
 
 
 def populate_admin(fake):
-    for _ in range(10):
+    for i in range(10):
         admin_fname = fake.first_name()
         admin_lname = fake.last_name()
-        email = fake.free_email()
+        email = str(i) + fake.free_email()
         password = fake.password(length=12)
         last_lgn = fake.past_datetime()
         Administrator.objects.create(first_name=admin_fname,
