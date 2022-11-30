@@ -3,6 +3,7 @@ from django.core.validators import RegexValidator
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.base_user import BaseUserManager
 import datetime
+from django.conf import settings
 
 class UserManager(BaseUserManager):
     use_in_migrations = True
@@ -104,7 +105,8 @@ class Request(models.Model):
     @property
     def availability(self):
         """Gets the availability in full"""
-        return "%s %s" % (self.day_availability, self.time_availability)
+        day_of_the_week = settings.DAYS_OF_THE_WEEK[int(self.day_availability)][1]
+        return "%s %s" % (day_of_the_week, self.time_availability)
 
     def get_date_from_weekday(self, weekday, time):
         """Gets the date from the weekday"""

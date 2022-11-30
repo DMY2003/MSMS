@@ -163,3 +163,6 @@ class RequestForm(forms.ModelForm):
 
         return cleaned_data
 
+class AdminLessonForm(forms.Form):
+    pass
+

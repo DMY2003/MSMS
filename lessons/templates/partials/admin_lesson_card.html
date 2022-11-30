@@ -9,9 +9,9 @@
             </div>
         </div>
 
-        <button class="btn btn-primary btn-xs">
+        <a class="btn btn-primary btn-xs" href="{% url 'admin_lesson' lesson.id %}">
             Edit
-        </button>
+        </a>
     </div>
 
     <table>
@@ -27,10 +27,5 @@
             <th>Instrument</th>
             <td>{{lesson.instrument.name}}</td>
         </tr>
-
     </table>
-    <!-- <span><b class="mr-2">Student</b>{{lesson.student.full_name}}</span>
-    <span><b class="mr-2">Teacher</b>{{lesson.teacher.full_name}}</span>
-    <span><b class="mr-2">Instrument</b>{{lesson.instrument.name}}</span> -->
-    <div></div>
 </div>
