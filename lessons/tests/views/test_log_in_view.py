@@ -10,15 +10,11 @@ from lessons.tests.helper import LogInTester
 class LogInViewTestCase(TestCase, LogInTester):
     """Tests of the log in view."""
 
+    fixtures = ['lessons/tests/fixtures/default_student.json']
+
     def setUp(self):
         self.url = reverse('log_in')
-        self.user = Student.objects.create_user(
-            email='johndoe@example.org',
-            first_name='John',
-            last_name='Doe',
-            password='Password123',
-            role='Student',
-        )
+        self.user = Student.objects.get(email='johndoe@example.org')
 
     def test_log_in_url(self):
         self.assertEqual(self.url, '/log_in/')

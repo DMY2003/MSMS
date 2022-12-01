@@ -1,0 +1,24 @@
+[
+    {
+        "model": "lessons.lesson",
+        "pk": 1,
+        "fields": {
+            "date": "2022-11-09 12:30:00",
+            "teacher": 1,
+            "student": 1,
+            "instrument": 1,
+            "duration": 30
+        }
+    },
+    {
+        "model": "lessons.lesson",
+        "pk": 2,
+        "fields": {
+            "date": "2022-11-09 12:30:00",
+            "teacher": 1,
+            "student": 1,
+            "instrument": 1,
+            "duration": 30
+        }
+    }
+]

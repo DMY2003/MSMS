@@ -1,13 +1,13 @@
 from django.test import TestCase
-from lessons.models import User
+from lessons.models import User, Student
 from lessons.forms import PasswordForm
 
 class PasswordFormTestCase(TestCase):
 
-    fixtures = ['lessons/tests/fixtures/default_user.json']
+    fixtures = ['lessons/tests/fixtures/default_student.json']
 
     def setUp(self):
-        self.user = User.objects.get(username='johndoe@example.org')
+        self.user = Student.objects.get(email='johndoe@example.org')
         self.form_input = {
             'password': 'Password123',
             'new_password': 'NewPassword123',
