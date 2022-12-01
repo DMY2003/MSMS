@@ -1,5 +1,6 @@
 from django import forms
 from lessons.models import User, Student, Teacher, Instrument, Request, Lesson
+from django.forms import ModelChoiceField
 from django.core.validators import RegexValidator
 from django.conf import settings
 import datetime
@@ -41,7 +42,8 @@ class SignUpForm(forms.ModelForm):
         user.save()
         return user
 
-    field_order=["first_name", "last_name", "email", "new_password", "confirm_password"]
+    field_order = ["first_name", "last_name", "email", "new_password", "confirm_password"]
+
 
 class UserForm(forms.ModelForm):
     """Form to update user profiles."""
@@ -64,7 +66,7 @@ class PasswordForm(forms.Form):
             regex=r'^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).*$',
             message='Password must contain an uppercase character, a lowercase '
                     'character and a number'
-            )]
+        )]
     )
     password_confirmation = forms.CharField(label='Password confirmation', widget=forms.PasswordInput())
 
@@ -76,6 +78,7 @@ class PasswordForm(forms.Form):
         password_confirmation = self.cleaned_data.get('password_confirmation')
         if new_password != password_confirmation:
             self.add_error('password_confirmation', 'Confirmation does not match password.')
+
 
 class LogInForm(forms.Form):
     email = forms.CharField(label="Email")
@@ -104,7 +107,6 @@ class AdminLessonForm(forms.Form):
         widget=forms.Select(),
         choices = settings.LESSON_DURATIONS,
     )   
-
 
 class AdminRequestForm(forms.Form):
     """Handles the creation of lessons through the help of a lesson request"""
@@ -143,10 +145,29 @@ class AdminRequestForm(forms.Form):
         choices = settings.LESSON_INTERVALS,
     )   
 
+
+class MyModelChoiceField(ModelChoiceField):
+    def label_from_instance(self, obj):
+        return obj.name
+
+
+class NoInput(forms.Widget):
+    input_type = "hidden"
+    template_name = ""
+
+    def render(self, name, value, attrs=None, renderer=None):
+        return ""
+
+
 class RequestForm(forms.ModelForm):
-    student = forms.IntegerField()
-    instrument = forms.CharField()
-    preferred_teacher = forms.CharField(required=False)
+    time_availability = forms.TimeField(widget=forms.TimeInput(attrs={'type': 'time'}))
+    day_availability = forms.CharField(label="Day of the week")
+    lesson_interval = forms.CharField(label='Interval', widget=forms.Select(choices=[(1, 1), (2, 2)]))
+    lesson_count = forms.IntegerField(label="Number of Lessons")
+    lesson_duration = forms.IntegerField(label="Duration")
+    preferred_teacher = forms.CharField(label="Preferred Teacher")
+    instrument = MyModelChoiceField(queryset=Instrument.objects.all(), required=True)
+    student = forms.CharField(label="", required=False, widget=NoInput)
 
     class Meta:
         model = Request
@@ -154,9 +175,6 @@ class RequestForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(RequestForm, self).clean()
-
-        requested = self.data.get("instrument")
-        cleaned_data["instrument"] = Instrument.objects.get(name=requested)
 
         student_id = self.data.get("student")
         cleaned_data["student"] = Student.objects.get(id=student_id)
