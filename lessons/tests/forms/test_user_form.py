@@ -8,7 +8,7 @@ class UserFormTestCase(TestCase):
     """Unit tests of the user form."""
 
     fixtures = [
-        'lessons/tests/fixtures/default_user.json'
+        'lessons/tests/fixtures/default_student.json'
     ]
 
     def setUp(self):

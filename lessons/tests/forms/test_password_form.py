@@ -4,7 +4,7 @@ from lessons.forms import PasswordForm
 
 class PasswordFormTestCase(TestCase):
 
-    fixtures = ['lessons/tests/fixtures/default_user.json']
+    fixtures = ['lessons/tests/fixtures/default_student.json']
 
     def setUp(self):
         self.user = User.objects.get(username='johndoe@example.org')
