@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordForm, AdminLessonForm, RequestForm
+from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordForm, AdminLessonForm, StudentRequestForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .models import Request, Lesson
@@ -118,14 +118,14 @@ def admin_request(request, request_id):
     generate lessons from it"""
     lesson_request = Request.objects.get(id=request_id)
     if request.method == "POST":
-        form = AdminRequestForm(request.POST)
+        form = AdminRequestForm(request.POST, instance=lesson_request)
         if form.is_valid():
             lesson_request.generate_lessons(form)
             lesson_request.save()
             return redirect("admin_requests")
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
     else:
-        form = AdminRequestForm()
+        form = AdminRequestForm(instance=lesson_request)
 
     return render(request, 'admin_request.html', {'form': form, 'request': lesson_request})
 
@@ -192,13 +192,13 @@ def lessons(request):
 
 
 def student_request(request, form=None):
-    form = RequestForm
+    form = StudentRequestForm()
     if request.method == 'POST':
         user = request.user
         post_values = request.POST.copy()
 
         post_values['student'] = user.id
-        form = RequestForm(post_values)
+        form = StudentRequestForm(post_values)
 
         if form.is_valid():
             form.save()

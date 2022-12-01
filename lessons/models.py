@@ -133,27 +133,22 @@ class Request(models.Model):
         """Generates lessons on the provided day/time at weekly intervals"""
         self.is_approved = True
 
-        teacher = form.cleaned_data.get("teacher")
-        day = int(form.cleaned_data.get("day"))
-        time = form.cleaned_data.get("time")
-        instrument = form.cleaned_data.get("instrument")
-        lesson_count = int(form.cleaned_data.get("lesson_count"))
-        lesson_interval = int(form.cleaned_data.get("lesson_interval"))
-        lesson_duration = int(form.cleaned_data.get("lesson_duration"))
+        lesson_datetime = self.get_date_from_weekday(
+            self.day_availability, 
+            self.time_availability
+        )
 
-        lesson_datetime = self.get_date_from_weekday(day, time)
-
-        for _ in range(lesson_count):
+        for _ in range(self.lesson_count):
             lesson = Lesson(
-                teacher=teacher, 
+                teacher=self.teacher, 
                 student=self.student, 
                 date=lesson_datetime, 
-                instrument=instrument,
-                duration=lesson_duration
+                instrument=self.instrument,
+                duration=self.lesson_duration
             )
             lesson.save()
 
-            lesson_datetime += datetime.timedelta(weeks=lesson_interval)
+            lesson_datetime += datetime.timedelta(weeks=self.lesson_interval)
 
 
 class Invoice(models.Model):
