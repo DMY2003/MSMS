@@ -85,7 +85,7 @@ class Lesson(models.Model):
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, blank=False)
     student = models.ForeignKey(Student, on_delete=models.CASCADE, blank=False)
     instrument = models.ForeignKey(Instrument, on_delete=models.CASCADE, blank=False)
-    duration = models.IntegerField(blank=False)
+    duration = models.IntegerField(choices=settings.LESSON_DURATIONS)
 
     class Meta:
         ordering = ('date',)

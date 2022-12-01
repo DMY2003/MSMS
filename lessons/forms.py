@@ -167,6 +167,7 @@ class AdminLessonForm(forms.ModelForm):
     class Meta:
         model = Lesson 
         fields = ["date", "teacher", "instrument", "duration"]
+        widgets = {"date": forms.DateTimeInput(attrs={'type': 'date'})}
 
     # date = forms.DateTimeField(label="Edit date")
 
