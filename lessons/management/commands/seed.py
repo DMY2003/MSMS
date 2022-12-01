@@ -2,7 +2,7 @@ from sys import stdout
 from django.contrib.auth.hashers import make_password
 from django.core.management.base import BaseCommand, CommandError
 from faker import Faker
-from lessons.models import Student, Teacher, Administrator, Lesson, Invoice, Instrument, Request
+from lessons.models import User, Student, Teacher, Administrator, Lesson, Invoice, Instrument, Request
 import random
 from django.conf import settings
 import datetime
@@ -22,7 +22,21 @@ class Command(BaseCommand):
         self.populate_requests()
         self.populate_lessons()
         self.populate_invoices()
+        self.create_superuser()
         self.stdout.write('done.')
+
+    def create_superuser(self):
+        self.stdout.write('creating superuser...')
+
+        user = User.objects.create_user(
+            username="admin",
+            email="admin@example.org",
+            password="Password123",
+        )
+
+        user.is_superuser = True
+        user.role = "Administrator"
+        user.save()
 
     def populate_admin(self):
         self.stdout.write('seeding admin...')
@@ -48,8 +62,9 @@ class Command(BaseCommand):
                         ["Jessica", "Swift"],
                         ["John", "Smith"]]
 
-        for each in teacher_list:
-            email = self.faker.free_email()
+        for i in range(len(teacher_list)):
+            each = teacher_list[i]
+            email = str(i) + self.faker.free_email()
             Teacher.objects.create(first_name=each[0],
                                    last_name=each[1],
                                    email=email,

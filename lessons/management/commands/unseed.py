@@ -4,7 +4,7 @@ from lessons.models import User, Student, Teacher, Administrator, Lesson, Invoic
 class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write('Unseeding data...')
-        User.objects.all().filter(is_superuser=False).delete()
+        User.objects.all().delete()
         Student.objects.all().delete()
         Teacher.objects.all().delete()
         Administrator.objects.all().delete()
