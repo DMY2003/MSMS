@@ -182,6 +182,7 @@ class RequestForm(forms.ModelForm):
         return cleaned_data
 
 class AdminLessonForm(forms.ModelForm):
+    """Implements a form for administrators to edit lessons"""
     class Meta:
         model = Lesson 
         fields = ["date", "teacher", "instrument", "duration"]

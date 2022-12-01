@@ -105,6 +105,7 @@ def transactions(request):
 
 
 def admin_request_delete(request, request_id):
+    """Handles the deletion of a particular request"""
     lesson_request = Request.objects.get(id=request_id)
     if lesson_request:
         lesson_request.delete()
@@ -113,6 +114,8 @@ def admin_request_delete(request, request_id):
 
 
 def admin_request(request, request_id):
+    """Handles the display of a particular admin request and the functionality to
+    generate lessons from it"""
     lesson_request = Request.objects.get(id=request_id)
     if request.method == "POST":
         form = AdminRequestForm(request.POST)
@@ -137,6 +140,7 @@ def admin_requests(request):
     return render(request, 'admin_requests.html', response_data)
 
 def admin_lessons(request):
+    """Handles the display of lessons"""
     name_search = request.GET.get('name_search', None)
     lessons = Lesson.objects.all()
     if name_search:
@@ -156,6 +160,7 @@ def admin_lessons(request):
     return render(request, 'admin_lessons.html', response_data)
 
 def admin_lesson(request, lesson_id):
+    """Handles the display and updating of a particular lesson"""
     lesson = Lesson.objects.get(id=lesson_id)
     
     if request.method == "POST":
@@ -173,6 +178,7 @@ def admin_lesson(request, lesson_id):
     return render(request, 'admin_lesson.html', response_data)
 
 def admin_lesson_delete(request, lesson_id):
+    """Handles the deletion of a particular lesson"""
     lesson = Lesson.objects.get(id=lesson_id)
     if lesson:
         lesson.delete()
