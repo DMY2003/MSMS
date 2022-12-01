@@ -1,5 +1,18 @@
 {% extends 'base_content.html' %} 
 
 {% block content %}
+<div class="row">
+    <div class="col-sm-12 col-md-6 offset-md-3">
+        <div class="card p-3">
+            <a href="{% url 'admin_lessons' %}">Go back</a>
+            <h3>Lesson #{{lesson.id}}</h3>
+            {% include 'partials/bootstrap_form.html' %}
+            <div class="d-flex">
+                <input type="submit" value="Save changes" class="btn btn-primary mr-2">
+                <a class="btn btn-danger" href="{% url 'admin_lesson_delete' lesson.id  %}">Delete lesson</a>
+            </div>
 
+        </div>
+    </div>
+</div>
 {% endblock %}

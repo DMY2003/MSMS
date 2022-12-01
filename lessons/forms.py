@@ -1,5 +1,5 @@
 from django import forms
-from lessons.models import User, Student, Teacher, Instrument, Request
+from lessons.models import User, Student, Teacher, Instrument, Request, Lesson
 from django.core.validators import RegexValidator
 from django.conf import settings
 import datetime
@@ -163,6 +163,11 @@ class RequestForm(forms.ModelForm):
 
         return cleaned_data
 
-class AdminLessonForm(forms.Form):
+class AdminLessonForm(forms.ModelForm):
     pass
+    # class Meta:
+    #     model = Lesson
+
+    # date = forms.DateTimeField(label="Edit date")
+
 

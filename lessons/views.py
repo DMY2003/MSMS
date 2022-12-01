@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordForm
+from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordForm, AdminLessonForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .models import Request, Lesson
@@ -152,9 +152,25 @@ def admin_lessons(request):
 
 def admin_lesson(request, lesson_id):
     lesson = Lesson.objects.get(id=lesson_id)
+    
+    if request.method == "POST":
+        form = AdminLessonForm(request.POST)
+        if form.is_valid():
+            form.save()
+    elif request.method == "GET":
+        pass
 
-    response_data = {}
+    response_data = {
+        "lesson": lesson
+    }
     return render(request, 'admin_lesson.html', response_data)
+
+def admin_lesson_delete(request, lesson_id):
+    lesson = Lesson.objects.get(id=lesson_id)
+    if lesson:
+        lesson.delete()
+    messages.add_message(request, messages.ERROR, "The lesson has been successfully deleted!")
+    return redirect("admin_lessons")
 
 @login_required
 def lessons(request):
