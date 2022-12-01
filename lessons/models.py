@@ -92,6 +92,13 @@ class Lesson(models.Model):
         ordering = ('date',)
 
 
+def get_date_from_weekday(weekday, time):
+    """Gets the date from the weekday"""
+    today = datetime.date.today()
+    today = datetime.datetime.combine(today, time)
+    return today + datetime.timedelta(days=today.weekday() - weekday)
+
+
 class Request(models.Model):
     time_availability = models.TimeField(null=True)
     day_availability = models.CharField(max_length=10, blank=True)
@@ -109,12 +116,6 @@ class Request(models.Model):
         day_of_the_week = settings.DAYS_OF_THE_WEEK[int(self.day_availability)][1]
         return "%s %s" % (day_of_the_week, self.time_availability)
 
-    def get_date_from_weekday(self, weekday, time):
-        """Gets the date from the weekday"""
-        today = datetime.date.today()
-        today = datetime.datetime.combine(today, time)
-        return today + datetime.timedelta(days=today.weekday() - weekday)
-
     def generate_lessons(self, form):
         """Generates lessons on the provided day/time at weekly intervals"""
         self.is_approved = True
@@ -127,8 +128,9 @@ class Request(models.Model):
         lesson_interval = int(form.cleaned_data.get("lesson_interval"))
         lesson_duration = int(form.cleaned_data.get("lesson_duration"))
 
-        lesson_datetime = self.get_date_from_weekday(day, time)
+        lesson_datetime = get_date_from_weekday(day, time)
 
+        # Generate Lessons for the request
         for i in range(lesson_count):
             lesson = Lesson(
                 teacher=teacher,
@@ -140,6 +142,11 @@ class Request(models.Model):
             lesson.save()
 
             lesson_datetime += datetime.timedelta(weeks=lesson_interval)
+
+            # Generate Invoices for the lessons
+            price = instrument.base_price * lesson_duration / 60
+            invoice = Invoice(price=price, lesson=lesson)
+            invoice.save()
 
 
 class Invoice(models.Model):
