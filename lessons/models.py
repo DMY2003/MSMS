@@ -78,7 +78,6 @@ class Director(User):
 class Instrument(models.Model):
     name = models.CharField(max_length=30, blank=False)
 
-
 class Lesson(models.Model):
     date = models.DateTimeField(null=True)
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, blank=False)
