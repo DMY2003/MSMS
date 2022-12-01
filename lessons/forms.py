@@ -164,9 +164,9 @@ class RequestForm(forms.ModelForm):
         return cleaned_data
 
 class AdminLessonForm(forms.ModelForm):
-    pass
-    # class Meta:
-    #     model = Lesson
+    class Meta:
+        model = Lesson 
+        fields = ["date", "teacher", "instrument", "duration"]
 
     # date = forms.DateTimeField(label="Edit date")
 

@@ -158,10 +158,11 @@ def admin_lesson(request, lesson_id):
         if form.is_valid():
             form.save()
     elif request.method == "GET":
-        pass
+        form = AdminLessonForm(instance=lesson)
 
     response_data = {
-        "lesson": lesson
+        "lesson": lesson,
+        "form": form
     }
     return render(request, 'admin_lesson.html', response_data)
 
