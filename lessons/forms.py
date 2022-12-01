@@ -1,7 +1,9 @@
 from django import forms
-from lessons.models import User, Student
+from django.forms import ModelChoiceField
+from lessons.models import User, Student, Teacher, Instrument, Request
 from django.core.validators import RegexValidator
-
+from django.conf import settings
+import datetime
 
 class SignUpForm(forms.ModelForm):
     class Meta:
@@ -40,7 +42,8 @@ class SignUpForm(forms.ModelForm):
         user.save()
         return user
 
-    field_order=["first_name", "last_name", "email", "new_password", "confirm_password"]
+    field_order = ["first_name", "last_name", "email", "new_password", "confirm_password"]
+
 
 class UserForm(forms.ModelForm):
     """Form to update user profiles."""
@@ -63,7 +66,7 @@ class PasswordForm(forms.Form):
             regex=r'^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).*$',
             message='Password must contain an uppercase character, a lowercase '
                     'character and a number'
-            )]
+        )]
     )
     password_confirmation = forms.CharField(label='Password confirmation', widget=forms.PasswordInput())
 
@@ -76,6 +79,7 @@ class PasswordForm(forms.Form):
         if new_password != password_confirmation:
             self.add_error('password_confirmation', 'Confirmation does not match password.')
 
+
 class LogInForm(forms.Form):
     email = forms.CharField(label="Email")
     password = forms.CharField(label="Password", widget=forms.PasswordInput())
@@ -83,20 +87,73 @@ class LogInForm(forms.Form):
 
 class AdminRequestForm(forms.Form):
     """Handles the creation of lessons through the help of a lesson request"""
-    start_date = forms.CharField(label="Day of the week")
-    time = forms.TimeField(label="Time")
-    teacher = forms.CharField(label="Teacher")
-    lesson_count = forms.IntegerField(label="Number of lessons")
-    lesson_duration = forms.IntegerField(label="Lesson duration")
-    lesson_interval = forms.IntegerField(label="Lesson interval")
-   
-    def save(self):
-        """Overrides save method in order to approve the request and generate the associated lessons"""
-        request = super().save(commit=False)
-        request.is_approved = True
-        self.generate_lessons()
-        request.save()
-        return request
 
-    def generate_lessons(self):
-        pass
+    day = forms.ChoiceField(
+        label="Day of the week",
+        widget=forms.Select(),
+        choices = settings.DAYS_OF_THE_WEEK,
+    )   
+
+    time = forms.TimeField(
+        widget=forms.TimeInput(attrs={'type': 'time'})
+    )
+
+    teacher = forms.ModelChoiceField(
+        label="Assigned teacher",
+        queryset=Teacher.objects.all(),
+
+    )
+
+    instrument = forms.ModelChoiceField(
+        label="Assigned instrument",
+        queryset=Instrument.objects.all(),       
+    )
+
+    lesson_count = forms.IntegerField(label="Number of lessons")
+    lesson_duration = forms.ChoiceField(
+        label="Lesson duration",
+        widget=forms.Select(),
+        choices = settings.LESSON_DURATIONS,
+    )   
+
+    lesson_interval = forms.ChoiceField(
+        label="Lesson interval",
+        widget=forms.Select(),
+        choices = settings.LESSON_INTERVALS,
+    )   
+
+
+class MyModelChoiceField(ModelChoiceField):
+    def label_from_instance(self, obj):
+        return obj.name
+
+
+class NoInput(forms.Widget):
+    input_type = "hidden"
+    template_name = ""
+
+    def render(self, name, value, attrs=None, renderer=None):
+        return ""
+
+
+class RequestForm(forms.ModelForm):
+    time_availability = forms.TimeField(widget=forms.TimeInput(attrs={'type': 'time'}))
+    day_availability = forms.CharField(label="Day of the week")
+    lesson_interval = forms.CharField(label='Interval', widget=forms.Select(choices=[(1, 1), (2, 2)]))
+    lesson_count = forms.IntegerField(label="Number of Lessons")
+    lesson_duration = forms.IntegerField(label="Duration")
+    preferred_teacher = forms.CharField(label="Preferred Teacher")
+    instrument = MyModelChoiceField(queryset=Instrument.objects.all(), required=True)
+    student = forms.CharField(label="", required=False, widget=NoInput)
+
+    class Meta:
+        model = Request
+        exclude = ['is_approved']
+
+    def clean(self):
+        cleaned_data = super(RequestForm, self).clean()
+
+        student_id = self.data.get("student")
+        cleaned_data["student"] = Student.objects.get(id=student_id)
+
+        return cleaned_data

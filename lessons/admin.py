@@ -1,6 +1,6 @@
 """Configuration of the admin interface for microblogs."""
 from django.contrib import admin
-from .models import User, Request, Lesson, Instrument
+from .models import User, Request, Lesson, Instrument, Teacher
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
@@ -9,6 +9,11 @@ class UserAdmin(admin.ModelAdmin):
     list_display = [
         'username', 'first_name', 'last_name', 'email', 'is_active',
     ]
+
+@admin.register(Teacher)
+class TeacherAdmin(admin.ModelAdmin):
+    """Configuration of the admin interface for teachers."""
+    pass
 
 @admin.register(Request)
 class RequestAdmin(admin.ModelAdmin):

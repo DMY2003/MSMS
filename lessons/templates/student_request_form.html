@@ -1,179 +1,34 @@
 {% extends "student_dashboard_template.html" %}
+
 {% block content %}
-<header class="pb-3 mb-4 border-bottom">
-    <a href="#" class="d-flex align-items-center text-dark text-decoration-none">
-        <span class="fs-4">Create Request</span>
-    </a>
-</header>
+    <header class="pb-3 mb-4 border-bottom">
+        <a href="#" class="d-flex align-items-center text-dark text-decoration-none">
+            <span class="fs-4">Create Request</span>
+        </a>
+    </header>
 
-<div class="container pt-2 pb-4">
-    <div class="card w-75" role="document">
-        <div class="card-body rounded-4 shadow">
-            <div class="modal-header p-5 pb-3 border-bottom-0">
-                <h1>New Request</h1>
-            </div>
-            
-            <div class="modal-body p-5 pt-0">
-                <form method="post" action="#">
-                    <div class="mb-1">
-                        <small><span style="color:#FF0000">*</span> represents a required field</small>
-                    </div>
+    <div class="container pt-2 pb-4">
+        <div class="card w-75" role="document">
+            <div class="card-body rounded-4 shadow">
+                <div class="modal-header p-5 pb-3 border-bottom-0">
+                    <h1>New Request</h1>
+                </div>
 
-                    <div class="mb-3">
-                        <label for="ticketTitle" class="form-label">Lesson type<span style="color:#FF0000">*</span></label>
-                        <select class="form-select" aria-label="Default select example" id="ticketPriority"
-                            name="priority" required>
-                            <option value="guitar" selected>Guitar</option>
-                            <option value="piano">Piano</option>
-                            <option value="saxophone">Saxophone</option>
-                            <option value="trumpet">Trumpet</option>
-                        </select>
-                    </div>
+                <div class="modal-body p-5 pt-0">
+                    <form method=POST action="">
+                        {% csrf_token %}
+                        {% include 'partials/bootstrap_form.html' with form=form %}
 
-                    <div class="mb-3">
-                        <label for="deadline" class="form-label">Number of Lessons<span style="color:#FF0000">*</span></label>
-                        <input type="text" class="form-control" id="no_of_lessons" name="no_of_lessons"
-                            placeholder="Number of lessons" required>
-                        <div class="valid-feedback">
-                            Looks good!
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="deadline" class="form-label">Interval between lessons<span style="color:#FF0000">*</span></label>
-                        <input type="text" class="form-control" id="lesson_interval" name="lesson_interval"
-                            placeholder="e.g. 2 for 2 weeks" required>
-                        <div class="valid-feedback">
-                            Looks good!
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="deadline" class="form-label">Duration of lessons<span style="color:#FF0000">*</span></label>
-                        <input type="text" class="form-control" id="lesson_duration" name="lesson_duration"
-                            placeholder="e.g. 60 for 60 minutes" required>
-                        <div class="valid-feedback">
-                            Looks good!
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label  class="form-label">Availability<span style="color:#FF0000">*</span></label>
-                        <div id="emailHelp" class="form-text">Please add up to 5 days and times that you are available in the week</div>
-                        <div id="timeContainer">
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-primary" value="Submit">Submit</button>
+                            <button type="button" class="btn btn-secondary">Cancel</button>
                         </div>
 
-                        <button class="form-control btn btn-primary mb-2" id="add-button" type="button"
-                            data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false"
-                            aria-controls="collapseExample">
-                            Add Time
-                        </button>
+                    </form>
 
-                        <!-- Time Addition collapse -->
-                        <div class="collapse" id="collapseExample">
-                            <div class="card card-body">
-                                <select class="form-select mb-2" aria-label="Default select example" id="weekDay">
-                                    <option value="Monday" selected>Monday</option>
-                                    <option value="Tuesday">Tuesday</option>
-                                    <option value="Wednesday">Wednesday</option>
-                                    <option value="Thursday">Thursday</option>
-                                    <option value="Friday">Friday</option>
-                                </select>
-                                <div class="col mb-2">
-                                    <input type="time" id="timeFrom">
-                                    <span> to </span>
-                                    <input type="time" id="timeTo">
-                                </div>
-                                <div class="col">
-                                    <button type="button" class="btn btn-primary" onclick="add_time()">Add</button>
-                                </div>
-                                <script>
-                                    var index = 0;
-                                    function add_time()
-                                    {
-                                        var container = document.getElementById("timeContainer");
-                                        var week_day = document.getElementById("weekDay");
-                                        var time_from = document.getElementById("timeFrom");
-                                        var time_to = document.getElementById("timeTo");
-                                        var add_button = document.getElementById("add-button");
-
-                                        //create a small container to store the input and the dismiss button
-                                        var small_container = document.createElement("div");
-                                        small_container.className = "row";
-                                        small_container.id = "sm"+index;
-
-                                        // create a new input
-                                        var input = document.createElement("input");
-                                        input.type = "text";
-                                        input.name = "availability[]";
-                                        input.className = "form-control mb-2 w-50";
-                                        input.value = week_day.value + " " + time_from.value + " - " + time_to.value;
-                                        
-                                        //create a dismiss button for the input
-                                        var dismiss = document.createElement("button");
-                                        dismiss.type = "button";
-                                        dismiss.className = "btn-close my-auto";
-                                        dismiss.onclick = function () { delete_time(small_container.id); };
-                                    
-                                        //add the input and button to the small container
-                                        small_container.appendChild(input);
-                                        small_container.appendChild(dismiss);
-
-                                        //add it to the time container
-                                        container.appendChild(small_container);
-                                        add_button.click();
-
-                                        if(container.childNodes.length > 5)
-                                        {
-                                            add_button.disabled = true;
-                                        }
-                                        else
-                                        {
-                                            add_button.disabled = false;
-                                        }
-                                        
-
-                                    }
-
-                                    function delete_time(id)
-                                    {
-                                        var elementToRemove = document.getElementById(id);
-                                        elementToRemove.remove();
-                                    }
-                                </script>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="deadline" class="form-label">Preferred teacher</label>
-                        <input type="text" class="form-control" id="teacher" name="teacher"
-                            placeholder="Leave this blank if none" required>
-                        <div class="valid-feedback">
-                            Looks good!
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="deadline" class="form-label">Description</label>
-                        <textarea class="form-control" id="description" name="description"
-                            placeholder="Provide any further details here." required></textarea>
-
-                        <div class="valid-feedback">
-                            Looks good!
-                        </div>
-                    </div>
-
-
-                    <div class="mb-3">
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                        <button type="button" class="btn btn-secondary">Cancel</button>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-</div>
 {% endblock %}

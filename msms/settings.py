@@ -139,3 +139,24 @@ MESSAGE_TAGS = {
     message_constants.DEBUG: "dark",
     message_constants.ERROR: "danger"
 }
+
+DAYS_OF_THE_WEEK = [
+    (0, "Monday"), 
+    (1, "Tuesday"),
+    (2, "Wednesday"), 
+    (3, "Thursday"),
+    (4, "Friday"), 
+    (5, "Saturday"),
+    (6, "Sunday"), 
+]
+
+LESSON_DURATIONS = [ 
+    (30, "30 minutes"),
+    (45, "45 minutes"),
+    (60, "60 minutes")
+]
+
+LESSON_INTERVALS = [ 
+    (1, "1 week"),
+    (2, "2 weeks")
+]

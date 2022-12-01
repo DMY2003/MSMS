@@ -28,9 +28,13 @@ urlpatterns = [
     # path('student_lessons/', views.student_lessons, name='student_lessons'),
     # path('student_transactions/', views.student_transactions, name='student_transactions'),
     path('administrator/requests', views.admin_requests, name='admin_requests'),
+    path('administrator/delete_request/<int:request_id>', views.admin_request_delete, name='admin_request_delete'),
     path('administrator/requests/<int:request_id>', views.admin_request, name='admin_request'),
+
     # path('administrator/transactions', views.admin_transactions, name='admin_transactions'),
     path('requests/', views.requests, name='requests'),
     path('lessons/', views.lessons, name='lessons'),
     path('transactions/', views.transactions, name='transactions'),
+    path('newrequest/', views.student_request, name='student-request'),
 ]
+
