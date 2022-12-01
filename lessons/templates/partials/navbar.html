@@ -2,9 +2,22 @@
     <div class="container">
         <a class="navbar-brand" href="{% url 'home' %}"><i class="bi bi-file-music-fill"></i>&nbsp;MSMS</a>
         {% if user.is_authenticated %}
-            <a class="ms-auto" href="{% url 'log_out' %}">
-                Log out
-            </a>
+            <div class="ms-auto">
+                {% if user.role == "Student" %}
+
+                {% elif user.role == "Administrator" %}
+                    <a class="ml-4" href="{% url 'admin_requests' %}">
+                        Requests
+                    </a>
+                    <a class="ml-4" href="{% url 'admin_lessons' %}">
+                        Lessons
+                    </a>
+                {% endif %}
+                <a class="ml-4" href="{% url 'log_out' %}">
+                    Log out
+                </a>
+            </div>
+
         {% endif %}
     </div>
 </nav>
