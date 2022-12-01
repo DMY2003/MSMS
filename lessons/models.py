@@ -5,6 +5,7 @@ from django.contrib.auth.base_user import BaseUserManager
 import datetime
 from django.conf import settings
 
+
 class UserManager(BaseUserManager):
     use_in_migrations = True
 
@@ -77,6 +78,8 @@ class Director(User):
 
 class Instrument(models.Model):
     name = models.CharField(max_length=30, blank=False)
+    base_price = models.IntegerField(default=0)
+
 
 class Lesson(models.Model):
     date = models.DateTimeField(null=True)
@@ -128,9 +131,9 @@ class Request(models.Model):
 
         for i in range(lesson_count):
             lesson = Lesson(
-                teacher=teacher, 
-                student=self.student, 
-                date=lesson_datetime, 
+                teacher=teacher,
+                student=self.student,
+                date=lesson_datetime,
                 instrument=instrument,
                 duration=lesson_duration
             )

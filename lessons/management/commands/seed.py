@@ -7,6 +7,7 @@ import random
 from django.conf import settings
 import datetime
 
+
 class Command(BaseCommand):
 
     def __init__(self):
@@ -41,20 +42,20 @@ class Command(BaseCommand):
     def populate_admin(self):
         self.stdout.write('seeding admin...')
         for i in range(10):
-                admin_fname = self.faker.first_name()
-                admin_lname = self.faker.last_name()
-                email = str(i) + self.faker.free_email()
-                password = self.faker.password(length=12)
-                last_lgn = self.faker.past_datetime()
-                Administrator.objects.create(first_name=admin_fname,
-                                             last_name=admin_lname,
-                                             email=email,
-                                             username=email,
-                                             password=make_password(password, salt=None, hasher='default'),
-                                             last_login=last_lgn,
-                                             is_staff=1,
-                                             is_superuser=1,
-                                             role="Administrator")
+            admin_fname = self.faker.first_name()
+            admin_lname = self.faker.last_name()
+            email = str(i) + self.faker.free_email()
+            password = self.faker.password(length=12)
+            last_lgn = self.faker.past_datetime()
+            Administrator.objects.create(first_name=admin_fname,
+                                         last_name=admin_lname,
+                                         email=email,
+                                         username=email,
+                                         password=make_password(password, salt=None, hasher='default'),
+                                         last_login=last_lgn,
+                                         is_staff=1,
+                                         is_superuser=1,
+                                         role="Administrator")
 
     def populate_teacher(self):
         self.stdout.write('seeding teacher...')
@@ -92,15 +93,15 @@ class Command(BaseCommand):
 
     def populate_instruments(self):
         self.stdout.write('seeding instruments...')
-        instruments = ["Guitar",
-                       "Ukulele",
-                       "Violin",
-                       "Recorder",
-                       "Piano",
-                       "Triangle"]
+        instruments = {"Guitar": 50,
+                       "Ukulele": 50,
+                       "Violin": 50,
+                       "Recorder": 50,
+                       "Piano": 50,
+                       "Triangle": 50}
 
-        for each in instruments:
-            Instrument.objects.create(name=each)
+        for key, value in instruments.items():
+            Instrument.objects.create(name=key, base_price=value)
 
     def populate_requests(self):
         self.stdout.write('seeding requests...')
@@ -152,10 +153,3 @@ class Command(BaseCommand):
             lesson = Lesson.objects.get(id=each)
 
             Invoice.objects.create(price=price, paid=paid, lesson=lesson)
-
-
-
-
-
-
-
