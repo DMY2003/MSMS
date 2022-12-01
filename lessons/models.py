@@ -73,11 +73,10 @@ class Administrator(User):
 class Director(User):
     pass
 
+
 class Instrument(models.Model):
     name = models.CharField(max_length=30, blank=False)
 
-    def __str__(self):
-        return self.name
 
 class Lesson(models.Model):
     time = models.TimeField(null=True)
@@ -106,7 +105,7 @@ class Request(models.Model):
 
     def get_date_from_weekday(self, weekday, time):
         """Gets the date from the weekday"""
-        today = datetime.date.today()   
+        today = datetime.date.today()
         today = datetime.datetime.combine(today, time)
         return today + datetime.timedelta(days=today.weekday() - weekday)
 
@@ -126,14 +125,14 @@ class Request(models.Model):
 
         for i in range(lesson_count):
             lesson = Lesson(
-                teacher=teacher, 
-                student=self.student, 
-                time=lesson_datetime, 
+                teacher=teacher,
+                student=self.student,
+                time=lesson_datetime,
                 instrument=instrument,
                 duration=lesson_duration
             )
             lesson.save()
-            
+
             lesson_datetime += datetime.timedelta(weeks=lesson_interval)
 
 

@@ -35,6 +35,6 @@ urlpatterns = [
     path('requests/', views.requests, name='requests'),
     path('lessons/', views.lessons, name='lessons'),
     path('transactions/', views.transactions, name='transactions'),
-    path('newrequest/', views.make_request, name='new-request'),
+    path('newrequest/', views.student_request, name='student-request'),
 ]
 

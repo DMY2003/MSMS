@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordForm
+from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordForm, RequestForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .models import Request
@@ -57,6 +57,7 @@ def log_out(request):
     logout(request)
     return redirect('sign_up')
 
+
 @login_required
 def password(request):
     current_user = request.user
@@ -73,6 +74,7 @@ def password(request):
                 return redirect('requests')
     form = PasswordForm()
     return render(request, 'password.html', {'form': form})
+
 
 @login_required
 def updateProile(request):
@@ -101,12 +103,14 @@ def transactions(request):
     elif request.user.role == 'Administrator' or request.user.role == 'Director':
         return render(request, 'admin_transactions_page.html')
 
+
 def admin_request_delete(request, request_id):
     lesson_request = Request.objects.get(id=request_id)
     if lesson_request:
         lesson_request.delete()
     messages.add_message(request, messages.ERROR, "The request has been successfully deleted!")
     return redirect("admin_requests")
+
 
 def admin_request(request, request_id):
     lesson_request = Request.objects.get(id=request_id)
@@ -119,8 +123,9 @@ def admin_request(request, request_id):
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
     else:
         form = AdminRequestForm()
-    
+
     return render(request, 'admin_request.html', {'form': form, 'request': lesson_request})
+
 
 def admin_requests(request):
     response_data = {
@@ -138,8 +143,8 @@ def lessons(request):
         return render(request, 'student_lessons_page.html')
 
 
-@login_required
-def make_request(request, form=None):
+def student_request(request, form=None):
+    form = RequestForm
     if request.method == 'POST':
         user = request.user
         post_values = request.POST.copy()
@@ -147,12 +152,9 @@ def make_request(request, form=None):
         post_values['student'] = user.id
         form = RequestForm(post_values)
 
-        # for field in form:
-        #     print("Field Error:", field.name, field.errors)
-
         if form.is_valid():
             form.save()
 
             return redirect('requests')
 
-    return render(request, 'student_request_form2.html', {'form': form})
+    return render(request, 'student_request_form.html', {'form': form})
