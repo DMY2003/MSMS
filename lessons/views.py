@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordForm, AdminLessonForm, RequestForm
+from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordForm, AdminLessonForm, RequestForm, ManageAdminsForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .models import Request, Lesson
@@ -83,10 +83,11 @@ def profile(request):
         form = UserForm(request.POST, instance=current_user)
         if form.is_valid():
             form.save()
+            messages.add_message(request, messages.SUCCESS, "Profile updated!")
             return redirect('requests')
     else:
         form = UserForm(instance=current_user)
-    return render(request, 'update_profile.html', {'form': form})
+    return render(request, 'profile.html', {'form': form})
 
 
 @login_required
@@ -191,6 +192,17 @@ def admin_lesson_delete(request, lesson_id):
         lesson.delete()
     messages.add_message(request, messages.ERROR, "The lesson has been successfully deleted!")
     return redirect("admin_lessons")
+
+def manage_admins(request):
+    if request.method == 'POST':
+        form = ManageAdminsForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.add_message(request, messages.SUCCESS, "Account created!")
+            return redirect('manage_admins')
+    else:
+        form = ManageAdminsForm()
+    return render(request, 'manage_admins.html', {'form': form})
 
 def student_request(request, form=None):
     form = RequestForm

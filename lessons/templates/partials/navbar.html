@@ -5,7 +5,7 @@
             <div class="ms-auto">
                 {% if user.role == "Student" %}
 
-                {% elif user.role == "Administrator" %}
+                {% elif user.role == "Administrator" or user.role == "Director" %}
                     <a class="ml-4" href="{% url 'admin_requests' %}">
                         Requests
                     </a>
@@ -13,8 +13,15 @@
                         Lessons
                     </a>
                 {% endif %}
+
+                {% if user.role == "Director" %}
+                    <a class="ml-4" href="{% url 'manage_admins' %}">
+                        Manage Admins
+                    </a>
+                {% endif %}
+
                 <a class="ml-4" href="{% url 'profile' %}">
-                    Change profile
+                    Edit profile
                 </a>
                 <a class="ml-4" href="{% url 'password' %}">
                     Change password
@@ -22,6 +29,12 @@
                 <a class="ml-4" href="{% url 'log_out' %}">
                     Log out
                 </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="user-account-dropdown">
+                    <li><a class="dropdown-item" href="{% url 'profile' %}">Change profile</a></li>
+                    <li><a class="dropdown-item" href="{% url 'password' %}">Change password</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{% url 'log_out' %}">Log out</a></li>
+                </ul>
             </div>
 
         {% endif %}
