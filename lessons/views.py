@@ -55,7 +55,7 @@ def log_in(request):
 
 def log_out(request):
     logout(request)
-    return redirect('sign_up')
+    return redirect('home')
 
 
 @login_required
@@ -77,7 +77,7 @@ def password(request):
 
 
 @login_required
-def updateProile(request):
+def profile(request):
     current_user = request.user
     if request.method == 'POST':
         form = UserForm(request.POST, instance=current_user)
@@ -102,6 +102,13 @@ def transactions(request):
         return render(request, 'student_transactions_page.html')
     elif request.user.role == 'Administrator' or request.user.role == 'Director':
         return render(request, 'admin_transactions_page.html')
+
+@login_required
+def lessons(request):
+    if request.user.role == 'Student':
+        return render(request, 'student_lessons_page.html')
+    elif request.user.role == 'Administrator' or request.user.role == 'Director':
+        return redirect('admin_lessons')
 
 
 def admin_request_delete(request, request_id):
@@ -184,12 +191,6 @@ def admin_lesson_delete(request, lesson_id):
         lesson.delete()
     messages.add_message(request, messages.ERROR, "The lesson has been successfully deleted!")
     return redirect("admin_lessons")
-
-@login_required
-def lessons(request):
-    if request.user.role == 'Student':
-        return render(request, 'student_lessons_page.html')
-
 
 def student_request(request, form=None):
     form = RequestForm
