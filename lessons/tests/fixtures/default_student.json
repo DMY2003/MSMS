@@ -1,6 +1,6 @@
 [
   {
-    "model": "lessons.student",
+    "model": "lessons.User",
     "pk": 1,
     "fields": {
       "first_name": "John",
@@ -10,6 +10,13 @@
       "role": "Student",
       "password": "pbkdf2_sha256$260000$4BNvFuAWoTT1XVU8D6hCay$KqDCG+bHl8TwYcvA60SGhOMluAheVOnF1PMz0wClilc=",
       "is_active": true
+    }
+  },
+  {
+    "model": "lessons.Student",
+    "pk": 1,
+    "fields": {
+      "user_ptr_id": 1
     }
   }
 ]

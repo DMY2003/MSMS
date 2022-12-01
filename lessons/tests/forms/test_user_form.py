@@ -2,7 +2,7 @@
 from django import forms
 from django.test import TestCase
 from lessons.forms import UserForm
-from lessons.models import User
+from lessons.models import User, Student
 
 class UserFormTestCase(TestCase):
     """Unit tests of the user form."""
@@ -36,11 +36,11 @@ class UserFormTestCase(TestCase):
         self.assertFalse(form.is_valid())
 
     def test_form_must_save_correctly(self):
-        user = User.objects.get(email='johndoe@example.org')
+        user = Student.objects.get(email='johndoe@example.org')
         form = UserForm(instance=user, data=self.form_input)
-        before_count = User.objects.count()
+        before_count = Student.objects.count()
         form.save()
-        after_count = User.objects.count()
+        after_count = Student.objects.count()
         self.assertEqual(after_count, before_count)
         self.assertEqual(user.first_name, 'Jane')
         self.assertEqual(user.last_name, 'Doe')
