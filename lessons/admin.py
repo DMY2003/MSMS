@@ -35,5 +35,5 @@ class RequestAdmin(admin.ModelAdmin):
     """Configuration of the admin interface for lessons."""
 
     list_display = [
-        "time", "teacher", "student"
+        "date", "teacher", "student"
     ]

@@ -3,6 +3,7 @@ from django.core.validators import RegexValidator
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.base_user import BaseUserManager
 import datetime
+from django.conf import settings
 
 class UserManager(BaseUserManager):
     use_in_migrations = True
@@ -77,14 +78,15 @@ class Director(User):
 class Instrument(models.Model):
     name = models.CharField(max_length=30, blank=False)
 
-
 class Lesson(models.Model):
-    time = models.TimeField(null=True)
-    day = models.CharField(max_length=10, blank=True)
+    date = models.DateTimeField(null=True)
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, blank=False)
     student = models.ForeignKey(Student, on_delete=models.CASCADE, blank=False)
     instrument = models.ForeignKey(Instrument, on_delete=models.CASCADE, blank=False)
-    duration = models.IntegerField(blank=False)
+    duration = models.IntegerField(choices=settings.LESSON_DURATIONS)
+
+    class Meta:
+        ordering = ('date',)
 
 
 class Request(models.Model):
@@ -101,7 +103,8 @@ class Request(models.Model):
     @property
     def availability(self):
         """Gets the availability in full"""
-        return "%s %s" % (self.day_availability, self.time_availability)
+        day_of_the_week = settings.DAYS_OF_THE_WEEK[int(self.day_availability)][1]
+        return "%s %s" % (day_of_the_week, self.time_availability)
 
     def get_date_from_weekday(self, weekday, time):
         """Gets the date from the weekday"""
@@ -125,9 +128,9 @@ class Request(models.Model):
 
         for i in range(lesson_count):
             lesson = Lesson(
-                teacher=teacher,
-                student=self.student,
-                time=lesson_datetime,
+                teacher=teacher, 
+                student=self.student, 
+                date=lesson_datetime, 
                 instrument=instrument,
                 duration=lesson_duration
             )

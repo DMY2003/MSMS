@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
-from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordForm, RequestForm
+from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordForm, AdminLessonForm, RequestForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .models import Request
+from .models import Request, Lesson
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
 
@@ -105,6 +105,7 @@ def transactions(request):
 
 
 def admin_request_delete(request, request_id):
+    """Handles the deletion of a particular request"""
     lesson_request = Request.objects.get(id=request_id)
     if lesson_request:
         lesson_request.delete()
@@ -113,6 +114,8 @@ def admin_request_delete(request, request_id):
 
 
 def admin_request(request, request_id):
+    """Handles the display of a particular admin request and the functionality to
+    generate lessons from it"""
     lesson_request = Request.objects.get(id=request_id)
     if request.method == "POST":
         form = AdminRequestForm(request.POST)
@@ -136,6 +139,51 @@ def admin_requests(request):
 
     return render(request, 'admin_requests.html', response_data)
 
+def admin_lessons(request):
+    """Handles the display of lessons"""
+    name_search = request.GET.get('name_search', None)
+    lessons = Lesson.objects.all()
+    if name_search:
+        names = name_search.split()
+        first_name = names[0] if len(names) >= 1 else ''
+        second_name = names[1] if len(names) >= 2 else ''
+        lessons = Lesson.objects.filter(
+            student__first_name__contains=first_name, 
+            student__last_name__contains=second_name
+        )
+
+    response_data = {
+        "lessons": lessons,
+        "lesson_count": len(lessons),
+        "name_search": name_search
+    }
+    return render(request, 'admin_lessons.html', response_data)
+
+def admin_lesson(request, lesson_id):
+    """Handles the display and updating of a particular lesson"""
+    lesson = Lesson.objects.get(id=lesson_id)
+    
+    if request.method == "POST":
+        form = AdminLessonForm(request.POST, instance=lesson)
+        if form.is_valid():
+            form.save()
+            messages.add_message(request, messages.SUCCESS, "The lesson was successfully updated!")
+    elif request.method == "GET":
+        form = AdminLessonForm(instance=lesson)
+
+    response_data = {
+        "lesson": lesson,
+        "form": form
+    }
+    return render(request, 'admin_lesson.html', response_data)
+
+def admin_lesson_delete(request, lesson_id):
+    """Handles the deletion of a particular lesson"""
+    lesson = Lesson.objects.get(id=lesson_id)
+    if lesson:
+        lesson.delete()
+    messages.add_message(request, messages.ERROR, "The lesson has been successfully deleted!")
+    return redirect("admin_lessons")
 
 @login_required
 def lessons(request):

@@ -15,3 +15,9 @@ body {
   grid-template-columns: 1fr 1fr;
   gap: 20px;
 }
+
+.lesson-grid {
+  display: grid; 
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+}

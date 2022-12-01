@@ -27,7 +27,7 @@
               <td>{{request.lesson_count}}</td>
               <td>{{request.lesson_interval}} week(s)</td>
               <td>{{request.lesson_duration}} minutes</td>
-              <td>{{request.day_availability}} {{request.time_availability}}</td>
+              <td>{{request.availability}}</td>
               {% if requests == unfulfilled_requests %}
               <td>
                   <a class="btn btn-primary btn-sm" href="{% url 'admin_request' request.id %}">
