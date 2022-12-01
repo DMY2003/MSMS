@@ -3,6 +3,7 @@ from django.core.validators import RegexValidator
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.base_user import BaseUserManager
 import datetime
+from django.core.validators import MaxValueValidator, MinValueValidator 
 from django.conf import settings
 
 class UserManager(BaseUserManager):
@@ -78,6 +79,9 @@ class Director(User):
 class Instrument(models.Model):
     name = models.CharField(max_length=30, blank=False)
 
+    def __str__(self):
+        return self.name
+
 class Lesson(models.Model):
     date = models.DateTimeField(null=True)
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, blank=False)
@@ -90,14 +94,27 @@ class Lesson(models.Model):
 
 
 class Request(models.Model):
-    time_availability = models.TimeField(null=True)
-    day_availability = models.IntegerField(blank=True)
-    lesson_interval = models.IntegerField(default=1)
-    lesson_count = models.IntegerField(blank=False)
-    lesson_duration = models.IntegerField(blank=False)
-    preferred_teacher = models.TextField()
-    instrument = models.ForeignKey(Instrument, on_delete=models.CASCADE)
+    """Stores the data of a lesson request"""
+
+    time_availability = models.TimeField(blank=False)
+
+    day_availability = models.IntegerField(choices=settings.DAYS_OF_THE_WEEK, blank=False)
+
+    lesson_interval = models.IntegerField(choices=settings.LESSON_INTERVALS, blank=False)
+
+    lesson_count = models.IntegerField(
+        blank=False,
+        validators=[MinValueValidator(1), MaxValueValidator(20)]
+    )
+
+    lesson_duration = models.IntegerField(choices=settings.LESSON_DURATIONS, blank=False)
+
+    preferred_teacher = models.CharField(blank=True, max_length=50)
+
+    instrument = models.ForeignKey(Instrument, on_delete=models.CASCADE, blank=False)
+
     student = models.ForeignKey(Student, on_delete=models.CASCADE, blank=False)
+
     is_approved = models.BooleanField(default=False)
 
     @property
@@ -126,7 +143,7 @@ class Request(models.Model):
 
         lesson_datetime = self.get_date_from_weekday(day, time)
 
-        for i in range(lesson_count):
+        for _ in range(lesson_count):
             lesson = Lesson(
                 teacher=teacher, 
                 student=self.student, 

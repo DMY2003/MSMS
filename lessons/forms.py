@@ -145,41 +145,15 @@ class AdminRequestForm(forms.Form):
         choices = settings.LESSON_INTERVALS,
     )   
 
-
-class MyModelChoiceField(ModelChoiceField):
-    def label_from_instance(self, obj):
-        return obj.name
-
-
-class NoInput(forms.Widget):
-    input_type = "hidden"
-    template_name = ""
-
-    def render(self, name, value, attrs=None, renderer=None):
-        return ""
-
-
 class RequestForm(forms.ModelForm):
-    time_availability = forms.TimeField(widget=forms.TimeInput(attrs={'type': 'time'}))
-    day_availability = forms.CharField(label="Day of the week")
-    lesson_interval = forms.CharField(label='Interval', widget=forms.Select(choices=[(1, 1), (2, 2)]))
-    lesson_count = forms.IntegerField(label="Number of Lessons")
-    lesson_duration = forms.IntegerField(label="Duration")
-    preferred_teacher = forms.CharField(label="Preferred Teacher")
-    instrument = MyModelChoiceField(queryset=Instrument.objects.all(), required=True)
-    student = forms.CharField(label="", required=False, widget=NoInput)
-
     class Meta:
         model = Request
-        exclude = ['is_approved']
+        fields = [
+            "time_availability", "day_availability", "lesson_interval",
+            "lesson_count", "lesson_duration", "preferred_teacher", 
+            "instrument"
+        ]
 
-    def clean(self):
-        cleaned_data = super(RequestForm, self).clean()
-
-        student_id = self.data.get("student")
-        cleaned_data["student"] = Student.objects.get(id=student_id)
-
-        return cleaned_data
 
 class AdminLessonForm(forms.ModelForm):
     """Implements a form for administrators to edit lessons"""
