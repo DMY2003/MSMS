@@ -1,7 +1,16 @@
 <div class="card p-3 mb-5">
-    <h3>
+    <div class="d-flex justify-content-between w-100 align-items-center mb-2">
+      <h3>
         {{request_type}}
-    </h3>
+      </h3>
+      {% if requests == ongoing_requests %}
+        <a class="btn btn-primary btn-sm" href="{% url 'student_request_create' %}">
+          Make a request
+        </a>
+      {% endif %}
+
+    </div>
+
     <table class="table">
         <thead>
           <tr>
