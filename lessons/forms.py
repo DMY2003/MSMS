@@ -165,7 +165,7 @@ class RequestForm(forms.ModelForm):
     lesson_interval = forms.CharField(label='Interval', widget=forms.Select(choices=[(1, 1), (2, 2)]))
     lesson_count = forms.IntegerField(label="Number of Lessons")
     lesson_duration = forms.IntegerField(label="Duration")
-    preferred_teacher = forms.CharField(label="Preferred Teacher")
+    preferred_teacher = forms.CharField(label="Preferred Teacher", required=False)
     instrument = MyModelChoiceField(queryset=Instrument.objects.all(), required=True)
     student = forms.CharField(label="", required=False, widget=NoInput)
 

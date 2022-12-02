@@ -1,0 +1,23 @@
+[
+    {
+        "model": "lessons.instrument",
+        "pk": 1,
+        "fields": {
+            "name": "Piano"
+        }
+    },
+    {
+        "model": "lessons.instrument",
+        "pk": 2,
+        "fields": {
+            "name": "Guitar"
+        }
+    },
+    {
+        "model": "lessons.instrument",
+        "pk": 3,
+        "fields": {
+            "name": "Violin"
+        }
+    }
+]

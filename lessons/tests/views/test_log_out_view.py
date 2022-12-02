@@ -7,14 +7,11 @@ from lessons.tests.helper import LogInTester
 class LogOutViewTestCase(TestCase, LogInTester):
     """Tests of the log-out view."""
 
+    fixtures = ['lessons/tests/fixtures/default_student.json']
+
     def setUp(self):
         self.url = reverse('log_out')
-        self.user = Student.objects.create_user(
-            email='johndoe@example.org',
-            first_name='John',
-            last_name='Doe',
-            password='Password123',
-        )
+        self.user = Student.objects.get(email='johndoe@example.org')
 
     def test_log_out_url(self):
         self.assertEqual(self.url,'/log_out/')
