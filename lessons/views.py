@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
-from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordForm, AdminLessonForm, StudentRequestForm, ManageAdminsForm
+from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordForm, AdminLessonForm, StudentRequestForm, CreateAdminsForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .models import Request, Lesson, Student
+from .models import Request, Lesson, Student, User
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
 
@@ -207,16 +207,24 @@ def admin_lesson_delete(request, lesson_id):
     messages.add_message(request, messages.ERROR, "The lesson has been successfully deleted!")
     return redirect("admin_lessons")
     
-def manage_admins(request):
+def create_admins(request):
     if request.method == 'POST':
-        form = ManageAdminsForm(request.POST)
+        form = CreateAdminsForm(request.POST)
         if form.is_valid():
             form.save()
             messages.add_message(request, messages.SUCCESS, "Account created!")
             return redirect('manage_admins')
     else:
-        form = ManageAdminsForm()
-    return render(request, 'manage_admins.html', {'form': form})
+        form = CreateAdminsForm()
+    return render(request, 'create_admins.html', {'form': form})
+
+
+def manage_admins(request):
+    response_data = {
+        "administrators_table": User.objects.filter(role="Administrator")
+    }
+
+    return render(request, 'manage_admins.html', response_data)
 
 def student_request_create(request):
     """Handles the creation of a request through the student request form"""

@@ -84,6 +84,8 @@ class PasswordForm(forms.Form):
 class LogInForm(forms.Form):
     email = forms.CharField(label="Email")
     password = forms.CharField(label="Password", widget=forms.PasswordInput())
+
+
 class StudentRequestForm(forms.ModelForm):
     class Meta:
         model = Request
@@ -95,6 +97,7 @@ class StudentRequestForm(forms.ModelForm):
         widgets = {
             "time_availability": forms.TimeInput(attrs={'type': 'time'})
         }
+
 
 class AdminRequestForm(forms.ModelForm):
     class Meta:
@@ -121,7 +124,8 @@ class AdminLessonForm(forms.ModelForm):
 
     # date = forms.DateTimeField(label="Edit date")
 
-class ManageAdminsForm(forms.ModelForm):
+
+class CreateAdminsForm(forms.ModelForm):
     class Meta:
         model = Administrator
         fields = {"first_name", "last_name", "email"}
@@ -159,3 +163,5 @@ class ManageAdminsForm(forms.ModelForm):
         return user
 
     field_order = ["first_name", "last_name", "email", "new_password", "confirm_password"]
+
+
