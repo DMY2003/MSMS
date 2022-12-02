@@ -36,6 +36,7 @@ urlpatterns = [
 
     # path('administrator/transactions', views.admin_transactions, name='admin_transactions'),
     path('requests/', views.requests, name='requests'),
+    path('requests/delete_lesson/<int:lesson_id>', views.student_req_delete, name='student_request_delete'),
     path('lessons/', views.lessons, name='lessons'),
     path('transactions/', views.transactions, name='transactions'),
     path('newrequest/', views.student_request, name='student-request'),
