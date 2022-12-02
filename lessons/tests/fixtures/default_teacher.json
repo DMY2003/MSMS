@@ -5,7 +5,7 @@
         "fields": {
             "first_name": "Tony",
             "last_name": "Black",
-            "username": "",
+            "username": "tony_black@email.com",
             "email": "tony_black@email.com",
             "role": "Teacher",
             "password": "pbkdf2_sha256$260000$4BNvFuAWoTT1XVU8D6hCay$KqDCG+bHl8TwYcvA60SGhOMluAheVOnF1PMz0wClilc=",

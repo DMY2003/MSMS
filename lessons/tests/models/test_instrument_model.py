@@ -1,9 +1,9 @@
 """Unit tests of the Instrument model."""
 from django.core.exceptions import ValidationError
 from django.test import TestCase
-from lessons.models import Request, Lesson, Student, User, Teacher, Instrument
+from lessons.models import Instrument
 
-class LessonModelTestCase(TestCase):
+class InstrumentModelTestCase(TestCase):
 
     fixtures = [
         'lessons/tests/fixtures/default_student.json',
