@@ -10,9 +10,13 @@ from django.contrib.auth.decorators import login_required
 def login_prohibited(function):
     def wrap(request, *args, **kwargs):
         if request.user.is_authenticated:
-            return redirect('student_requests')
+            role = request.user.role 
+            if role == "Administrator":
+                return redirect('admin_requests')
+            else:
+                return redirect('student_requests')
         else:
-            return redirect('log_in')
+            return function(request, *args, **kwargs)
 
     wrap.__doc__ = function.__doc__
     wrap.__name__ = function.__name__
@@ -24,6 +28,7 @@ def home(request):
     return render(request, 'home.html')
 
 
+@login_prohibited
 def sign_up(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -35,6 +40,8 @@ def sign_up(request):
         form = SignUpForm()
     return render(request, 'sign_up.html', {'form': form})
 
+
+@login_prohibited
 def log_in(request):
     if request.method == 'POST':
         form = LogInForm(request.POST)
@@ -44,7 +51,7 @@ def log_in(request):
             user = authenticate(email=email, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('requests')
+                return redirect('student_requests')
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
     form = LogInForm()
     return render(request, 'log_in.html', {'form': form})
@@ -148,7 +155,7 @@ def admin_request(request, request_id):
 
     return render(request, 'admin_request.html', {'form': form, 'request': lesson_request})
 
-@login_prohibited
+
 def admin_requests(request):
     response_data = {
         "form": AdminRequestForm(),
@@ -158,7 +165,7 @@ def admin_requests(request):
 
     return render(request, 'admin_requests.html', response_data)
 
-@login_prohibited
+
 def admin_lessons(request):
     """Handles the display of lessons"""
     name_search = request.GET.get('name_search', None)
@@ -179,7 +186,7 @@ def admin_lessons(request):
     }
     return render(request, 'admin_lessons.html', response_data)
 
-@login_prohibited
+
 def admin_lesson(request, lesson_id):
     """Handles the display and updating of a particular lesson"""
     lesson = Lesson.objects.get(id=lesson_id)
@@ -198,7 +205,7 @@ def admin_lesson(request, lesson_id):
     }
     return render(request, 'admin_lesson.html', response_data)
 
-@login_prohibited
+
 def admin_lesson_delete(request, lesson_id):
     """Handles the deletion of a particular lesson"""
     lesson = Lesson.objects.get(id=lesson_id)
@@ -207,7 +214,6 @@ def admin_lesson_delete(request, lesson_id):
     messages.add_message(request, messages.ERROR, "The lesson has been successfully deleted!")
     return redirect("admin_lessons")
     
-@login_prohibited
 def manage_admins(request):
     if request.method == 'POST':
         form = ManageAdminsForm(request.POST)
@@ -219,7 +225,6 @@ def manage_admins(request):
         form = ManageAdminsForm()
     return render(request, 'manage_admins.html', {'form': form})
 
-@login_prohibited
 def student_request_create(request):
     """Handles the creation of a request through the student request form"""
     form = StudentRequestForm()
@@ -235,7 +240,6 @@ def student_request_create(request):
 
     return render(request, 'student_request_create.html', {'form': form})
 
-@login_prohibited
 def student_request_update(request, request_id):
     """Handles the updating of a request through the student request form"""
     lesson_request = Request.objects.get(pk=request_id)
@@ -260,7 +264,8 @@ def student_request_update(request, request_id):
 
     return render(request, 'student_request_update.html', response_data)
 
-@login_prohibited
+
+
 def student_request_delete(request, request_id):
     lesson_request = Request.objects.get(id=request_id)
     if lesson_request:
