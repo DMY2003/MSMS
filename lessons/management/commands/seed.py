@@ -108,6 +108,7 @@ class Command(BaseCommand):
         self.stdout.write('seeding requests...')
         students = list(Student.objects.all())
         instruments = list(Instrument.objects.all())
+        teachers = list(Teacher.objects.all())
 
         for _ in students:
             req_made = bool(random.getrandbits(1))
@@ -124,6 +125,7 @@ class Command(BaseCommand):
                                            day_availability=day_availability,
                                            lesson_count=les_count,
                                            lesson_duration=duration,
+                                           lesson_interval=1,
                                            preferred_teacher=preferred_teacher,
                                            instrument=random.choice(instruments),
                                            student=random.choice(students),

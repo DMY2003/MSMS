@@ -111,7 +111,7 @@ class StudentRequestForm(forms.ModelForm):
         model = Request
 
         exclude = [
-            "student", "is_approved"
+            "student", "is_approved", "teacher"
         ]
 
         widgets = {
@@ -130,7 +130,7 @@ class AdminRequestForm(forms.ModelForm):
             "time_availability": forms.TimeInput(attrs={'type': 'time'})
         }
 
-
+    teacher = forms.ModelChoiceField(queryset=Teacher.objects.all(), blank=False)
 
 class AdminLessonForm(forms.ModelForm):
     """Implements a form for administrators to edit lessons"""

@@ -129,7 +129,7 @@ class Request(models.Model):
         today = datetime.datetime.combine(today, time)
         return today + datetime.timedelta(days=today.weekday() - weekday)
 
-    def generate_lessons(self, form):
+    def generate_lessons(self, teacher):
         """Generates lessons on the provided day/time at weekly intervals"""
         self.is_approved = True
 
@@ -140,7 +140,7 @@ class Request(models.Model):
 
         for _ in range(self.lesson_count):
             lesson = Lesson(
-                teacher=self.teacher, 
+                teacher=teacher, 
                 student=self.student, 
                 date=lesson_datetime, 
                 instrument=self.instrument,
