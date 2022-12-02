@@ -1,0 +1,17 @@
+[
+    {
+        "model": "lessons.request",
+        "pk": 2,
+        "fields": {
+            "time_availability": "12:30:00",
+            "day_availability": 4,
+            "lesson_interval": 2,
+            "lesson_count": 5,
+            "lesson_duration": 45,
+            "preferred_teacher": "Tommy Shelby",
+            "instrument": 2,
+            "student": 2,
+            "is_approved": false
+        }
+    }
+]
