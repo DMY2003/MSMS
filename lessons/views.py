@@ -134,7 +134,7 @@ def admin_request_delete(request, request_id):
     messages.add_message(request, messages.ERROR, "The request has been successfully deleted!")
     return redirect("admin_requests")
 
-
+@login_required
 def admin_request(request, request_id):
     """Handles the display of a particular admin request and the functionality to
     generate lessons from it"""
@@ -186,7 +186,7 @@ def admin_lessons(request):
     }
     return render(request, 'admin_lessons.html', response_data)
 
-
+@login_required
 def admin_lesson(request, lesson_id):
     """Handles the display and updating of a particular lesson"""
     lesson = Lesson.objects.get(id=lesson_id)
@@ -205,7 +205,7 @@ def admin_lesson(request, lesson_id):
     }
     return render(request, 'admin_lesson.html', response_data)
 
-
+@login_required
 def admin_lesson_delete(request, lesson_id):
     """Handles the deletion of a particular lesson"""
     lesson = Lesson.objects.get(id=lesson_id)
@@ -240,6 +240,7 @@ def student_request_create(request):
 
     return render(request, 'student_request_create.html', {'form': form})
 
+@login_required
 def student_request_update(request, request_id):
     """Handles the updating of a request through the student request form"""
     lesson_request = Request.objects.get(pk=request_id)
@@ -264,8 +265,7 @@ def student_request_update(request, request_id):
 
     return render(request, 'student_request_update.html', response_data)
 
-
-
+@login_required
 def student_request_delete(request, request_id):
     lesson_request = Request.objects.get(id=request_id)
     if lesson_request:
