@@ -111,7 +111,7 @@ class StudentRequestForm(forms.ModelForm):
         model = Request
 
         exclude = [
-            "student", "is_approved", "teacher"
+            "is_approved", "teacher"
         ]
 
         widgets = {

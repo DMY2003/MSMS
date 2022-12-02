@@ -125,7 +125,7 @@ def admin_request(request, request_id):
             lesson_request.generate_lessons(
                 form.cleaned_data.get("teacher")
             )
-            
+
             return redirect("admin_requests")
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
     else:
@@ -201,12 +201,14 @@ def student_request(request, form=None):
         user = request.user
         post_values = request.POST.copy()
 
-        post_values['student'] = user.id
+        post_values['student'] = user
+
         form = StudentRequestForm(post_values)
 
         if form.is_valid():
+            print("1")
             form.save()
-
+            print("2")
             return redirect('requests')
 
     return render(request, 'student_request_form.html', {'form': form})
