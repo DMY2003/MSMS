@@ -12,12 +12,6 @@ class UserModelTestCase(TestCase):
         ]
 
     def setUp(self):
-        # self.user = Student.objects.create_user(
-        #     first_name='John',
-        #     last_name='Doe',
-        #     email='johndoe@example.org',
-        #     password='Password123'
-        # )
         self.user = Student.objects.get(username='johndoe@example.org')
 
     # default test
