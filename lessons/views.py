@@ -5,6 +5,7 @@ from django.contrib import messages
 from .models import Request, Lesson, Student
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, EmptyPage
 
 def login_prohibited(function):
     def wrap(request, *args, **kwargs):
@@ -162,7 +163,11 @@ def admin_requests(request):
 def admin_lessons(request):
     """Handles the display of lessons"""
     name_search = request.GET.get('name_search', None)
+    page_number = request.GET.get('page', 1) 
+
     lessons = Lesson.objects.all()
+
+    # Filters lessons by the name provided
     if name_search:
         names = name_search.split()
         first_name = names[0] if len(names) >= 1 else ''
@@ -172,8 +177,15 @@ def admin_lessons(request):
             student__last_name__contains=second_name
         )
 
+    paginator = Paginator(lessons, 9)
+    
+    try:
+        lessons_page = paginator.page(page_number)
+    except EmptyPage:
+        lessons_page = []
+
     response_data = {
-        "lessons": lessons,
+        "lessons": lessons_page,
         "lesson_count": len(lessons),
         "name_search": name_search
     }
