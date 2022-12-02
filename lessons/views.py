@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
-from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordForm, AdminLessonForm, StudentRequestForm, CreateAdminsForm
+from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordForm, AdminLessonForm, StudentRequestForm, CreateAdminsForm, AccountForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .models import Request, Lesson, Student, User
+from .models import Request, Lesson, Student, Administrator
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
 
@@ -148,7 +148,7 @@ def admin_request(request, request_id):
 
     return render(request, 'admin_request.html', {'form': form, 'request': lesson_request})
 
-
+@login_required
 def admin_requests(request):
     response_data = {
         "form": AdminRequestForm(),
@@ -158,7 +158,7 @@ def admin_requests(request):
 
     return render(request, 'admin_requests.html', response_data)
 
-
+@login_required
 def admin_lessons(request):
     """Handles the display of lessons"""
     name_search = request.GET.get('name_search', None)
@@ -206,8 +206,9 @@ def admin_lesson_delete(request, lesson_id):
         lesson.delete()
     messages.add_message(request, messages.ERROR, "The lesson has been successfully deleted!")
     return redirect("admin_lessons")
-    
-def create_admins(request):
+
+@login_required
+def create_admin(request):
     if request.method == 'POST':
         form = CreateAdminsForm(request.POST)
         if form.is_valid():
@@ -216,16 +217,47 @@ def create_admins(request):
             return redirect('manage_admins')
     else:
         form = CreateAdminsForm()
-    return render(request, 'create_admins.html', {'form': form})
+    return render(request, 'create_admin.html', {'form': form})
 
-
+@login_required
 def manage_admins(request):
-    response_data = {
-        "administrators_table": User.objects.filter(role="Administrator")
-    }
+    email_search = request.GET.get('email_search', None)
+    accounts = Administrator.objects.all()
+    if email_search:
+        accounts = Administrator.objects.filter(
+            email = email_search
+        )
 
+    response_data = {
+        "accounts": accounts,
+        "lesson_count": len(accounts),
+        "email_search": email_search
+    }
     return render(request, 'manage_admins.html', response_data)
 
+@login_required
+def edit_admin(request, admin_id):
+    current_user = Administrator.objects.get(id=admin_id)
+    if request.method == 'POST':
+        form = AccountForm(request.POST, instance=current_user)
+        if form.is_valid():
+            form.save()
+            messages.add_message(request, messages.SUCCESS, "Account updated!")
+            return redirect('manage_admins')
+    else:
+        form = AccountForm(instance=current_user)
+    return render(request, 'edit_account.html', {'form': form})
+
+@login_required
+def manage_admin_delete(request, admin_id):
+    """Handles the deletion of a particular lesson"""
+    admin = Administrator.objects.get(id=admin_id)
+    if admin:
+        admin.delete()
+    messages.add_message(request, messages.ERROR, "The account has been successfully deleted!")
+    return redirect("manage_admins")
+
+@login_required
 def student_request_create(request):
     """Handles the creation of a request through the student request form"""
     form = StudentRequestForm()

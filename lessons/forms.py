@@ -165,3 +165,11 @@ class CreateAdminsForm(forms.ModelForm):
     field_order = ["first_name", "last_name", "email", "new_password", "confirm_password"]
 
 
+class AccountForm(forms.ModelForm):
+    """Form to update user profiles."""
+
+    class Meta:
+        """Form options."""
+
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'role']

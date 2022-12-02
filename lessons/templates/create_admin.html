@@ -4,8 +4,8 @@
 <div class="row">
     <div class="col-sm-12 col-md-6 offset-md-3">
         <div class="card p-3">
-          <h1>Create new Administrator account</h1>
-            <form action="{% url 'create_admins' %}" method="post">
+          <h1>Create a new Administrator account</h1>
+            <form action="{% url 'create_admin' %}" method="post">
               {% csrf_token %}
               {% include 'partials/bootstrap_form.html' with form=form %}
                 <a class="btn btn-primary" href="{% url 'manage_admins' %}">
