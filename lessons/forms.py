@@ -1,5 +1,5 @@
 from django import forms
-from lessons.models import User, Student, Teacher, Instrument, Request, Lesson
+from lessons.models import User, Student, Administrator, Teacher, Instrument, Request, Lesson
 from django.forms import ModelChoiceField
 from django.core.validators import RegexValidator
 from django.conf import settings
@@ -141,4 +141,41 @@ class AdminLessonForm(forms.ModelForm):
 
     # date = forms.DateTimeField(label="Edit date")
 
+class ManageAdminsForm(forms.ModelForm):
+    class Meta:
+        model = Administrator
+        fields = {"first_name", "last_name", "email"}
 
+    new_password = forms.CharField(
+        label="Password",
+        widget=forms.PasswordInput(),
+        validators=[
+            RegexValidator(
+                regex=r'^(?=.*[A-Z](?=.*[a-z])(?=.*[0-9])).*$',
+                message="Password must contain an uppercase character, a lowercase character and a number."
+            )
+        ]
+    )
+    confirm_password = forms.CharField(label="Confirm password", widget=forms.PasswordInput())
+
+    def clean(self):
+        super().clean()
+        new_password = self.cleaned_data.get("new_password")
+        confirm_password = self.cleaned_data.get("confirm_password")
+        if new_password != confirm_password:
+            self.add_error("confirm_password", "Confirmation does not match password.")
+
+    def save(self):
+        super().save(commit=False)
+        user = Student.objects.create_user(
+            username=self.cleaned_data.get("email"),
+            first_name=self.cleaned_data.get("first_name"),
+            last_name=self.cleaned_data.get("last_name"),
+            email=self.cleaned_data.get("email"),
+            password=self.cleaned_data.get("new_password"),
+        )
+        user.role = "Administrator"
+        user.save()
+        return user
+
+    field_order = ["first_name", "last_name", "email", "new_password", "confirm_password"]

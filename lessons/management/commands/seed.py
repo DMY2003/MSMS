@@ -2,10 +2,11 @@ from sys import stdout
 from django.contrib.auth.hashers import make_password
 from django.core.management.base import BaseCommand, CommandError
 from faker import Faker
-from lessons.models import User, Student, Teacher, Administrator, Lesson, Invoice, Instrument, Request
+from lessons.models import User, Student, Teacher, Administrator, Lesson, Invoice, Instrument, Request, Director
 import random
 from django.conf import settings
 import datetime
+
 
 class Command(BaseCommand):
 
@@ -23,7 +24,57 @@ class Command(BaseCommand):
         self.populate_lessons()
         self.populate_invoices()
         self.create_superuser()
+        self.create_test_accs()
         self.stdout.write('done.')
+
+    def create_test_accs(self):
+        self.stdout.write('creating test accounts...')
+        # Student
+        student_fname = "John"
+        student_lname = "Doe"
+        email = "john.doe@example.org"
+        balance = self.faker.random_int(min=0, max=500)
+        password = "Password123"
+        last_lgn = self.faker.past_datetime()
+
+        Student.objects.create(first_name=student_fname,
+                               last_name=student_lname,
+                               email=email,
+                               username=email,
+                               balance=balance,
+                               password=make_password(password, salt=None, hasher='default'),
+                               last_login=last_lgn,
+                               role="Student")
+        # Admin
+        admin_fname = "Petra"
+        admin_lname = "Pickles"
+        email = "petra.pickles@example.org"
+        password = "Password123"
+        last_lgn = self.faker.past_datetime()
+        Administrator.objects.create(first_name=admin_fname,
+                                     last_name=admin_lname,
+                                     email=email,
+                                     username=email,
+                                     password=make_password(password, salt=None, hasher='default'),
+                                     last_login=last_lgn,
+                                     is_staff=1,
+                                     is_superuser=1,
+                                     role="Administrator")
+        # Director
+        dir_fname = "Marty"
+        dir_lname = "Major"
+        email = "marty.major@example.org"
+        password = "Password123"
+        last_lgn = self.faker.past_datetime()
+        Director.objects.create(first_name=dir_fname,
+                                last_name=dir_lname,
+                                email=email,
+                                username=email,
+                                password=make_password(password, salt=None, hasher='default'),
+                                last_login=last_lgn,
+                                is_staff=1,
+                                is_superuser=1,
+                                role="Director")
 
     def create_superuser(self):
         self.stdout.write('creating superuser...')
@@ -35,7 +86,7 @@ class Command(BaseCommand):
         )
 
         user.is_superuser = True
-        user.is_staff = True 
+        user.is_staff = True
         user.is_admin = True
         user.role = "Administrator"
         user.save()
@@ -43,20 +94,20 @@ class Command(BaseCommand):
     def populate_admin(self):
         self.stdout.write('seeding admin...')
         for i in range(10):
-                admin_fname = self.faker.first_name()
-                admin_lname = self.faker.last_name()
-                email = str(i) + self.faker.free_email()
-                password = self.faker.password(length=12)
-                last_lgn = self.faker.past_datetime()
-                Administrator.objects.create(first_name=admin_fname,
-                                             last_name=admin_lname,
-                                             email=email,
-                                             username=email,
-                                             password=make_password(password, salt=None, hasher='default'),
-                                             last_login=last_lgn,
-                                             is_staff=1,
-                                             is_superuser=1,
-                                             role="Administrator")
+            admin_fname = self.faker.first_name()
+            admin_lname = self.faker.last_name()
+            email = str(i) + self.faker.free_email()
+            password = self.faker.password(length=12)
+            last_lgn = self.faker.past_datetime()
+            Administrator.objects.create(first_name=admin_fname,
+                                         last_name=admin_lname,
+                                         email=email,
+                                         username=email,
+                                         password=make_password(password, salt=None, hasher='default'),
+                                         last_login=last_lgn,
+                                         is_staff=1,
+                                         is_superuser=1,
+                                         role="Administrator")
 
     def populate_teacher(self):
         self.stdout.write('seeding teacher...')
@@ -156,10 +207,3 @@ class Command(BaseCommand):
             lesson = Lesson.objects.get(id=each)
 
             Invoice.objects.create(price=price, paid=paid, lesson=lesson)
-
-
-
-
-
-
-
