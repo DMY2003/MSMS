@@ -150,6 +150,8 @@ class Request(models.Model):
 
             lesson_datetime += datetime.timedelta(weeks=self.lesson_interval)
 
+        self.save()
+
 
 class Invoice(models.Model):
     price = models.IntegerField(blank=False)

@@ -148,7 +148,7 @@ def admin_request(request, request_id):
                 form.cleaned_data.get("teacher")
             )
 
-            messages.add_message(request, messages.ERROR, "Lessons successfuly booked!")
+            messages.add_message(request, messages.SUCCESS, "Lessons successfuly booked!")
             return redirect("admin_requests")
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
     else:
