@@ -111,12 +111,15 @@ class StudentRequestForm(forms.ModelForm):
         model = Request
 
         exclude = [
-            "is_approved", "teacher"
+            "is_approved", "teacher", "student"
         ]
 
         widgets = {
             "time_availability": forms.TimeInput(attrs={'type': 'time'})
         }
+
+
+
 
 class AdminRequestForm(forms.ModelForm):
     class Meta:

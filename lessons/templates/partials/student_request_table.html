@@ -38,7 +38,7 @@
               <td>{{request.availability}}</td>
               {% if requests == ongoing_requests %} 
               <td>
-                  <a class="btn btn-primary btn-sm" href="{% url 'student_request' request.id %}">
+                  <a class="btn btn-primary btn-sm" href="{% url 'student_request_update' request.id %}">
                     Edit
                   </a>
                   <a class="btn btn-danger btn-sm" href="{% url 'student_request_delete' request.id  %}">

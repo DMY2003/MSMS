@@ -113,7 +113,7 @@ class Request(models.Model):
 
     instrument = models.ForeignKey(Instrument, on_delete=models.CASCADE, blank=False)
 
-    student = models.ForeignKey(Student, on_delete=models.CASCADE, blank=False)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, blank=True)
 
     is_approved = models.BooleanField(default=False)
 

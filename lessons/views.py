@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordForm, AdminLessonForm, StudentRequestForm, ManageAdminsForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .models import Request, Lesson
+from .models import Request, Lesson, Student
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
 
@@ -222,22 +222,22 @@ def manage_admins(request):
     return render(request, 'manage_admins.html', {'form': form})
 
 def student_request_create(request):
+    """Handles the creation of a request through the student request form"""
     form = StudentRequestForm()
     if request.method == 'POST':
-        user = request.user
-        post_values = request.POST.copy()
-
-        post_values['student'] = user
-
-        form = StudentRequestForm(post_values)
-
+        form = StudentRequestForm(request.POST)
+        
         if form.is_valid():
-            form.save()
-            return redirect('requests')
+            lesson_request = form.save(commit=False)
+            student = Student.objects.get(email=request.user.email)
+            lesson_request.student = student
+            lesson_request.save()
+            return redirect('student_requests')
 
     return render(request, 'student_request_create.html', {'form': form})
 
 def student_request_update(request, request_id):
+    """Handles the updating of a request through the student request form"""
     pass
 
 
