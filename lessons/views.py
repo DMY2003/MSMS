@@ -238,7 +238,21 @@ def student_request_create(request):
 
 def student_request_update(request, request_id):
     """Handles the updating of a request through the student request form"""
-    pass
+    lesson_request = Request.objects.get(pk=request_id)
+    form = StudentRequestForm(instance=lesson_request)
+
+    response_data = {
+        "form": form
+    }
+
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+            messages.add_message(request, messages.SUCCESS, "Your request was successfully updated!")
+            return render(request, 'student_request_update.html', response_data)
+
+    return render(request, 'student_request_update.html', response_data)
+
 
 
 def student_request_delete(request, request_id):
