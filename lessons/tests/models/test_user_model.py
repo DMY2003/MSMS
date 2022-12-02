@@ -4,24 +4,21 @@ from django.test import TestCase
 from lessons.models import User, Student
 
 
-def _create_second_user():
-    user = Student.objects.create_user(
-        first_name='Jane',
-        last_name='Doe',
-        email='janedoe@example.org',
-        password='Password123',
-    )
-    return user
-
-
 class UserModelTestCase(TestCase):
+
+    fixtures = [
+        'lessons/tests/fixtures/default_student.json',
+        'lessons/tests/fixtures/other_students.json',
+        ]
+
     def setUp(self):
-        self.user = Student.objects.create_user(
-            first_name='John',
-            last_name='Doe',
-            email='johndoe@example.org',
-            password='Password123'
-        )
+        # self.user = Student.objects.create_user(
+        #     first_name='John',
+        #     last_name='Doe',
+        #     email='johndoe@example.org',
+        #     password='Password123'
+        # )
+        self.user = Student.objects.get(username='johndoe@example.org')
 
     # default test
     def test_valid_user(self):
@@ -33,7 +30,7 @@ class UserModelTestCase(TestCase):
         self._assert_user_is_invalid()
 
     def test_first_name_need_not_be_unique(self):
-        second_user = _create_second_user()
+        second_user = Student.objects.get(username='janedoe@example.org')
         self.user.first_name = second_user.first_name
         self._assert_user_is_valid()
 
@@ -51,7 +48,7 @@ class UserModelTestCase(TestCase):
         self._assert_user_is_invalid()
 
     def test_last_name_need_not_be_unique(self):
-        second_user = _create_second_user()
+        second_user = Student.objects.get(username='janedoe@example.org')
         self.user.last_name = second_user.last_name
         self._assert_user_is_valid()
 
@@ -69,7 +66,7 @@ class UserModelTestCase(TestCase):
         self._assert_user_is_invalid()
 
     def test_email_must_be_unique(self):
-        second_user = _create_second_user()
+        second_user = Student.objects.get(username='janedoe@example.org')
         self.user.email = second_user.email
         self._assert_user_is_invalid()
 
