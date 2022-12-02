@@ -5,6 +5,7 @@ from django.core.validators import RegexValidator
 from django.conf import settings
 import datetime
 
+
 class SignUpForm(forms.ModelForm):
     class Meta:
         model = Student
@@ -84,12 +85,13 @@ class LogInForm(forms.Form):
     email = forms.CharField(label="Email")
     password = forms.CharField(label="Password", widget=forms.PasswordInput())
 
+
 class AdminLessonForm(forms.Form):
     """Handles the input for updating a lesson"""
 
     time = forms.TimeField(
         widget=forms.TimeInput(attrs={'type': 'time'})
-    ) 
+    )
 
     teacher = forms.ModelChoiceField(
         label="Assigned teacher",
@@ -99,14 +101,15 @@ class AdminLessonForm(forms.Form):
 
     instrument = forms.ModelChoiceField(
         label="Assigned instrument",
-        queryset=Instrument.objects.all(),       
+        queryset=Instrument.objects.all(),
     )
 
     lesson_duration = forms.ChoiceField(
         label="Lesson duration",
         widget=forms.Select(),
-        choices = settings.LESSON_DURATIONS,
-    )   
+        choices=settings.LESSON_DURATIONS,
+    )
+
 
 class AdminRequestForm(forms.Form):
     """Handles the creation of lessons through the help of a lesson request"""
@@ -114,8 +117,8 @@ class AdminRequestForm(forms.Form):
     day = forms.ChoiceField(
         label="Day of the week",
         widget=forms.Select(),
-        choices = settings.DAYS_OF_THE_WEEK,
-    )   
+        choices=settings.DAYS_OF_THE_WEEK,
+    )
 
     time = forms.TimeField(
         widget=forms.TimeInput(attrs={'type': 'time'})
@@ -129,21 +132,21 @@ class AdminRequestForm(forms.Form):
 
     instrument = forms.ModelChoiceField(
         label="Assigned instrument",
-        queryset=Instrument.objects.all(),       
+        queryset=Instrument.objects.all(),
     )
 
     lesson_count = forms.IntegerField(label="Number of lessons")
     lesson_duration = forms.ChoiceField(
         label="Lesson duration",
         widget=forms.Select(),
-        choices = settings.LESSON_DURATIONS,
-    )   
+        choices=settings.LESSON_DURATIONS,
+    )
 
     lesson_interval = forms.ChoiceField(
         label="Lesson interval",
         widget=forms.Select(),
-        choices = settings.LESSON_INTERVALS,
-    )   
+        choices=settings.LESSON_INTERVALS,
+    )
 
 
 class MyModelChoiceField(ModelChoiceField):
@@ -181,10 +184,12 @@ class RequestForm(forms.ModelForm):
 
         return cleaned_data
 
+
 class AdminLessonForm(forms.ModelForm):
     """Implements a form for administrators to edit lessons"""
+
     class Meta:
-        model = Lesson 
+        model = Lesson
         fields = ["date", "teacher", "instrument", "duration"]
         widgets = {"date": forms.DateTimeInput(attrs={'type': 'date'})}
 
