@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordForm, AdminLessonForm, RequestForm
+from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordForm, AdminLessonForm, RequestForm, ManageAdminsForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .models import Request, Lesson
@@ -55,7 +55,7 @@ def log_in(request):
 
 def log_out(request):
     logout(request)
-    return redirect('sign_up')
+    return redirect('home')
 
 
 @login_required
@@ -77,16 +77,17 @@ def password(request):
 
 
 @login_required
-def updateProile(request):
+def profile(request):
     current_user = request.user
     if request.method == 'POST':
         form = UserForm(request.POST, instance=current_user)
         if form.is_valid():
             form.save()
+            messages.add_message(request, messages.SUCCESS, "Profile updated!")
             return redirect('requests')
     else:
         form = UserForm(instance=current_user)
-    return render(request, 'update_profile.html', {'form': form})
+    return render(request, 'profile.html', {'form': form})
 
 
 @login_required
@@ -111,6 +112,13 @@ def transactions(request):
         return render(request, 'student_transactions_page.html')
     elif request.user.role == 'Administrator' or request.user.role == 'Director':
         return render(request, 'admin_transactions_page.html')
+
+@login_required
+def lessons(request):
+    if request.user.role == 'Student':
+        return render(request, 'student_lessons_page.html')
+    elif request.user.role == 'Administrator' or request.user.role == 'Director':
+        return redirect('admin_lessons')
 
 
 def admin_request_delete(request, request_id):
@@ -196,13 +204,17 @@ def admin_lesson_delete(request, lesson_id):
         lesson.delete()
     messages.add_message(request, messages.ERROR, "The lesson has been successfully deleted!")
     return redirect("admin_lessons")
-
-
-@login_required
-def lessons(request):
-    if request.user.role == 'Student':
-        return render(request, 'student_lessons_page.html')
-
+    
+def manage_admins(request):
+    if request.method == 'POST':
+        form = ManageAdminsForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.add_message(request, messages.SUCCESS, "Account created!")
+            return redirect('manage_admins')
+    else:
+        form = ManageAdminsForm()
+    return render(request, 'manage_admins.html', {'form': form})
 
 def student_request(request, form=None):
     form = RequestForm
