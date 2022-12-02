@@ -239,9 +239,12 @@ def student_request_create(request):
 
     return render(request, 'student_request_form.html', {'form': form})
 
+def student_request(request):
+    pass
 
-def student_req_delete(request, lesson_id):
-    lesson_request = Request.objects.get(id=lesson_id)
+
+def student_request_delete(request, student_id):
+    lesson_request = Request.objects.get(id=student_id)
     if lesson_request:
         lesson_request.delete()
     return redirect('requests')

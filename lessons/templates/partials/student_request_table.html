@@ -29,8 +29,12 @@
               <td>{{request.availability}}</td>
               {% if requests == ongoing_requests %} 
               <td>
-                  <a class="btn btn-outline-primary"><i class="fa-solid fa-pen-to-square"></i></a>
-                  <a class="btn btn-outline-danger" href="{% url 'student_request_delete' request.id  %}"><i class="fa-solid fa-trash"></i></a>
+                  <a class="btn btn-primary btn-sm" href="{% url 'student_request' request.id %}">
+                    Edit
+                  </a>
+                  <a class="btn btn-danger btn-sm" href="{% url 'student_request_delete' request.id  %}">
+                    Delete
+                  </a>
               </td>
               {% endif %}
             </tr>

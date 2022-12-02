@@ -36,9 +36,10 @@ urlpatterns = [
     path('manage_admins', views.manage_admins, name='manage_admins'),
 
     path('requests/', views.student_requests, name='student_requests'),
-    path('requests/delete_lesson/<int:lesson_id>', views.student_req_delete, name='student_request_delete'),
+    path('requests/create', views.student_request_create, name='student_request_create'),
+    path('requests/<int:request_id>', views.student_request, name='student_request'),
+    path('delete_request/<int:request_id>', views.student_request_delete, name='student_request_delete'),
     path('lessons/', views.lessons, name='lessons'),
     path('transactions/', views.transactions, name='transactions'),
-    path('requests/create', views.student_request_create, name='student_request_create'),
 ]
 
