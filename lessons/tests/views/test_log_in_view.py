@@ -45,9 +45,9 @@ class LogInViewTestCase(TestCase, LogInTester):
         form_input = {'email': 'johndoe@example.org', 'password': 'Password123'}
         response = self.client.post(self.url, form_input, follow=True)
         self.assertTrue(self._is_logged_in())
-        response_url = reverse('requests')
+        response_url = reverse('student_requests')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'student_requests_page.html')
+        self.assertTemplateUsed(response, 'student_requests.html')
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list), 0)
 

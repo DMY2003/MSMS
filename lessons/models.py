@@ -133,28 +133,23 @@ class Request(models.Model):
         day_of_the_week = settings.DAYS_OF_THE_WEEK[int(self.day_availability)][1]
         return "%s %s" % (day_of_the_week, self.time_availability)
 
-    def generate_lessons(self, form):
+    def generate_lessons(self, teacher):
         """Generates lessons on the provided day/time at weekly intervals"""
         self.is_approved = True
 
-        teacher = form.cleaned_data.get("teacher")
-        day = int(form.cleaned_data.get("day"))
-        time = form.cleaned_data.get("time")
-        instrument = form.cleaned_data.get("instrument")
-        lesson_count = int(form.cleaned_data.get("lesson_count"))
-        lesson_interval = int(form.cleaned_data.get("lesson_interval"))
-        lesson_duration = int(form.cleaned_data.get("lesson_duration"))
-
-        lesson_datetime = get_date_from_weekday(day, time)
+        lesson_datetime = get_date_from_weekday(
+            self.day_availability, 
+            self.time_availability
+        )
 
         # Generate Lessons for the request
-        for i in range(lesson_count):
+        for i in range(self.lesson_count):
             lesson = Lesson(
                 teacher=teacher,
                 student=self.student,
                 date=lesson_datetime,
-                instrument=instrument,
-                duration=lesson_duration
+                instrument=self.instrument,
+                duration=self.lesson_duration
             )
             lesson.save()
 
@@ -163,7 +158,7 @@ class Request(models.Model):
         self.save()
 
         # Generate Invoices for the lessons
-        price = instrument.base_price * lesson_duration / 60
+        price = self.instrument.base_price * self.lesson_duration / 60
         invoice = Invoice(price=price, lesson=lesson)
         invoice.save()
 

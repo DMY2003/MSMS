@@ -44,21 +44,13 @@ class RequestModelTestCase(TestCase):
         self._assert_request_is_valid()
 
     #day_availability tests
-    def test_day_availability_may_be_blank(self):
+    def test_day_availability_cannot_be_blank(self):
         self.request.day_availability = ''
-        self._assert_request_is_valid()
+        self._assert_request_is_invalid()
     
     def test_day_availability_need_not_be_unique(self):
         second_request = Request.objects.get(id=2)
         self.request.day_availability = second_request.day_availability
-        self._assert_request_is_valid()
-
-    def test_day_availability_must_be_an_integer(self):
-        self.request.day_availability = 'Monday'
-        self._assert_request_is_invalid()
-        self.request.day_availability = '2'
-        self._assert_request_is_valid()
-        self.request.day_availability = 2
         self._assert_request_is_valid()
 
     #lesson_interval tests
@@ -93,10 +85,6 @@ class RequestModelTestCase(TestCase):
         self._assert_request_is_invalid()
         self.request.lesson_interval = ''
         self._assert_request_is_invalid()
-        self.request.lesson_interval = '3'
-        self._assert_request_is_valid()
-        self.request.lesson_interval = 3
-        self._assert_request_is_valid()
 
     #lesson_duration tests
     def test_lesson_duration_must_not_be_blank(self):
@@ -114,8 +102,8 @@ class RequestModelTestCase(TestCase):
         self.request.lesson_interval = ''
         self._assert_request_is_invalid()
         self.request.lesson_interval = '60'
-        self._assert_request_is_valid()
-        self.request.lesson_interval =60
+        self._assert_request_is_invalid()
+        self.request.lesson_interval =1
         self._assert_request_is_valid()
 
     #preferred_teacher tests

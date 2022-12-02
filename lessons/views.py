@@ -31,7 +31,7 @@ def sign_up(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('requests')
+            return redirect('student_requests')
     else:
         form = SignUpForm()
     return render(request, 'sign_up.html', {'form': form})
