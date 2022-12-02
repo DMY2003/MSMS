@@ -4,7 +4,7 @@
         {% if user.is_authenticated %}
             <div class="ms-auto">
                 {% if user.role == "Student" %}
-                    
+                        
                 {% elif user.role == "Administrator" or user.role == "Director" %}
                     <a class="ml-4" href="{% url 'admin_requests' %}">
                         Requests
