@@ -145,15 +145,15 @@ class Command(BaseCommand):
 
     def populate_instruments(self):
         self.stdout.write('seeding instruments...')
-        instruments = ["Guitar",
-                       "Ukulele",
-                       "Violin",
-                       "Recorder",
-                       "Piano",
-                       "Triangle"]
+        instruments = {"Guitar": 50,
+                       "Ukulele": 50,
+                       "Violin": 50,
+                       "Recorder": 50,
+                       "Piano": 50,
+                       "Triangle": 50}
 
-        for each in instruments:
-            Instrument.objects.create(name=each)
+        for key, value in instruments.items():
+            Instrument.objects.create(name=key, base_price=value)
 
     def populate_requests(self):
         self.stdout.write('seeding requests...')

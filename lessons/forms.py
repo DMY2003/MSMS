@@ -5,6 +5,7 @@ from django.core.validators import RegexValidator
 from django.conf import settings
 import datetime
 
+
 class SignUpForm(forms.ModelForm):
     class Meta:
         model = Student
@@ -83,29 +84,6 @@ class PasswordForm(forms.Form):
 class LogInForm(forms.Form):
     email = forms.CharField(label="Email")
     password = forms.CharField(label="Password", widget=forms.PasswordInput())
-
-# class AdminLessonForm(forms.Form):
-#     """Handles the input for updating a lesson"""
-
-#     time = forms.TimeField(
-#         widget=forms.TimeInput(attrs={'type': 'time'})
-#     ) 
-
-#     teacher = forms.ModelChoiceField(
-#         label="Assigned teacher",
-#         queryset=Teacher.objects.all(),
-#     )
-
-#     instrument = forms.ModelChoiceField(
-#         label="Assigned instrument",
-#         queryset=Instrument.objects.all(),       
-#     )
-
-#     lesson_duration = forms.ChoiceField(
-#         label="Lesson duration",
-#         widget=forms.Select(),
-#         choices = settings.LESSON_DURATIONS,
-#     )   
 class StudentRequestForm(forms.ModelForm):
     class Meta:
         model = Request
@@ -117,9 +95,6 @@ class StudentRequestForm(forms.ModelForm):
         widgets = {
             "time_availability": forms.TimeInput(attrs={'type': 'time'})
         }
-
-
-
 
 class AdminRequestForm(forms.ModelForm):
     class Meta:
@@ -135,10 +110,12 @@ class AdminRequestForm(forms.ModelForm):
 
     teacher = forms.ModelChoiceField(queryset=Teacher.objects.all(), blank=False)
 
+
 class AdminLessonForm(forms.ModelForm):
     """Implements a form for administrators to edit lessons"""
+
     class Meta:
-        model = Lesson 
+        model = Lesson
         fields = ["date", "teacher", "instrument", "duration"]
         widgets = {"date": forms.DateTimeInput(attrs={'type': 'date'})}
 

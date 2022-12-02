@@ -1,0 +1,22 @@
+[
+    {
+        "model": "lessons.User",
+        "pk": 2,
+        "fields": {
+          "first_name": "Jane",
+          "last_name": "Doe",
+          "username": "janedoe@example.org",
+          "email": "janedoe@example.org",
+          "role": "Student",
+          "password": "pbkdf2_sha256$260000$4BNvFuAWoTT1XVU8D6hCay$KqDCG+bHl8TwYcvA60SGhOMluAheVOnF1PMz0wClilc=",
+          "is_active": true
+        }
+      },
+      {
+        "model": "lessons.Student",
+        "pk": 2,
+        "fields": {
+          "user_ptr_id": 2
+        }
+      }
+]

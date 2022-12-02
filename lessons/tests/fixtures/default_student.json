@@ -16,7 +16,8 @@
     "model": "lessons.Student",
     "pk": 1,
     "fields": {
-      "user_ptr_id": 1
+      "user_ptr_id": 1,
+      "balance":100
     }
   }
 ]

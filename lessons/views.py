@@ -6,7 +6,6 @@ from .models import Request, Lesson, Student
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
 
-
 def login_prohibited(function):
     def wrap(request, *args, **kwargs):
         if request.user.is_authenticated:
@@ -17,16 +16,13 @@ def login_prohibited(function):
                 return redirect('student_requests')
         else:
             return function(request, *args, **kwargs)
-
-    wrap.__doc__ = function.__doc__
-    wrap.__name__ = function.__name__
+    wrap.__doc__=function.__doc__
+    wrap.__name__=function.__name__
     return wrap
-
 
 @login_prohibited
 def home(request):
     return render(request, 'home.html')
-
 
 @login_prohibited
 def sign_up(request):
@@ -56,11 +52,9 @@ def log_in(request):
     form = LogInForm()
     return render(request, 'log_in.html', {'form': form})
 
-
 def log_out(request):
     logout(request)
     return redirect('home')
-
 
 @login_required
 def password(request):
@@ -79,7 +73,6 @@ def password(request):
     form = PasswordForm()
     return render(request, 'password.html', {'form': form})
 
-
 @login_required
 def profile(request):
     current_user = request.user
@@ -92,7 +85,6 @@ def profile(request):
     else:
         form = UserForm(instance=current_user)
     return render(request, 'profile.html', {'form': form})
-
 
 @login_required
 def student_requests(request):
