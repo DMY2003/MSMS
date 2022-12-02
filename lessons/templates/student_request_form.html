@@ -1,28 +1,27 @@
 {% extends "base_content.html" %}
 
 {% block content %}
-
-    <div class="container pt-2 pb-4">
-        <div class="card w-75" role="document">
-            <div class="card-body rounded-4 shadow">
-                <div class="modal-header border-bottom-0">
-                    <h1>New Request</h1>
-                </div>
-                <div class="modal-body px-5">
-                    <form method=POST action="">
-                        {% csrf_token %}
-                        {% include 'partials/bootstrap_form.html' with form=form %}
-
-                        <div class="mb-3">
-                            <button type="submit" class="btn btn-primary" value="Submit">Submit</button>
-                            <button type="button" class="btn btn-secondary">Cancel</button>
-                        </div>
-
-                    </form>
-
-                </div>
+<div class="container-sm mt-5">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card p-3">
+                <a href="{% url 'requests' %}">Go back</a>
+                {% include 'partials/admin_request_details.html' %}
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card p-3">
+                <form action="{% url 'student_request_create' %}" method="post">
+                    {% csrf_token %}
+                    
+                    <h3>
+                        Approve request  
+                    </h3>
+                    {% include 'partials/bootstrap_form.html' with form=form %}
+                    <input type="submit" value="Make request" class="btn btn-primary">
+                </form>
             </div>
         </div>
     </div>
-
+</div>
 {% endblock %}

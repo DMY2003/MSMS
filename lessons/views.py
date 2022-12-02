@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 def login_prohibited(function):
     def wrap(request, *args, **kwargs):
         if request.user.is_authenticated:
-            return redirect('requests')
+            return redirect('student_requests')
         else:
             return function(request, *args, **kwargs)
 
@@ -91,16 +91,17 @@ def profile(request):
 
 
 @login_required
-def requests(request):
+def student_requests(request):
     if request.user.role == 'Student':
         student = request.user.id
+
         response_data = {
-            "form": RequestForm(),
+            "form": StudentRequestForm(),
             "confirmed_requests": Request.objects.filter(student_id=student, is_approved=True),
             "ongoing_requests": Request.objects.filter(student_id=student, is_approved=False)
         }
 
-        return render(request, 'student_requests_page.html', response_data)
+        return render(request, 'student_requests.html', response_data)
 
     elif request.user.role == 'Administrator' or request.user.role == 'Director':
         return redirect('admin_requests')
@@ -220,7 +221,7 @@ def manage_admins(request):
         form = ManageAdminsForm()
     return render(request, 'manage_admins.html', {'form': form})
 
-def student_request(request, form=None):
+def student_request_create(request):
     form = StudentRequestForm()
     if request.method == 'POST':
         user = request.user
