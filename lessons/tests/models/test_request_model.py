@@ -2,8 +2,6 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 from lessons.models import Request, Instrument, User, Student
-from django.contrib.auth.hashers import make_password
-from faker import Faker
 
 class RequestModelTestCase(TestCase):
 
