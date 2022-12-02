@@ -240,11 +240,9 @@ def student_request_update(request, request_id):
     """Handles the updating of a request through the student request form"""
     lesson_request = Request.objects.get(pk=request_id)
 
-    
     response_data = {
         "request": lesson_request
     }
-
 
     if request.method == "POST":
         form = StudentRequestForm(request.POST, instance=lesson_request)
@@ -267,5 +265,6 @@ def student_request_update(request, request_id):
 def student_request_delete(request, request_id):
     lesson_request = Request.objects.get(id=request_id)
     if lesson_request:
+        messages.add_message(request, messages.SUCCESS, "Your request was successfully deleted!")
         lesson_request.delete()
-    return redirect('requests')
+    return redirect('student_requests')
