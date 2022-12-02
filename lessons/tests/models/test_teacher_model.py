@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase
 from lessons.models import Teacher, User
 
-class InstrumentModelTestCase(TestCase):
+class TeacherModelTestCase(TestCase):
 
     fixtures = [
         'lessons/tests/fixtures/default_teacher.json',
