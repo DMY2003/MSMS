@@ -37,7 +37,7 @@ urlpatterns = [
 
     path('requests/', views.student_requests, name='student_requests'),
     path('requests/create', views.student_request_create, name='student_request_create'),
-    path('requests/<int:request_id>', views.student_request, name='student_request'),
+    path('requests/<int:request_id>', views.student_request_update, name='student_request_update'),
     path('delete_request/<int:request_id>', views.student_request_delete, name='student_request_delete'),
     path('lessons/', views.lessons, name='lessons'),
     path('transactions/', views.transactions, name='transactions'),

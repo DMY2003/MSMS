@@ -232,19 +232,17 @@ def student_request_create(request):
         form = StudentRequestForm(post_values)
 
         if form.is_valid():
-            print("1")
             form.save()
-            print("2")
             return redirect('requests')
 
-    return render(request, 'student_request_form.html', {'form': form})
+    return render(request, 'student_request_create.html', {'form': form})
 
-def student_request(request):
+def student_request_update(request, request_id):
     pass
 
 
-def student_request_delete(request, student_id):
-    lesson_request = Request.objects.get(id=student_id)
+def student_request_delete(request, request_id):
+    lesson_request = Request.objects.get(id=request_id)
     if lesson_request:
         lesson_request.delete()
     return redirect('requests')
