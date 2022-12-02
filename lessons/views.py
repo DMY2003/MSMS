@@ -1,15 +1,19 @@
 from django.shortcuts import render, redirect
-from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordForm, AdminLessonForm, RequestForm, ManageAdminsForm
+from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordForm, AdminLessonForm, StudentRequestForm, ManageAdminsForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .models import Request, Lesson
+from .models import Request, Lesson, Student
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
 
 def login_prohibited(function):
     def wrap(request, *args, **kwargs):
         if request.user.is_authenticated:
-            return redirect('requests')
+            role = request.user.role 
+            if role == "Administrator":
+                return redirect('admin_requests')
+            else:
+                return redirect('student_requests')
         else:
             return function(request, *args, **kwargs)
     wrap.__doc__=function.__doc__
@@ -27,7 +31,7 @@ def sign_up(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('requests')
+            return redirect('student_requests')
     else:
         form = SignUpForm()
     return render(request, 'sign_up.html', {'form': form})
@@ -43,7 +47,7 @@ def log_in(request):
             user = authenticate(email=email, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('requests')
+                return redirect('student_requests')
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
     form = LogInForm()
     return render(request, 'log_in.html', {'form': form})
@@ -83,16 +87,17 @@ def profile(request):
     return render(request, 'profile.html', {'form': form})
 
 @login_required
-def requests(request):
+def student_requests(request):
     if request.user.role == 'Student':
         student = request.user.id
+
         response_data = {
-            "form": RequestForm(),
+            "form": StudentRequestForm(),
             "confirmed_requests": Request.objects.filter(student_id=student, is_approved=True),
             "ongoing_requests": Request.objects.filter(student_id=student, is_approved=False)
         }
 
-        return render(request, 'student_requests_page.html', response_data)
+        return render(request, 'student_requests.html', response_data)
 
     elif request.user.role == 'Administrator' or request.user.role == 'Director':
         return redirect('admin_requests')
@@ -121,20 +126,25 @@ def admin_request_delete(request, request_id):
     messages.add_message(request, messages.ERROR, "The request has been successfully deleted!")
     return redirect("admin_requests")
 
-
+@login_required
 def admin_request(request, request_id):
     """Handles the display of a particular admin request and the functionality to
     generate lessons from it"""
     lesson_request = Request.objects.get(id=request_id)
     if request.method == "POST":
-        form = AdminRequestForm(request.POST)
+        form = AdminRequestForm(request.POST, instance=lesson_request)
         if form.is_valid():
-            lesson_request.generate_lessons(form)
-            lesson_request.save()
+            form.save()
+
+            lesson_request.generate_lessons(
+                form.cleaned_data.get("teacher")
+            )
+
+            messages.add_message(request, messages.SUCCESS, "Lessons successfuly booked!")
             return redirect("admin_requests")
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
     else:
-        form = AdminRequestForm()
+        form = AdminRequestForm(instance=lesson_request)
 
     return render(request, 'admin_request.html', {'form': form, 'request': lesson_request})
 
@@ -169,7 +179,7 @@ def admin_lessons(request):
     }
     return render(request, 'admin_lessons.html', response_data)
 
-
+@login_required
 def admin_lesson(request, lesson_id):
     """Handles the display and updating of a particular lesson"""
     lesson = Lesson.objects.get(id=lesson_id)
@@ -188,7 +198,7 @@ def admin_lesson(request, lesson_id):
     }
     return render(request, 'admin_lesson.html', response_data)
 
-
+@login_required
 def admin_lesson_delete(request, lesson_id):
     """Handles the deletion of a particular lesson"""
     lesson = Lesson.objects.get(id=lesson_id)
@@ -208,25 +218,50 @@ def manage_admins(request):
         form = ManageAdminsForm()
     return render(request, 'manage_admins.html', {'form': form})
 
-def student_request(request, form=None):
-    form = RequestForm
+def student_request_create(request):
+    """Handles the creation of a request through the student request form"""
+    form = StudentRequestForm()
     if request.method == 'POST':
-        user = request.user
-        post_values = request.POST.copy()
+        form = StudentRequestForm(request.POST)
+        
+        if form.is_valid():
+            lesson_request = form.save(commit=False)
+            student = Student.objects.get(email=request.user.email)
+            lesson_request.student = student
+            lesson_request.save()
+            return redirect('student_requests')
 
-        post_values['student'] = user.id
-        form = RequestForm(post_values)
+    return render(request, 'student_request_create.html', {'form': form})
 
+@login_required
+def student_request_update(request, request_id):
+    """Handles the updating of a request through the student request form"""
+    lesson_request = Request.objects.get(pk=request_id)
+
+    response_data = {
+        "request": lesson_request
+    }
+
+    if request.method == "POST":
+        form = StudentRequestForm(request.POST, instance=lesson_request)
+        print(form.is_valid())
+        print(form.cleaned_data)
         if form.is_valid():
             form.save()
+            messages.add_message(request, messages.SUCCESS, "Your request was successfully updated!")
+            response_data["form"] = form
+            return render(request, 'student_request_update.html', response_data)
+        messages.add_message(request, messages.ERROR, "Your request is not valid!")
+    else:
+        form = StudentRequestForm(instance=lesson_request)
+        response_data["form"] = form
 
-            return redirect('requests')
+    return render(request, 'student_request_update.html', response_data)
 
-    return render(request, 'student_request_form.html', {'form': form})
-
-
-def student_req_delete(request, lesson_id):
-    lesson_request = Request.objects.get(id=lesson_id)
+@login_required
+def student_request_delete(request, request_id):
+    lesson_request = Request.objects.get(id=request_id)
     if lesson_request:
+        messages.add_message(request, messages.SUCCESS, "Your request was successfully deleted!")
         lesson_request.delete()
-    return redirect('requests')
+    return redirect('student_requests')

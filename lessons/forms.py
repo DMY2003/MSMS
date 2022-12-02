@@ -84,105 +84,31 @@ class PasswordForm(forms.Form):
 class LogInForm(forms.Form):
     email = forms.CharField(label="Email")
     password = forms.CharField(label="Password", widget=forms.PasswordInput())
-
-
-class AdminLessonForm(forms.Form):
-    """Handles the input for updating a lesson"""
-
-    time = forms.TimeField(
-        widget=forms.TimeInput(attrs={'type': 'time'})
-    )
-
-    teacher = forms.ModelChoiceField(
-        label="Assigned teacher",
-        queryset=Teacher.objects.all(),
-
-    )
-
-    instrument = forms.ModelChoiceField(
-        label="Assigned instrument",
-        queryset=Instrument.objects.all(),
-    )
-
-    lesson_duration = forms.ChoiceField(
-        label="Lesson duration",
-        widget=forms.Select(),
-        choices=settings.LESSON_DURATIONS,
-    )
-
-
-class AdminRequestForm(forms.Form):
-    """Handles the creation of lessons through the help of a lesson request"""
-
-    day = forms.ChoiceField(
-        label="Day of the week",
-        widget=forms.Select(),
-        choices=settings.DAYS_OF_THE_WEEK,
-    )
-
-    time = forms.TimeField(
-        widget=forms.TimeInput(attrs={'type': 'time'})
-    )
-
-    teacher = forms.ModelChoiceField(
-        label="Assigned teacher",
-        queryset=Teacher.objects.all(),
-
-    )
-
-    instrument = forms.ModelChoiceField(
-        label="Assigned instrument",
-        queryset=Instrument.objects.all(),
-    )
-
-    lesson_count = forms.IntegerField(label="Number of lessons")
-    lesson_duration = forms.ChoiceField(
-        label="Lesson duration",
-        widget=forms.Select(),
-        choices=settings.LESSON_DURATIONS,
-    )
-
-    lesson_interval = forms.ChoiceField(
-        label="Lesson interval",
-        widget=forms.Select(),
-        choices=settings.LESSON_INTERVALS,
-    )
-
-
-class MyModelChoiceField(ModelChoiceField):
-    def label_from_instance(self, obj):
-        return obj.name
-
-
-class NoInput(forms.Widget):
-    input_type = "hidden"
-    template_name = ""
-
-    def render(self, name, value, attrs=None, renderer=None):
-        return ""
-
-
-class RequestForm(forms.ModelForm):
-    time_availability = forms.TimeField(widget=forms.TimeInput(attrs={'type': 'time'}))
-    day_availability = forms.CharField(label="Day of the week")
-    lesson_interval = forms.CharField(label='Interval', widget=forms.Select(choices=[(1, 1), (2, 2)]))
-    lesson_count = forms.IntegerField(label="Number of Lessons")
-    lesson_duration = forms.IntegerField(label="Duration")
-    preferred_teacher = forms.CharField(label="Preferred Teacher", required=False)
-    instrument = MyModelChoiceField(queryset=Instrument.objects.all(), required=True)
-    student = forms.CharField(label="", required=False, widget=NoInput)
-
+class StudentRequestForm(forms.ModelForm):
     class Meta:
         model = Request
-        exclude = ['is_approved']
 
-    def clean(self):
-        cleaned_data = super(RequestForm, self).clean()
+        exclude = [
+            "is_approved", "teacher", "student"
+        ]
 
-        student_id = self.data.get("student")
-        cleaned_data["student"] = Student.objects.get(id=student_id)
+        widgets = {
+            "time_availability": forms.TimeInput(attrs={'type': 'time'})
+        }
 
-        return cleaned_data
+class AdminRequestForm(forms.ModelForm):
+    class Meta:
+        model = Request
+
+        exclude = [
+            "student", "is_approved", "preferred_teacher"
+        ]
+
+        widgets = {
+            "time_availability": forms.TimeInput(attrs={'type': 'time'})
+        }
+
+    teacher = forms.ModelChoiceField(queryset=Teacher.objects.all(), blank=False)
 
 
 class AdminLessonForm(forms.ModelForm):

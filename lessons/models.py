@@ -3,6 +3,7 @@ from django.core.validators import RegexValidator
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.base_user import BaseUserManager
 import datetime
+from django.core.validators import MaxValueValidator, MinValueValidator 
 from django.conf import settings
 
 
@@ -81,6 +82,9 @@ class Instrument(models.Model):
     base_price = models.IntegerField(default=0)
 
 
+    def __str__(self):
+        return self.name
+
 class Lesson(models.Model):
     date = models.DateTimeField(null=True)
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, blank=False)
@@ -100,14 +104,27 @@ def get_date_from_weekday(weekday, time):
 
 
 class Request(models.Model):
-    time_availability = models.TimeField(null=True)
-    day_availability = models.IntegerField(blank=True)
-    lesson_interval = models.IntegerField(default=1)
-    lesson_count = models.IntegerField(blank=False)
-    lesson_duration = models.IntegerField(blank=False)
-    preferred_teacher = models.TextField()
-    instrument = models.ForeignKey(Instrument, on_delete=models.CASCADE)
+    """Stores the data of a lesson request"""
+
+    time_availability = models.TimeField(blank=False)
+
+    day_availability = models.IntegerField(choices=settings.DAYS_OF_THE_WEEK, blank=False)
+
+    lesson_interval = models.IntegerField(choices=settings.LESSON_INTERVALS, blank=False)
+
+    lesson_count = models.IntegerField(
+        blank=False,
+        validators=[MinValueValidator(1), MaxValueValidator(20)]
+    )
+
+    lesson_duration = models.IntegerField(choices=settings.LESSON_DURATIONS, blank=False)
+
+    preferred_teacher = models.CharField(blank=True, max_length=50)
+
+    instrument = models.ForeignKey(Instrument, on_delete=models.CASCADE, blank=False)
+
     student = models.ForeignKey(Student, on_delete=models.CASCADE, blank=False)
+
     is_approved = models.BooleanField(default=False)
 
     @property
@@ -116,37 +133,34 @@ class Request(models.Model):
         day_of_the_week = settings.DAYS_OF_THE_WEEK[int(self.day_availability)][1]
         return "%s %s" % (day_of_the_week, self.time_availability)
 
-    def generate_lessons(self, form):
+    def generate_lessons(self, teacher):
         """Generates lessons on the provided day/time at weekly intervals"""
         self.is_approved = True
 
-        teacher = form.cleaned_data.get("teacher")
-        day = int(form.cleaned_data.get("day"))
-        time = form.cleaned_data.get("time")
-        instrument = form.cleaned_data.get("instrument")
-        lesson_count = int(form.cleaned_data.get("lesson_count"))
-        lesson_interval = int(form.cleaned_data.get("lesson_interval"))
-        lesson_duration = int(form.cleaned_data.get("lesson_duration"))
-
-        lesson_datetime = get_date_from_weekday(day, time)
+        lesson_datetime = get_date_from_weekday(
+            self.day_availability, 
+            self.time_availability
+        )
 
         # Generate Lessons for the request
-        for i in range(lesson_count):
+        for i in range(self.lesson_count):
             lesson = Lesson(
                 teacher=teacher,
                 student=self.student,
                 date=lesson_datetime,
-                instrument=instrument,
-                duration=lesson_duration
+                instrument=self.instrument,
+                duration=self.lesson_duration
             )
             lesson.save()
 
-            lesson_datetime += datetime.timedelta(weeks=lesson_interval)
+            lesson_datetime += datetime.timedelta(weeks=self.lesson_interval)
 
-            # Generate Invoices for the lessons
-            price = instrument.base_price * lesson_duration / 60
-            invoice = Invoice(price=price, lesson=lesson)
-            invoice.save()
+        self.save()
+
+        # Generate Invoices for the lessons
+        price = self.instrument.base_price * self.lesson_duration / 60
+        invoice = Invoice(price=price, lesson=lesson)
+        invoice.save()
 
 
 class Invoice(models.Model):

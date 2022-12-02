@@ -1,0 +1,17 @@
+{% extends 'base_content.html' %} 
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-12 col-md-6 offset-md-3">
+        <div class="card p-3">
+            <form action="{% url 'student_request_create' %}" method="post">
+                {% csrf_token %}
+                <a href="{% url 'student_requests' %}">Go back</a>
+                <h3>Make a lesson request</h3>
+                {% include 'partials/bootstrap_form.html' %}
+                <input type="submit" value="Make request" class="btn btn-primary mr-2">
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

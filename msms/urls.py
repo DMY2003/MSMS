@@ -26,9 +26,7 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('password/', views.password, name='password'),
     path('log_out/', views.log_out, name='log_out'),
-    # path('student_requests/', views.student_requests, name='student_requests'),
-    # path('student_lessons/', views.student_lessons, name='student_lessons'),
-    # path('student_transactions/', views.student_transactions, name='student_transactions'),
+
     path('administrator/lessons', views.admin_lessons, name='admin_lessons'),
     path('administrator/lessons/<int:lesson_id>', views.admin_lesson, name="admin_lesson"),
     path('administrator/delete_lesson/<int:lesson_id>', views.admin_lesson_delete, name='admin_lesson_delete'),
@@ -37,11 +35,11 @@ urlpatterns = [
     path('administrator/requests/<int:request_id>', views.admin_request, name='admin_request'),
     path('manage_admins', views.manage_admins, name='manage_admins'),
 
-    # path('administrator/transactions', views.admin_transactions, name='admin_transactions'),
-    path('requests/', views.requests, name='requests'),
-    path('requests/delete_lesson/<int:lesson_id>', views.student_req_delete, name='student_request_delete'),
+    path('requests/', views.student_requests, name='student_requests'),
+    path('requests/create', views.student_request_create, name='student_request_create'),
+    path('requests/<int:request_id>', views.student_request_update, name='student_request_update'),
+    path('delete_request/<int:request_id>', views.student_request_delete, name='student_request_delete'),
     path('lessons/', views.lessons, name='lessons'),
     path('transactions/', views.transactions, name='transactions'),
-    path('newrequest/', views.student_request, name='student-request'),
 ]
 

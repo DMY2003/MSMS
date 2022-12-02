@@ -1,23 +1,27 @@
 <div class="card p-3 mb-5">
-    <h3>
+    <div class="d-flex justify-content-between w-100 align-items-center mb-2">
+      <h3>
         {{request_type}}
-    </h3>
+      </h3>
+      {% if requests == ongoing_requests %}
+        <a class="btn btn-primary btn-sm" href="{% url 'student_request_create' %}">
+          Make a request
+        </a>
+      {% endif %}
+
+    </div>
+
     <table class="table">
         <thead>
           <tr>
             <th scope="col">ID</th>
-            <th scope="col">Student name</th>
             <th scope="col">Lesson Type</th>
             <th scope="col"># Lessons</th>
             <th scope="col">Interval</th>
             <th scope="col">Duration</th>
+            <th scope="col">Availability</th>
             {% if requests == ongoing_requests %}
-                <th scope="col">Availability</th>
-            {% else %}
-                <th scope="col">Scheduled for</th>
-            {% endif %}
-            {% if requests == ongoing_requests %}
-            <th scope="col">Action</th>
+              <th scope="col">Action</th>
             {% endif %}
           </tr>
         </thead>
@@ -25,16 +29,19 @@
           {% for request in requests %}
             <tr>
               <th scope="row">{{request.id}}</th>
-              <td>{{request.student.full_name}}</td>
               <td>{{request.instrument.name}}</td>
               <td>{{request.lesson_count}}</td>
               <td>{{request.lesson_interval}} week(s)</td>
               <td>{{request.lesson_duration}} minutes</td>
               <td>{{request.availability}}</td>
-              {% if requests == ongoing_requests %}
+              {% if requests == ongoing_requests %} 
               <td>
-                  <a class="btn btn-outline-primary"><i class="fa-solid fa-pen-to-square"></i></a>
-                  <a class="btn btn-outline-danger" href="{% url 'student_request_delete' request.id  %}"><i class="fa-solid fa-trash"></i></a>
+                  <a class="btn btn-primary btn-sm" href="{% url 'student_request_update' request.id %}">
+                    Edit
+                  </a>
+                  <a class="btn btn-danger btn-sm" href="{% url 'student_request_delete' request.id  %}">
+                    Delete
+                  </a>
               </td>
               {% endif %}
             </tr>
