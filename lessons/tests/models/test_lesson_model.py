@@ -1,7 +1,7 @@
 """Unit tests of the Lesson model."""
 from django.core.exceptions import ValidationError
 from django.test import TestCase
-from lessons.models import Request, Lesson, Student, User, Teacher, Instrument
+from lessons.models import Lesson, Student, User, Teacher, Instrument
 import datetime
 
 class LessonModelTestCase(TestCase):
@@ -17,7 +17,7 @@ class LessonModelTestCase(TestCase):
         self.lesson = Lesson.objects.get(id=1)
     
     # default test
-    def test_valid_request(self):
+    def test_valid_lesson(self):
         self._assert_lesson_is_valid()
 
     # date tests
