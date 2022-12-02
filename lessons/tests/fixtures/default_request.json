@@ -1,0 +1,17 @@
+[
+    {
+        "model": "lessons.request",
+        "pk": 1,
+        "fields": {
+            "time_availability": "12:30:00",
+            "day_availability": 5,
+            "lesson_interval": 1,
+            "lesson_count": 6,
+            "lesson_duration": 30,
+            "preferred_teacher": "Tom Smith",
+            "instrument": 1,
+            "student": 1,
+            "is_approved": false
+        }
+    }
+]
