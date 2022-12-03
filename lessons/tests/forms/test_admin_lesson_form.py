@@ -62,6 +62,11 @@ class AdminLessonFormTestCase(TestCase):
         self.assertFalse(form.is_valid())
         self.form_input["duration"] = 45
 
+    def test_form_rejects_empty_date(self):
+        form = AdminLessonForm(instance=self.lesson, data=self.form_input)
+        self.form_input["date"] = None
+        self.assertFalse(form.is_valid())
+
     def test_form_accepts_valid_input(self):
         form = AdminLessonForm(instance=self.lesson, data=self.form_input)
         self.assertTrue(form.is_valid())
