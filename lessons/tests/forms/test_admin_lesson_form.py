@@ -56,6 +56,12 @@ class AdminLessonFormTestCase(TestCase):
         self.assertIn('instrument', form.fields)
         self.assertIn('duration', form.fields)
 
+    def test_form_rejects_invalid_duration(self):
+        self.form_input["duration"] = "string"
+        form = AdminLessonForm(instance=self.lesson, data=self.form_input)
+        self.assertFalse(form.is_valid())
+        self.form_input["duration"] = 45
+
     def test_form_accepts_valid_input(self):
         form = AdminLessonForm(instance=self.lesson, data=self.form_input)
         self.assertTrue(form.is_valid())
