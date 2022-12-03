@@ -284,8 +284,6 @@ def student_request_update(request, request_id):
 
     if request.method == "POST":
         form = StudentRequestForm(request.POST, instance=lesson_request)
-        print(form.is_valid())
-        print(form.cleaned_data)
         if form.is_valid():
             form.save()
             messages.add_message(request, messages.SUCCESS, "Your request was successfully updated!")

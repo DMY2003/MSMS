@@ -21,5 +21,4 @@ class AdminRequestFormTestCase(TestCase):
 
     def test_test(self):
         teacher = Student.objects.first()
-        print(teacher)
         self.assertTrue(True)
