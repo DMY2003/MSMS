@@ -1,4 +1,4 @@
-"""Unit tests of the admin request form."""
+"""Unit tests of the admin lesson form."""
 from django.test import TestCase
 from django import forms
 from lessons.forms import LogInForm
@@ -7,9 +7,14 @@ import datetime
 from lessons.models import Teacher, Student
 
 
-class AdminRequestFormTestCase(TestCase):
-    """Unit tests of the admin request form."""
+class AdminLessonFormTestCase(TestCase):
+    """Unit tests of the admin lesson form."""
 
+    fixtures = [
+        'lessons/tests/fixtures/default_student.json',
+        'lessons/tests/fixtures/default_teacher.json',
+        'lessons/tests/fixtures/default_instrument.json',
+    ]
 
     def setUp(self):
         self.form_input = {
