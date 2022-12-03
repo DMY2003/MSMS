@@ -6,3 +6,4 @@ Faker==15.3.2
 coverage==6.5.0
 asgiref==3.5.2
 sqlparse==0.4.3
+reportlab==3.6.12
