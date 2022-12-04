@@ -1,7 +1,20 @@
-<div class="card p-3 mb-5">
-    <h3>
+<div class="container-sm">
+  <div class="card p-3 mb-4">
+    <div class="d-flex justify-content-between align-content-center w-100 mb-2">
+      <h3>
         {{request_type}}
-    </h3> 
+      </h3> 
+      {% if request_type == "Unapproved requests" %}
+        <a class="btn btn-primary" href="{% url 'admin_approved_requests' %}">
+          View approved requests
+        </a>
+      {% elif request_type == "Approved requests" %}
+        <a class="btn btn-primary" href="{% url 'admin_unapproved_requests' %}">
+          View unapproved requests
+        </a>
+      {% endif %}
+    </div>
+
     <table class="table">
         <thead>
           <tr>
@@ -12,7 +25,7 @@
             <th scope="col">Interval</th>
             <th scope="col">Duration</th>
             <th scope="col">Availabiity</th>
-            {% if requests == unfulfilled_requests %}
+            {% if request_type == "Unapproved requests" %}
             <th scope="col">Action</th>
             {% endif %}
           </tr>
@@ -28,7 +41,7 @@
               <td>{{request.lesson_interval}} week(s)</td>
               <td>{{request.lesson_duration}} minutes</td>
               <td>{{request.availability}}</td>
-              {% if requests == unfulfilled_requests %}
+              {% if request_type == "Unapproved requests" %}
               <td>
                   <a class="btn btn-primary btn-sm" href="{% url 'admin_request' request.id %}">
                     Approve
@@ -43,4 +56,7 @@
           {% endfor %}
         </tbody>
     </table>
+    
+  </div>
+{% include 'partials/pagination.html' with page=requests %}
 </div>
