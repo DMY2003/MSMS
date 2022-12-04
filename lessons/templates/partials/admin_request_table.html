@@ -1,6 +1,6 @@
 <div class="container-sm">
-<div class="card p-3 mb-5">
-    <div class="d-flex justify-content-between align-content-center w-100 mb-3">
+  <div class="card p-3 mb-4">
+    <div class="d-flex justify-content-between align-content-center w-100 mb-2">
       <h3>
         {{request_type}}
       </h3> 
@@ -56,5 +56,7 @@
           {% endfor %}
         </tbody>
     </table>
-</div>
+    
+  </div>
+{% include 'partials/pagination.html' with page=requests %}
 </div>

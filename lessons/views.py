@@ -154,7 +154,7 @@ def admin_request(request, request_id):
 def admin_approved_requests(request):
     page_number = request.GET.get('page', 1)
     requests = Request.objects.filter(is_approved=True)
-    paginator = Paginator(requests, 8)
+    paginator = Paginator(requests, 9)
     requests_page = paginator.page(page_number)
     response_data = {"requests": requests_page}
 
@@ -165,7 +165,7 @@ def admin_approved_requests(request):
 def admin_unapproved_requests(request):
     page_number = request.GET.get('page', 1)
     requests = Request.objects.filter(is_approved=False)
-    paginator = Paginator(requests, 8)
+    paginator = Paginator(requests, 9)
     requests_page = paginator.page(page_number)
     response_data = {"requests": requests_page}
 
