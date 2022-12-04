@@ -50,4 +50,4 @@ $ python3 manage.py test
 ## Sources
 The packages used by this application are specified in `requirements.txt`
 
-*Declare are other sources here.*
+*Mobirise.com - Website Builder - To further edit the home page with Google Maps API etc.*
