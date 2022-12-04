@@ -370,8 +370,13 @@ def term_create(request):
 def term_update(request, term_id):
     term = Term.objects.get(pk=term_id)
 
-    
-
+    if request.method == "POST":
+        form = TermForm(request.POST, instance=term)
+        if form.is_valid():
+            form.save()
+            messages.add_message(request, messages.SUCCESS, "The term was succesfully updated!")
+    else:
+        form = TermForm(instance=term)
 
     terms = map_terms(Term.objects.all())
 
@@ -379,7 +384,6 @@ def term_update(request, term_id):
     for position, current_term in terms.items():
         if current_term == term:
             term_position = position 
-    form = TermForm()
 
     response_data = {
         "terms": terms, 
@@ -387,4 +391,4 @@ def term_update(request, term_id):
         "term_position" : term_position
     }
 
-    return render(request, 'term_create.html', response_data) 
+    return render(request, 'term_update.html', response_data) 

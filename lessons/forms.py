@@ -183,8 +183,14 @@ class TermForm(forms.ModelForm):
         model = Term
         fields = ["start_date", "end_date"]
         widgets = {
-            "start_date": forms.DateTimeInput(attrs={'type': 'date'}),
-            "end_date": forms.DateTimeInput(attrs={'type': 'date'})
+            "start_date": forms.DateTimeInput(
+                format=('%Y-%m-%d'),
+                attrs={'type': 'date'}
+            ),
+            "end_date": forms.DateTimeInput(
+                format=('%Y-%m-%d'), 
+                attrs={'type': 'date'}
+            )
         }
 
     def clean(self):
