@@ -332,9 +332,15 @@ def map_terms(terms):
 def term_create(request):
     terms = map_terms(Term.objects.all())
     form = TermForm()
+
+    if request.method == "POST":
+        form = TermForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.add_message(request, messages.SUCCESS, "The term was successfully created!")
+
     response_data = {"terms": terms, "form": form}
     
-
     return render(request, 'term_create.html', response_data) 
 
 @login_required 

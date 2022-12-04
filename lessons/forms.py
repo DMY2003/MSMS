@@ -189,9 +189,14 @@ class TermForm(forms.ModelForm):
 
     def clean(self):
         super().clean()
+
+        if self.start_date > self.end_date:
+            self.add_error("start_date", "Start date cannot come after end date!")
+            return
+
         current_terms = Term.objects.all()
 
         for term in current_terms:
             if self.start_date <= term.end_date and self.end_date >= term.start_date:
                 self.add_error("start_date", "Dates cannot overlap with current term dates!")
-                break
+                return

@@ -3,9 +3,12 @@
 {% block term_content %} 
 <div class="container-sm">
     <div class="card p-3">
-        <h3>Create Term</h3>
-        {% include 'partials/bootstrap_form.html' with form=form %}
-        <input class="btn btn-primary" type="submit" value="Create term">
+        <form action="{% url 'term_create' %}" method="POST">
+            {% csrf_token %}
+            <h3>Create Term</h3>
+            {% include 'partials/bootstrap_form.html' with form=form %}
+            <input class="btn btn-primary" type="submit" value="Create term">
+        </form>
     </div>
 </div>
 {% endblock %}
