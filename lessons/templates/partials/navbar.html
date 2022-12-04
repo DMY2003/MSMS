@@ -11,7 +11,7 @@
                         {% if user.role == "Student" %}
 
                         {% elif user.role == "Administrator" or user.role == "Director" %}
-                            <a class="nav-link" href="{% url 'admin_requests' %}">
+                            <a class="nav-link" href="{% url 'admin_unapproved_requests' %}">
                                 Requests
                             </a>
                             <a class="nav-link" href="{% url 'admin_lessons' %}">
