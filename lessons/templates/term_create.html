@@ -3,7 +3,9 @@
 {% block term_content %} 
 <div class="container-sm">
     <div class="card p-3">
-        a
+        <h3>Create Term</h3>
+        {% include 'partials/bootstrap_form.html' with form=form %}
+        <input class="btn btn-primary" type="submit" value="Create term">
     </div>
 </div>
 {% endblock %}

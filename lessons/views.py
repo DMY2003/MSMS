@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordForm, AdminLessonForm, StudentRequestForm, CreateAdminsForm, AccountForm
+from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordForm, AdminLessonForm, StudentRequestForm, CreateAdminsForm, AccountForm, TermForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from lessons.models import Request, Lesson, Student, Administrator, User, Term
@@ -322,7 +322,7 @@ def student_request_delete(request, request_id):
 
 def map_terms(terms):
     mapped_terms = {}
-    
+
     for i in range(len(terms)):
         mapped_terms[i + 1] = terms[i]
 
@@ -331,7 +331,8 @@ def map_terms(terms):
 @login_required 
 def term_create(request):
     terms = map_terms(Term.objects.all())
-    response_data = {"terms": terms}
+    form = TermForm()
+    response_data = {"terms": terms, "form": form}
     
 
     return render(request, 'term_create.html', response_data) 
