@@ -388,7 +388,8 @@ def term_update(request, term_id):
     response_data = {
         "terms": terms, 
         "form": form, 
-        "term_position" : term_position
+        "term_position" : term_position,
+        "term": term
     }
 
     return render(request, 'term_update.html', response_data) 
