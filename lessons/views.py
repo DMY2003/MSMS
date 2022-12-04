@@ -348,13 +348,15 @@ def term_update(request, term_id):
     term = Term.objects.get(pk=term_id)
 
     
+
+
+    terms = map_terms(Term.objects.all())
+
     term_position = 1
     for position, current_term in terms.items():
         if current_term == term:
             term_position = position 
     form = TermForm()
-
-    terms = map_terms(Term.objects.all())
 
     response_data = {
         "terms": terms, 
