@@ -1,5 +1,5 @@
 from django import forms
-from lessons.models import User, Student, Administrator, Teacher, Instrument, Request, Lesson
+from lessons.models import User, Student, Administrator, Teacher, Instrument, Request, Lesson, Term
 from django.forms import ModelChoiceField
 from django.core.validators import RegexValidator
 from django.conf import settings
@@ -175,3 +175,14 @@ class AccountForm(forms.ModelForm):
         fields = ['first_name', 'last_name', 'email', 'role']
 
     role = forms.ChoiceField(choices=settings.ROLES)
+
+class TermForm(forms.ModelForm):
+    """Form to update school terms"""
+
+    class Meta:
+        """Form options"""
+
+        model = Term
+        fields = ["start_date", "end_date"]
+
+        

@@ -167,3 +167,7 @@ class Invoice(models.Model):
     price = models.IntegerField(blank=False)
     paid = models.BooleanField(default=False)
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, blank=False)
+
+class Term(models.Model):
+    start_date = models.DateTimeField(null=True)
+    end_date = models.DateTimeField(null=True)
