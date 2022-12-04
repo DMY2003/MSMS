@@ -4,6 +4,7 @@ from django import forms
 from lessons.forms import AccountForm
 from lessons.models import User, Administrator, Director
 from django.contrib.auth.hashers import check_password
+from django.conf import settings
 
 
 class AccountFormTestCase(TestCase):
@@ -15,8 +16,8 @@ class AccountFormTestCase(TestCase):
         self.form_input = {
             'first_name': 'Bob',
             'last_name': 'Green',
-            'email': 'bob_green@email.com',
-            'role': 'Director'
+            'email': 'bob_green1@email.com',
+            'role': settings.ROLES[1][0]
         }
     
     def test_valid_account_form(self):
@@ -40,7 +41,7 @@ class AccountFormTestCase(TestCase):
     def test_form_must_save_correctly(self):
         form = AccountForm(data=self.form_input)
         form.save()
-        admin = User.objects.get(email='bob_green@email.com')
+        admin = User.objects.get(email='bob_green1@email.com')
         self.assertEqual(admin.first_name, 'Bob')
         self.assertEqual(admin.last_name, 'Green')
-        self.assertEqual(admin.role, 'Director')
+        self.assertEqual(admin.role, str(settings.ROLES[1][0]))
