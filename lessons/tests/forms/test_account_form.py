@@ -2,18 +2,21 @@
 from django.test import TestCase
 from django import forms
 from lessons.forms import AccountForm
-from lessons.models import Administrator, Student, User
+from lessons.models import User, Administrator, Director
 from django.contrib.auth.hashers import check_password
 
 
 class AccountFormTestCase(TestCase):
     """Unit tests of the account form."""
+
+    fixtures = ['lessons/tests/fixtures/default_administrator.json']
+
     def setUp(self):
         self.form_input = {
             'first_name': 'Bob',
             'last_name': 'Green',
             'email': 'bob_green@email.com',
-            'role': 'Student'
+            'role': 'Director'
         }
     
     def test_valid_account_form(self):
@@ -36,10 +39,8 @@ class AccountFormTestCase(TestCase):
     
     def test_form_must_save_correctly(self):
         form = AccountForm(data=self.form_input)
-        before_count = User.objects.count()
         form.save()
-        after_count = User.objects.count()
-        self.assertEqual(after_count, before_count + 1)
         admin = User.objects.get(email='bob_green@email.com')
         self.assertEqual(admin.first_name, 'Bob')
         self.assertEqual(admin.last_name, 'Green')
+        self.assertEqual(admin.role, 'Director')

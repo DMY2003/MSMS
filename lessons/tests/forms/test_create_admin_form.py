@@ -66,11 +66,11 @@ class CreateAdminFormTestCase(TestCase):
 
     def test_form_must_save_correctly(self):
         form = CreateAdminsForm(data=self.form_input)
-        before_count = Student.objects.count()
+        before_count = Administrator.objects.count()
         form.save()
-        after_count = Student.objects.count()
+        after_count = Administrator.objects.count()
         self.assertEqual(after_count, before_count + 1)
-        admin = Student.objects.get(email='bob_green@email.com')
+        admin = Administrator.objects.get(email='bob_green@email.com')
         self.assertEqual(admin.first_name, 'Bob')
         self.assertEqual(admin.last_name, 'Green')
         is_password_correct = check_password('Password123', admin.password)
