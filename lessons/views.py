@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordForm, AdminLessonForm, StudentRequestForm, CreateAdminsForm, AccountForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .models import Request, Lesson, Student, Administrator
+from .models import Request, Lesson, Student, Administrator, User
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage
@@ -70,7 +70,7 @@ def password(request):
                 current_user.save()
                 login(request, current_user)
                 messages.add_message(request, messages.SUCCESS, "Password updated!")
-                return redirect('requests')
+                return redirect('student_requests')
     form = PasswordForm()
     return render(request, 'password.html', {'form': form})
 
@@ -82,7 +82,7 @@ def profile(request):
         if form.is_valid():
             form.save()
             messages.add_message(request, messages.SUCCESS, "Profile updated!")
-            return redirect('requests')
+            return redirect('student_requests')
     else:
         form = UserForm(instance=current_user)
     return render(request, 'profile.html', {'form': form})
@@ -118,7 +118,7 @@ def lessons(request):
     elif request.user.role == 'Administrator' or request.user.role == 'Director':
         return redirect('admin_lessons')
 
-
+@login_required
 def admin_request_delete(request, request_id):
     """Handles the deletion of a particular request"""
     lesson_request = Request.objects.get(id=request_id)
@@ -233,6 +233,7 @@ def create_admin(request):
 
 @login_required
 def manage_admins(request):
+    """Handles the display of all admins"""
     email_search = request.GET.get('email_search', None)
     accounts = Administrator.objects.all()
     if email_search:
@@ -242,32 +243,33 @@ def manage_admins(request):
 
     response_data = {
         "accounts": accounts,
-        "lesson_count": len(accounts),
+        "account_count": len(accounts),
         "email_search": email_search
     }
     return render(request, 'manage_admins.html', response_data)
 
 @login_required
-def edit_admin(request, admin_id):
-    current_user = Administrator.objects.get(id=admin_id)
+def delete_account(request, account_id):
+    """Handles the deletion of a particular account"""
+    account = User.objects.get(id=account_id)
+    if account:
+        account.delete()
+    messages.add_message(request, messages.ERROR, "The account has been successfully deleted!")
+    return redirect("manage_admins")
+
+@login_required
+def edit_account(request, account_id):
+    """Handles the display and updating of a particular account"""
+    account = User.objects.get(id=account_id)
     if request.method == 'POST':
-        form = AccountForm(request.POST, instance=current_user)
+        form = AccountForm(request.POST, instance=account)
         if form.is_valid():
             form.save()
             messages.add_message(request, messages.SUCCESS, "Account updated!")
             return redirect('manage_admins')
     else:
-        form = AccountForm(instance=current_user)
-    return render(request, 'edit_account.html', {'form': form})
-
-@login_required
-def manage_admin_delete(request, admin_id):
-    """Handles the deletion of a particular lesson"""
-    admin = Administrator.objects.get(id=admin_id)
-    if admin:
-        admin.delete()
-    messages.add_message(request, messages.ERROR, "The account has been successfully deleted!")
-    return redirect("manage_admins")
+        form = AccountForm(instance=account)
+    return render(request, 'edit_account.html', {'form': form, 'account': account})
 
 @login_required
 def student_request_create(request):

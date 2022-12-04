@@ -15,7 +15,7 @@
             <div>
                 <h3>Manage Administrators</h3>
                 <h6 class="text-muted">
-                    Showing {{lesson_count}} accounts
+                    Showing {{account_count}} accounts
                     
                     {% if email_search %}
                     for
@@ -62,10 +62,10 @@
                     <td>{{account.full_name}}</td>
                     <td>{{account.email}}</td>
                     <td class="float-right">
-                        <a class="btn btn-primary btn-sm" href="{% url 'edit_admin' account.id  %}">
+                        <a class="btn btn-primary btn-sm" href="{% url 'edit_account' account.id %}">
                             Edit details
                         </a>
-                        <a class="btn btn-danger btn-sm" href="{% url 'manage_admin_delete' account.id  %}">
+                        <a class="btn btn-danger btn-sm" href="{% url 'delete_account' account.id %}">
                             Remove Account
                         </a>
                     </td>
