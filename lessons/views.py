@@ -160,6 +160,17 @@ def admin_approved_requests(request):
 
     return render(request, 'admin_approved_requests', response_data)
 
+
+@login_required 
+def admin_unapproved_requests(request):
+    page_number = request.GET.get('page', 1)
+    requests = Request.objects.filter(is_approved=False)
+    paginator = Paginator(requests, 8)
+    requests_page = paginator.page(page_number)
+    response_data = {"requests": requests_page}
+
+    return render(request, 'admin_unapproved_requests', response_data)
+
 @login_required
 def admin_requests(request):
     response_data = {
