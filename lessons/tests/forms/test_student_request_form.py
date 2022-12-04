@@ -2,8 +2,7 @@
 from django import forms
 from django.test import TestCase
 from lessons.forms import StudentRequestForm
-from lessons.models import User, Student, Instrument,Request
-from django.contrib.auth.hashers import check_password
+from lessons.models import Instrument,Request
 import datetime
 
 
