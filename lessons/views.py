@@ -393,3 +393,9 @@ def term_update(request, term_id):
     }
 
     return render(request, 'term_update.html', response_data) 
+
+@login_required
+def term_delete(request, term_id):
+    Term.objects.get(pk=term_id).delete()
+    messages.add_message(request, messages.SUCCESS, "The term was succesfully deleted!")
+    return redirect('term_create') 
