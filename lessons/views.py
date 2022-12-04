@@ -101,7 +101,7 @@ def student_requests(request):
         return render(request, 'student_requests.html', response_data)
 
     elif request.user.role == 'Administrator' or request.user.role == 'Director':
-        return redirect('admin_requests')
+        return redirect('admin_unapproved_requests')
 
 
 @login_required
@@ -330,7 +330,7 @@ def map_terms(terms):
 
 @login_required 
 def term_create(request):
-    terms = map_terms(Term.objects.all())
+    
     form = TermForm()
 
     if request.method == "POST":
@@ -338,7 +338,7 @@ def term_create(request):
         if form.is_valid():
             form.save()
             messages.add_message(request, messages.SUCCESS, "The term was successfully created!")
-
+    terms = map_terms(Term.objects.all())
     response_data = {"terms": terms, "form": form}
     
     return render(request, 'term_create.html', response_data) 
@@ -347,12 +347,14 @@ def term_create(request):
 def term_update(request, term_id):
     term = Term.objects.get(pk=term_id)
 
-    terms = map_terms(Term.objects.all())
+    
     term_position = 1
     for position, current_term in terms.items():
         if current_term == term:
             term_position = position 
     form = TermForm()
+
+    terms = map_terms(Term.objects.all())
 
     response_data = {
         "terms": terms, 
