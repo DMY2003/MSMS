@@ -1,0 +1,12 @@
+{% extends 'base_content.html' %}
+
+{% block content %} 
+<div class="term-grid">
+    <div>
+        {% include 'partials/term_list.html' %}
+    </div>
+    <div>
+        {% block term_content %}{% endblock %}
+    </div>
+</div>
+{% endblock %}

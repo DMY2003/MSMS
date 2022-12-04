@@ -38,7 +38,7 @@ urlpatterns = [
     path('delete_account/<int:account_id>', views.delete_account, name='delete_account'),
     path('edit_account/<int:account_id>', views.edit_account, name='edit_account'),
 
-    path('administrator/term/create', views.term_creation, name='term_create'),
+    path('administrator/term/create', views.term_create, name='term_create'),
     path('administrator/term/update/<int:term_id>', views.term_update, name='term_update'),
 
     path('requests/', views.student_requests, name='student_requests'),

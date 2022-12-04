@@ -319,3 +319,11 @@ def student_request_delete(request, request_id):
         messages.add_message(request, messages.SUCCESS, "Your request was successfully deleted!")
         lesson_request.delete()
     return redirect('student_requests')
+
+@login_required 
+def term_create(request):
+    return render(request, 'term_create.html', {}) 
+
+@login_required 
+def term_update(request, term_id):
+    pass
