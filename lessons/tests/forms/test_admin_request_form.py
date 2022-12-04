@@ -2,7 +2,6 @@
 from django.test import TestCase
 from django import forms
 from lessons.forms import AdminRequestForm
-from django.conf import settings
 import datetime
 from lessons.models import Teacher, Instrument, Request
 
