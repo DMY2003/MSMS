@@ -339,4 +339,19 @@ def term_create(request):
 
 @login_required 
 def term_update(request, term_id):
-    pass
+    term = Term.objects.get(pk=term_id)
+
+    terms = map_terms(Term.objects.all())
+    term_position = 1
+    for position, current_term in terms.items():
+        if current_term == term:
+            term_position = position 
+    form = TermForm()
+
+    response_data = {
+        "terms": terms, 
+        "form": form, 
+        "term_position" : term_position
+    }
+
+    return render(request, 'term_create.html', response_data) 
