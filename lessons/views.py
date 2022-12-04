@@ -269,7 +269,7 @@ def edit_account(request, account_id):
             return redirect('manage_admins')
     else:
         form = AccountForm(instance=account)
-    return render(request, 'edit_account.html', {'form': form})
+    return render(request, 'edit_account.html', {'form': form, 'account': account})
 
 @login_required
 def student_request_create(request):

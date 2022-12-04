@@ -161,8 +161,7 @@ LESSON_INTERVALS = [
     (2, "2 weeks")
 ]
 
-ROLES = [ 
-    (0, "Student"),
+ROLES = [
     (1, "Administrator"),
     (2, "Director"),
 ]
