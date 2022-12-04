@@ -6,26 +6,26 @@
         </a>
     </div>
 </div>
-<div class="card p-3">
-<div class="d-flex w-100 justify-content-between - align-items-center">
-    <div>
-        <h4>
-            Term 1
-        </h4>
-        <div class="d-flex">
-            <b class="mr-1">Period:</b>
-            <div>
-                14/03/22 - 20/05/22
+
+{% for position, term in terms.items %}
+<div class="card p-3 mb-3">
+    <div class="d-flex w-100 justify-content-between align-items-center">
+        <div>
+            <h4>
+                Term {{position}}
+            </h4>
+            <div class="d-flex">
+                <b class="mr-1">Period:</b>
+                <div>
+                    {{term.start_date|date:"d/m/y"}} - {{term.end_date|date:"d/m/y"}}
+                </div>
             </div>
+    
         </div>
-
+    
+        <a href="{% url 'term_update' term.id %}" class="btn btn-primary">
+            Edit term
+        </a>
     </div>
-
-    <a href="" class="btn btn-primary">
-        Edit term
-    </a>
 </div>
-</div>
-    <!-- {% for position, term in terms.items %}
-
-    {% endfor %} -->
+{% endfor %}

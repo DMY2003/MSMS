@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordForm, AdminLessonForm, StudentRequestForm, CreateAdminsForm, AccountForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .models import Request, Lesson, Student, Administrator, User
+from lessons.models import Request, Lesson, Student, Administrator, User, Term
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage
@@ -320,9 +320,21 @@ def student_request_delete(request, request_id):
         lesson_request.delete()
     return redirect('student_requests')
 
+def map_terms(terms):
+    mapped_terms = {}
+    
+    for i in range(len(terms)):
+        mapped_terms[i + 1] = terms[i]
+
+    return mapped_terms
+
 @login_required 
 def term_create(request):
-    return render(request, 'term_create.html', {}) 
+    terms = map_terms(Term.objects.all())
+    response_data = {"terms": terms}
+    
+
+    return render(request, 'term_create.html', response_data) 
 
 @login_required 
 def term_update(request, term_id):
