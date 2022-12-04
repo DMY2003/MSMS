@@ -158,7 +158,7 @@ def admin_approved_requests(request):
     requests_page = paginator.page(page_number)
     response_data = {"requests": requests_page}
 
-    return render(request, 'admin_approved_requests', response_data)
+    return render(request, 'admin_approved_requests.html', response_data)
 
 
 @login_required 
@@ -169,7 +169,7 @@ def admin_unapproved_requests(request):
     requests_page = paginator.page(page_number)
     response_data = {"requests": requests_page}
 
-    return render(request, 'admin_unapproved_requests', response_data)
+    return render(request, 'admin_unapproved_requests.html', response_data)
 
 @login_required
 def admin_requests(request):
