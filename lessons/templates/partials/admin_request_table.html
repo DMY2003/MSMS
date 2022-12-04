@@ -1,3 +1,4 @@
+<div class="container-sm">
 <div class="card p-3 mb-5">
     <h3>
         {{request_type}}
@@ -12,7 +13,7 @@
             <th scope="col">Interval</th>
             <th scope="col">Duration</th>
             <th scope="col">Availabiity</th>
-            {% if requests == unfulfilled_requests %}
+            {% if request_type == "Unfulfilled requests" %}
             <th scope="col">Action</th>
             {% endif %}
           </tr>
@@ -28,7 +29,7 @@
               <td>{{request.lesson_interval}} week(s)</td>
               <td>{{request.lesson_duration}} minutes</td>
               <td>{{request.availability}}</td>
-              {% if requests == unfulfilled_requests %}
+              {% if request_type == "Unfulfilled requests" %}
               <td>
                   <a class="btn btn-primary btn-sm" href="{% url 'admin_request' request.id %}">
                     Approve
@@ -43,4 +44,5 @@
           {% endfor %}
         </tbody>
     </table>
+</div>
 </div>
