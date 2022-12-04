@@ -122,8 +122,6 @@ class AdminLessonForm(forms.ModelForm):
         fields = ["date", "teacher", "instrument", "duration"]
         widgets = {"date": forms.DateTimeInput(attrs={'type': 'date'})}
 
-    # date = forms.DateTimeField(label="Edit date")
-
 
 class CreateAdminsForm(forms.ModelForm):
     class Meta:
@@ -184,5 +182,16 @@ class TermForm(forms.ModelForm):
 
         model = Term
         fields = ["start_date", "end_date"]
+        widgets = {
+            "start_date": forms.DateTimeInput(attrs={'type': 'date'}),
+            "end_date": forms.DateTimeInput(attrs={'type': 'date'})
+        }
 
-        
+    def clean(self):
+        super().clean()
+        current_terms = Term.objects.all()
+
+        for term in current_terms:
+            if self.start_date <= term.end_date and self.end_date >= term.start_date:
+                self.add_error("start_date", "Dates cannot overlap with current term dates!")
+                break
