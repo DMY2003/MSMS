@@ -171,3 +171,6 @@ class Invoice(models.Model):
 class Term(models.Model):
     start_date = models.DateTimeField(null=True)
     end_date = models.DateTimeField(null=True)
+
+    class Meta:
+        ordering = ('start_date',)
