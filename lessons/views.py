@@ -12,7 +12,7 @@ def login_prohibited(function):
         if request.user.is_authenticated:
             role = request.user.role 
             if role == "Administrator":
-                return redirect('admin_requests')
+                return redirect('admin_unapproved_requests')
             else:
                 return redirect('student_requests')
         else:
@@ -101,7 +101,7 @@ def student_requests(request):
         return render(request, 'student_requests.html', response_data)
 
     elif request.user.role == 'Administrator' or request.user.role == 'Director':
-        return redirect('admin_requests')
+        return redirect('admin_unapproved_requests')
 
 
 @login_required
@@ -125,7 +125,7 @@ def admin_request_delete(request, request_id):
     if lesson_request:
         lesson_request.delete()
     messages.add_message(request, messages.ERROR, "The request has been successfully deleted!")
-    return redirect("admin_requests")
+    return redirect("admin_unapproved_requests")
 
 @login_required
 def admin_request(request, request_id):
@@ -142,7 +142,7 @@ def admin_request(request, request_id):
             )
 
             messages.add_message(request, messages.SUCCESS, "Lessons successfuly booked!")
-            return redirect("admin_requests")
+            return redirect("admin_unapproved_requests")
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
     else:
         form = AdminRequestForm(instance=lesson_request)
