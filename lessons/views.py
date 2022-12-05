@@ -375,6 +375,7 @@ def term_update(request, term_id):
         if form.is_valid():
             form.save()
             messages.add_message(request, messages.SUCCESS, "The term was succesfully updated!")
+            return redirect('term_create')
     else:
         form = TermForm(instance=term)
 
