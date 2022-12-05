@@ -173,3 +173,13 @@ class AccountForm(forms.ModelForm):
 
         model = User
         fields = ['first_name', 'last_name', 'email', 'role']
+
+
+class UpdateBalance(forms.ModelForm):
+    class Meta:
+        model = Student
+        fields = ['balance']
+
+        labels = {
+            'balance': 'New Balance',
+        }

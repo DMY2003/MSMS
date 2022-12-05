@@ -33,9 +33,13 @@ urlpatterns = [
     path('administrator/requests', views.admin_requests, name='admin_requests'),
     path('administrator/delete_request/<int:request_id>', views.admin_request_delete, name='admin_request_delete'),
     path('administrator/requests/<int:request_id>', views.admin_request, name='admin_request'),
+    path('administrator/manage_students', views.manage_students, name='manage_students'),
+    path('administrator/delete_user/<int:user_id>', views.manage_user_delete, name='manage_user_delete'),
+    path('administrator/change_balance/<int:user_id>', views.change_balance, name='change_balance'),
+
     path('director/create_admin', views.create_admin, name='create_admin'),
     path('director/manage_admins', views.manage_admins, name='manage_admins'),
-    path('director/delete_admin/<int:admin_id>', views.manage_admin_delete, name='manage_admin_delete'),
+    path('director/delete_admin/<int:admin_id>', views.manage_user_delete, name='manage_admin_delete'),
     path('director/edit_admin/<int:admin_id>', views.edit_admin, name='edit_admin'),
 
     path('requests/', views.student_requests, name='student_requests'),

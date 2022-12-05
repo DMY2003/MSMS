@@ -1,29 +1,34 @@
 from django.shortcuts import render, redirect
-from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordForm, AdminLessonForm, StudentRequestForm, CreateAdminsForm, AccountForm
+from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordForm, AdminLessonForm, StudentRequestForm, \
+    CreateAdminsForm, AccountForm, UpdateBalance
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .models import Request, Lesson, Student, Administrator
+from .models import Request, Lesson, User, Student, Administrator
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage
 
+
 def login_prohibited(function):
     def wrap(request, *args, **kwargs):
         if request.user.is_authenticated:
-            role = request.user.role 
+            role = request.user.role
             if role == "Administrator":
                 return redirect('admin_requests')
             else:
                 return redirect('student_requests')
         else:
             return function(request, *args, **kwargs)
-    wrap.__doc__=function.__doc__
-    wrap.__name__=function.__name__
+
+    wrap.__doc__ = function.__doc__
+    wrap.__name__ = function.__name__
     return wrap
+
 
 @login_prohibited
 def home(request):
     return render(request, 'home.html')
+
 
 @login_prohibited
 def sign_up(request):
@@ -53,9 +58,11 @@ def log_in(request):
     form = LogInForm()
     return render(request, 'log_in.html', {'form': form})
 
+
 def log_out(request):
     logout(request)
     return redirect('home')
+
 
 @login_required
 def password(request):
@@ -74,6 +81,7 @@ def password(request):
     form = PasswordForm()
     return render(request, 'password.html', {'form': form})
 
+
 @login_required
 def profile(request):
     current_user = request.user
@@ -86,6 +94,7 @@ def profile(request):
     else:
         form = UserForm(instance=current_user)
     return render(request, 'profile.html', {'form': form})
+
 
 @login_required
 def student_requests(request):
@@ -111,6 +120,7 @@ def transactions(request):
     elif request.user.role == 'Administrator' or request.user.role == 'Director':
         return render(request, 'admin_transactions_page.html')
 
+
 @login_required
 def lessons(request):
     if request.user.role == 'Student':
@@ -126,6 +136,7 @@ def admin_request_delete(request, request_id):
         lesson_request.delete()
     messages.add_message(request, messages.ERROR, "The request has been successfully deleted!")
     return redirect("admin_requests")
+
 
 @login_required
 def admin_request(request, request_id):
@@ -149,6 +160,7 @@ def admin_request(request, request_id):
 
     return render(request, 'admin_request.html', {'form': form, 'request': lesson_request})
 
+
 @login_required
 def admin_requests(request):
     response_data = {
@@ -159,11 +171,12 @@ def admin_requests(request):
 
     return render(request, 'admin_requests.html', response_data)
 
+
 @login_required
 def admin_lessons(request):
     """Handles the display of lessons"""
     name_search = request.GET.get('name_search', None)
-    page_number = request.GET.get('page', 1) 
+    page_number = request.GET.get('page', 1)
 
     lessons = Lesson.objects.all()
 
@@ -178,7 +191,7 @@ def admin_lessons(request):
         )
 
     paginator = Paginator(lessons, 9)
-    
+
     try:
         lessons_page = paginator.page(page_number)
     except EmptyPage:
@@ -190,6 +203,7 @@ def admin_lessons(request):
         "name_search": name_search
     }
     return render(request, 'admin_lessons.html', response_data)
+
 
 @login_required
 def admin_lesson(request, lesson_id):
@@ -210,6 +224,7 @@ def admin_lesson(request, lesson_id):
     }
     return render(request, 'admin_lesson.html', response_data)
 
+
 @login_required
 def admin_lesson_delete(request, lesson_id):
     """Handles the deletion of a particular lesson"""
@@ -218,6 +233,7 @@ def admin_lesson_delete(request, lesson_id):
         lesson.delete()
     messages.add_message(request, messages.ERROR, "The lesson has been successfully deleted!")
     return redirect("admin_lessons")
+
 
 @login_required
 def create_admin(request):
@@ -231,13 +247,14 @@ def create_admin(request):
         form = CreateAdminsForm()
     return render(request, 'create_admin.html', {'form': form})
 
+
 @login_required
 def manage_admins(request):
     email_search = request.GET.get('email_search', None)
     accounts = Administrator.objects.all()
     if email_search:
         accounts = Administrator.objects.filter(
-            email = email_search
+            email=email_search
         )
 
     response_data = {
@@ -246,6 +263,23 @@ def manage_admins(request):
         "email_search": email_search
     }
     return render(request, 'manage_admins.html', response_data)
+
+
+def manage_students(request):
+    email_search = request.GET.get('email_search', None)
+    accounts = Student.objects.all()
+    if email_search:
+        accounts = Student.objects.filter(
+            email=email_search
+        )
+
+    response_data = {
+        "accounts": accounts,
+        "student_count": len(accounts),
+        "email_search": email_search
+    }
+    return render(request, 'manage_students.html', response_data)
+
 
 @login_required
 def edit_admin(request, admin_id):
@@ -260,6 +294,21 @@ def edit_admin(request, admin_id):
         form = AccountForm(instance=current_user)
     return render(request, 'edit_account.html', {'form': form})
 
+
+# @login_required
+# def edit_student(request, student_id):
+#     current_user = User.objects.get(id=student_id)
+#     if request.method == 'POST':
+#         form = AccountForm(request.POST, instance=current_user)
+#         if form.is_valid():
+#             form.save()
+#             messages.add_message(request, messages.SUCCESS, "Account updated!")
+#             return redirect('manage_students')
+#     else:
+#         form = AccountForm(instance=current_user)
+#     return render(request, 'edit_account.html', {'form': form})
+
+
 @login_required
 def manage_admin_delete(request, admin_id):
     """Handles the deletion of a particular lesson"""
@@ -269,13 +318,31 @@ def manage_admin_delete(request, admin_id):
     messages.add_message(request, messages.ERROR, "The account has been successfully deleted!")
     return redirect("manage_admins")
 
+
+@login_required
+def manage_user_delete(request, user_id):
+    """Handles the deletion of a particular user"""
+    user = User.objects.get(id=user_id)
+    role = user.role
+    if user:
+        user.delete()
+    messages.add_message(request, messages.ERROR, "The account has been successfully deleted!")
+    if request.user.role == "Administrator":
+        return redirect("manage_students")
+    elif request.user.role == "Director":
+        if role == "Administrator":
+            return redirect("manage_admins")
+        elif role == "Student":
+            return redirect("manage_students")
+
+
 @login_required
 def student_request_create(request):
     """Handles the creation of a request through the student request form"""
     form = StudentRequestForm()
     if request.method == 'POST':
         form = StudentRequestForm(request.POST)
-        
+
         if form.is_valid():
             lesson_request = form.save(commit=False)
             student = Student.objects.get(email=request.user.email)
@@ -284,6 +351,7 @@ def student_request_create(request):
             return redirect('student_requests')
 
     return render(request, 'student_request_create.html', {'form': form})
+
 
 @login_required
 def student_request_update(request, request_id):
@@ -296,8 +364,6 @@ def student_request_update(request, request_id):
 
     if request.method == "POST":
         form = StudentRequestForm(request.POST, instance=lesson_request)
-        print(form.is_valid())
-        print(form.cleaned_data)
         if form.is_valid():
             form.save()
             messages.add_message(request, messages.SUCCESS, "Your request was successfully updated!")
@@ -310,6 +376,7 @@ def student_request_update(request, request_id):
 
     return render(request, 'student_request_update.html', response_data)
 
+
 @login_required
 def student_request_delete(request, request_id):
     lesson_request = Request.objects.get(id=request_id)
@@ -317,3 +384,17 @@ def student_request_delete(request, request_id):
         messages.add_message(request, messages.SUCCESS, "Your request was successfully deleted!")
         lesson_request.delete()
     return redirect('student_requests')
+
+
+def change_balance(request, user_id):
+    student = Student.objects.get(id=user_id)
+
+    if request.method == 'POST':
+        form = UpdateBalance(request.POST, student.balance)
+        if form.is_valid():
+            form.save()
+            messages.add_message(request, messages.SUCCESS, "Balance Updated!")
+            return redirect('manage_students')
+    else:
+        form = UpdateBalance()
+    return render(request, 'change_balance.html', {'form': form})
