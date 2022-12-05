@@ -9,7 +9,12 @@
                     <ul class="nav navbar-nav ml-auto">
 
                         {% if user.role == "Student" %}
-
+                            <a class="nav-link" href="{% url 'student_requests' %}">
+                                Requests
+                            </a>
+                            <a class="nav-link" href="{% url 'student_lessons' %}">
+                                Lessons
+                            </a>
                         {% elif user.role == "Administrator" or user.role == "Director" %}
                             <a class="nav-link" href="{% url 'admin_unapproved_requests' %}">
                                 Requests

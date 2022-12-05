@@ -1,0 +1,27 @@
+<div class="card p-3">
+    <div class="d-flex w-100 justify-content-between mb-2 align-items-center">
+        <div>
+            <div>Lesson #{{lesson.id}} booked at:</div>
+            <div class="d-flex align-items-baseline align-items-baseline">
+                
+                <h5 class="mr-1">{{lesson.date|date:"d/m/y"}}</h5>
+                <span>{{lesson.date|date:"h:m"}}</span>
+            </div>
+        </div>
+    </div>
+
+    <table>
+        <tr>
+            <th>Teacher</th>
+            <td>{{lesson.teacher.full_name}}</td>
+        </tr>
+        <tr>
+            <th>Instrument</th>
+            <td>{{lesson.instrument.name}}</td>
+        </tr>
+        <tr>
+            <th>Duration</th>
+            <td>{{lesson.duration}} minutes</td>
+        </tr>
+    </table>
+</div>
