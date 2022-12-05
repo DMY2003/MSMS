@@ -4,7 +4,7 @@ from django.forms import ModelChoiceField
 from django.core.validators import RegexValidator
 from django.conf import settings
 import datetime
-
+from lessons.helpers import get_available_terms
 
 class SignUpForm(forms.ModelForm):
     class Meta:
@@ -112,7 +112,7 @@ class AdminRequestForm(forms.ModelForm):
         }
 
     teacher = forms.ModelChoiceField(queryset=Teacher.objects.all(), blank=False)
-    term = forms.ModelChoiceField(queryset=Term.objects.all(), blank=False)
+    term = forms.ModelChoiceField(queryset=get_available_terms(), blank=False)
 
     def clean(self):
         """Checks if the approval of the lesson fits in the term specified"""
@@ -126,6 +126,7 @@ class AdminRequestForm(forms.ModelForm):
 
         if expected_end_date > term.end_date:
             self.add_error("term", "The last lesson cannot end after the end of the term!")
+
 
 
 class AdminLessonForm(forms.ModelForm):
