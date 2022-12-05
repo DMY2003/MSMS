@@ -4,7 +4,6 @@ from django.forms import ModelChoiceField
 from django.core.validators import RegexValidator
 from django.conf import settings
 import datetime
-from lessons.helpers import get_available_terms
 
 class SignUpForm(forms.ModelForm):
     class Meta:
@@ -112,7 +111,12 @@ class AdminRequestForm(forms.ModelForm):
         }
 
     teacher = forms.ModelChoiceField(queryset=Teacher.objects.all(), blank=False)
-    term = forms.ModelChoiceField(queryset=get_available_terms(), blank=False)
+    term = forms.ModelChoiceField(
+        queryset=(
+            Term.objects.filter(end_date__gte=datetime.datetime.now().date())
+        ), 
+        blank=False
+    )
 
     def clean(self):
         """Checks if the approval of the lesson fits in the term specified"""

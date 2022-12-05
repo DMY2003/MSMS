@@ -143,7 +143,7 @@ def admin_request(request, request_id):
 
             messages.add_message(request, messages.SUCCESS, "Lessons successfuly booked!")
             return redirect("admin_unapproved_requests")
-        messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
+        messages.add_message(request, messages.ERROR, "The request cannot be approved with the details provided!")
     else:
         form = AdminRequestForm(instance=lesson_request)
 
