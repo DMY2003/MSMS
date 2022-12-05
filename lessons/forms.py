@@ -114,6 +114,19 @@ class AdminRequestForm(forms.ModelForm):
     teacher = forms.ModelChoiceField(queryset=Teacher.objects.all(), blank=False)
     term = forms.ModelChoiceField(queryset=Term.objects.all(), blank=False)
 
+    def clean(self):
+        """Checks if the approval of the lesson fits in the term specified"""
+        super().clean()
+        lesson_count = self.cleaned_data.get("lesson_count")
+        lesson_interval = self.cleaned_data.get("lesson_interval")
+        term = self.cleaned_data.get("term")
+
+        expected_end_date = term.start_date
+        expected_end_date += datetime.timedelta(weeks=lesson_interval) * lesson_count
+
+        if expected_end_date > term.end_date:
+            self.add_error("term", "The last lesson cannot end after the end of the term!")
+
 
 class AdminLessonForm(forms.ModelForm):
     """Implements a form for administrators to edit lessons"""
