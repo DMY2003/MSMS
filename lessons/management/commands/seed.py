@@ -126,7 +126,7 @@ class Command(BaseCommand):
 
     def populate_student(self):
         self.stdout.write('seeding student...')
-        for i in range(100):
+        for i in range(50):
             student_fname = self.faker.first_name()
             student_lname = self.faker.last_name()
             email = str(i) + self.faker.free_email()
@@ -184,19 +184,14 @@ class Command(BaseCommand):
 
     def populate_lessons(self):
         self.stdout.write('seeding lessons...')
-        teachers = list(Teacher.objects.all())
-        instruments = list(Instrument.objects.all())
+        teacher_list = list(Teacher.objects.all())
+
         for request in Request.objects.all():
             if request.is_approved:
-                pref_teacher = random.choice(teachers)
-                instrument = random.choice(instruments)
-                student = Student.objects.get(email=request.student)
-                datetime_obj = datetime.datetime.combine(datetime.datetime.now(), request.time_availability)
-                Lesson.objects.create(date=datetime_obj,
-                                      teacher=pref_teacher,
-                                      student=student,
-                                      instrument=instrument,
-                                      duration=request.lesson_duration)
+                pref_teacher = random.choice(teacher_list)
+                request.generate_lessons(
+                    pref_teacher
+                )
 
     def populate_invoices(self):
         self.stdout.write('seeding invoices...')
