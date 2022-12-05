@@ -88,21 +88,23 @@ def profile(request):
     return render(request, 'profile.html', {'form': form})
 
 @login_required
-def student_requests(request):
+def requests(request):
     if request.user.role == 'Student':
-        student = request.user.id
-
-        response_data = {
-            "form": StudentRequestForm(),
-            "confirmed_requests": Request.objects.filter(student_id=student, is_approved=True),
-            "ongoing_requests": Request.objects.filter(student_id=student, is_approved=False)
-        }
-
-        return render(request, 'student_requests.html', response_data)
-
+        return redirect('student_requests')
     elif request.user.role == 'Administrator' or request.user.role == 'Director':
         return redirect('admin_unapproved_requests')
 
+@login_required
+def student_requests(request):
+    student = request.user.id
+
+    response_data = {
+        "form": StudentRequestForm(),
+        "confirmed_requests": Request.objects.filter(student_id=student, is_approved=True),
+        "ongoing_requests": Request.objects.filter(student_id=student, is_approved=False)
+    }
+
+    return render(request, 'student_requests.html', response_data)
 
 @login_required
 def transactions(request):
