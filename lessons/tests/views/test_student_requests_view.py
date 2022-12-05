@@ -1,7 +1,7 @@
 """Tests of the student requests view."""
 from django.test import TestCase
 from django.urls import reverse
-from lessons.models import User, Student, Request
+from lessons.models import Student, Request
 from lessons.forms import StudentRequestForm
 from lessons.tests.helper import reverse_with_next
 
@@ -20,7 +20,7 @@ class StudentRequestsViewTestCase(TestCase):
         self.url = reverse('student_requests')
 
     def test_student_requests_url(self):
-        self.assertEqual(self.url,'/student/requests/')
+        self.assertEqual(self.url,'/student/requests')
 
     def test_get_student_requests(self):
         self.client.login(email=self.user.email, password='Password123')
