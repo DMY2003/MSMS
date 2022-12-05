@@ -112,6 +112,7 @@ class AdminRequestForm(forms.ModelForm):
         }
 
     teacher = forms.ModelChoiceField(queryset=Teacher.objects.all(), blank=False)
+    term = forms.ModelChoiceField(queryset=Term.objects.all(), blank=False)
 
 
 class AdminLessonForm(forms.ModelForm):

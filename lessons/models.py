@@ -5,6 +5,7 @@ from django.contrib.auth.base_user import BaseUserManager
 import datetime
 from django.core.validators import MaxValueValidator, MinValueValidator 
 from django.conf import settings
+from lessons.helpers import get_date_from_weekday
 
 
 class UserManager(BaseUserManager):
@@ -94,14 +95,6 @@ class Lesson(models.Model):
 
     class Meta:
         ordering = ('date',)
-
-
-def get_date_from_weekday(weekday, time):
-    """Gets the date from the weekday"""
-    today = datetime.date.today()
-    today = datetime.datetime.combine(today, time)
-    return today + datetime.timedelta(days=today.weekday() - weekday)
-
 
 class Request(models.Model):
     """Stores the data of a lesson request"""
