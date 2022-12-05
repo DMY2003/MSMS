@@ -1,5 +1,5 @@
 from django import forms
-from lessons.models import User, Student, Administrator, Teacher, Instrument, Request, Lesson
+from lessons.models import User, Student, Administrator, Teacher, Instrument, Request, Lesson, Term
 from django.forms import ModelChoiceField
 from django.core.validators import RegexValidator
 from django.conf import settings
@@ -122,8 +122,6 @@ class AdminLessonForm(forms.ModelForm):
         fields = ["date", "teacher", "instrument", "duration"]
         widgets = {"date": forms.DateTimeInput(attrs={'type': 'date'})}
 
-    # date = forms.DateTimeField(label="Edit date")
-
 
 class CreateAdminsForm(forms.ModelForm):
     class Meta:
@@ -175,3 +173,42 @@ class AccountForm(forms.ModelForm):
         fields = ['first_name', 'last_name', 'email', 'role']
 
     role = forms.ChoiceField(choices=settings.ROLES)
+
+class TermForm(forms.ModelForm):
+    """Form to update school terms"""
+
+    class Meta:
+        """Form options"""
+
+        model = Term
+        fields = ["start_date", "end_date"]
+        widgets = {
+            "start_date": forms.DateTimeInput(
+                format=('%Y-%m-%d'),
+                attrs={'type': 'date'}
+            ),
+            "end_date": forms.DateTimeInput(
+                format=('%Y-%m-%d'), 
+                attrs={'type': 'date'}
+            )
+        }
+
+    def clean(self):
+        super().clean()
+
+        if self.cleaned_data.get("start_date") > self.cleaned_data.get("end_date"):
+            self.add_error("start_date", "Start date cannot come after end date!")
+            self.add_error("end_date", "End date cannot come before start date!")
+            return
+
+        current_terms = Term.objects.all()
+
+        for term in current_terms:
+            if self.cleaned_data.get("start_date") <= term.end_date and self.cleaned_data.get("end_date") >= term.start_date:
+                if self.instance:
+                    if self.instance.id == term.id:
+                        continue
+
+                self.add_error("start_date", "Dates cannot overlap with current term dates!")
+                self.add_error("end_date", "Dates cannot overlap with current term dates!")
+                return
