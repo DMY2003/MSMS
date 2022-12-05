@@ -337,6 +337,7 @@ def student_request_update(request, request_id):
 
 @login_required
 def student_request_delete(request, request_id):
+    """Handles the deletion of a request by the student who has made it"""
     lesson_request = Request.objects.get(id=request_id)
     if lesson_request:
         messages.add_message(request, messages.SUCCESS, "Your request was successfully deleted!")
@@ -353,7 +354,7 @@ def map_terms(terms):
 
 @login_required 
 def term_create(request):
-    
+    """Handles the creation of a term"""
     form = TermForm()
 
     if request.method == "POST":
@@ -368,6 +369,7 @@ def term_create(request):
 
 @login_required 
 def term_update(request, term_id):
+    """Handles the updating of a term's start date and end date"""
     term = Term.objects.get(pk=term_id)
 
     if request.method == "POST":
@@ -397,6 +399,7 @@ def term_update(request, term_id):
 
 @login_required
 def term_delete(request, term_id):
+    """Handles the deletion of a term"""
     Term.objects.get(pk=term_id).delete()
     messages.add_message(request, messages.SUCCESS, "The term was succesfully deleted!")
     return redirect('term_create') 
