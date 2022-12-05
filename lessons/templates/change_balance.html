@@ -4,15 +4,17 @@
 <div class="row">
     <div class="col-sm-12 col-md-6 offset-md-3">
         <div class="card p-3">
-          <h1>Edit account</h1>
-          <p> Current Balance {{ student.balance }}</p>
+            <h1>Change Balance for <u>{{ name }}</u></h1></br>
+            <p style="text-align:center;"><b>Current Balance: £{{ balance }}</b></p>
           <form action="" method="post">
             {% csrf_token %}
             {% include 'partials/bootstrap_form.html' with form=form %}
             <a class="btn btn-primary" href="{% url 'manage_students' %}">
               Back
             </a>
-            <input type="submit" value="Update" class="btn btn-primary float-right"href ={% url 'manage_students'%}>
+            <input type="submit" name="Change" value="Change Amount" class="btn btn-secondary float-right" href ={% url 'manage_students'%}>
+            <input type="submit" name="Subtract" value="Subtract Amount" class="btn btn-danger float-right" href ={% url 'manage_students'%}>
+            <input type="submit" name="Add" value="Add Amount" class="btn btn-success float-right" href ={% url 'manage_students'%}>
           </form>
         </div>
     </div>

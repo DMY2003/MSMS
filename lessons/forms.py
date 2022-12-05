@@ -181,5 +181,22 @@ class UpdateBalance(forms.ModelForm):
         fields = ['balance']
 
         labels = {
-            'balance': 'New Balance',
+            'balance': 'Amount',
         }
+
+    def save(self, option):
+        student = super().save(commit=False)
+
+        amount = self.cleaned_data["balance"]
+
+        if option == "Change":
+            student.balance = amount
+
+        elif option == "Subtract":
+            student.balance = self.initial["balance"] - amount
+
+        elif option == "Add":
+            student.balance = self.initial["balance"] + amount
+
+        student.save()
+        return student

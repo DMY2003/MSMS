@@ -389,12 +389,25 @@ def student_request_delete(request, request_id):
 def change_balance(request, user_id):
     student = Student.objects.get(id=user_id)
 
+    response_data = {
+        "balance": student.balance,
+        "name": student.first_name + " " + student.last_name,
+    }
+
     if request.method == 'POST':
-        form = UpdateBalance(request.POST, student.balance)
+        form = UpdateBalance(request.POST, instance=student)
         if form.is_valid():
-            form.save()
+            if "Subtract" in request.POST:
+                form.save("Subtract")
+            elif "Add" in request.POST:
+                form.save("Add")
+            elif "Change" in request.POST:
+                form.save("Change")
             messages.add_message(request, messages.SUCCESS, "Balance Updated!")
             return redirect('manage_students')
     else:
-        form = UpdateBalance()
-    return render(request, 'change_balance.html', {'form': form})
+        form = UpdateBalance(instance=student)
+
+    response_data.update({"form": form})
+
+    return render(request, 'change_balance.html', response_data)

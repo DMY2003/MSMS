@@ -58,13 +58,14 @@
                     <th scope="row">{{account.id}}</th>
                     <td>{{account.full_name}}</td>
                     <td>{{account.email}}</td>
-                    <td>£{{account.balance}}</td>
+                    {% if 0 > account.balance %}
+                        <td style="color:red;">£{{account.balance}}</td>
+                    {% else %}
+                        <td style="color:black;">£{{account.balance}}</td>
+                    {% endif %}
                     <td class="float-right">
                         <a class="btn btn-warning btn-sm" href="{% url 'change_balance' account.id  %}">
-                            Change Balance
-                        </a>
-                        <a class="btn btn-primary btn-sm" href="{% url 'edit_admin' account.id  %}">
-                            Edit details
+                            Update Balance
                         </a>
                         <a class="btn btn-danger btn-sm" href="{% url 'manage_user_delete' account.id  %}">
                             Remove Account
