@@ -174,3 +174,6 @@ class Term(models.Model):
 
     class Meta:
         ordering = ('start_date',)
+
+    def __str__(self):
+        return self.start_date.strftime("%d/%m/%Y") + " - " + self.end_date.strftime("%d/%m/%Y")
