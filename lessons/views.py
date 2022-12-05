@@ -114,7 +114,7 @@ def transactions(request):
 @login_required
 def lessons(request):
     if request.user.role == 'Student':
-        return render(request, 'student_lessons_page.html')
+        return redirect('student_lessons')
     elif request.user.role == 'Administrator' or request.user.role == 'Director':
         return redirect('admin_lessons')
 
@@ -342,3 +342,33 @@ def student_request_delete(request, request_id):
         messages.add_message(request, messages.SUCCESS, "Your request was successfully deleted!")
         lesson_request.delete()
     return redirect('student_requests')
+
+
+@login_required
+def student_lessons(request):
+    """Handles the display of lessons for students"""
+    instrument_search = request.GET.get('instrument_search', None)
+    page_number = request.GET.get('page', 1) 
+
+    lessons = Lesson.objects.filter(student=request.user)
+
+    # Filters lessons by the name provided
+    if instrument_search:
+        lessons = Lesson.objects.filter(
+            instrument__name__contains=instrument_search,
+            student=request.user
+        )
+
+    paginator = Paginator(lessons, 9)
+    
+    try:
+        lessons_page = paginator.page(page_number)
+    except EmptyPage:
+        lessons_page = []
+
+    response_data = {
+        "lessons": lessons_page,
+        "lesson_count": len(lessons),
+        "instrument_search": instrument_search
+    }
+    return render(request, 'student_lessons.html', response_data)
