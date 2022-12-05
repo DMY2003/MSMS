@@ -1,0 +1,17 @@
+{% extends 'term_layout.html' %}
+
+{% block term_content %} 
+<div class="container-sm">
+    <div class="card p-3">
+        <form action="{% url 'term_update' term.id %}" method="POST">
+            {% csrf_token %}
+            <h3>Update Term {{term_position}}</h3>
+            {% include 'partials/bootstrap_form.html' with form=form %}
+            <div class="d-flex">
+                <input class="btn btn-primary mr-2" type="submit" value="Save changes">
+                <a class="btn btn-danger" href="{% url 'term_delete' term.id %}">Delete term</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
-from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordForm, AdminLessonForm, StudentRequestForm, CreateAdminsForm, AccountForm
+from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordForm, AdminLessonForm, StudentRequestForm, CreateAdminsForm, AccountForm, TermForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .models import Request, Lesson, Student, Administrator, User
+from lessons.models import Request, Lesson, Student, Administrator, User, Term
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage
@@ -337,12 +337,12 @@ def student_request_update(request, request_id):
 
 @login_required
 def student_request_delete(request, request_id):
+    """Handles the deletion of a request by the student who has made it"""
     lesson_request = Request.objects.get(id=request_id)
     if lesson_request:
         messages.add_message(request, messages.SUCCESS, "Your request was successfully deleted!")
         lesson_request.delete()
     return redirect('student_requests')
-
 
 @login_required
 def student_lessons(request):
@@ -372,3 +372,63 @@ def student_lessons(request):
         "instrument_search": instrument_search
     }
     return render(request, 'student_lessons.html', response_data)
+    
+def map_terms(terms):
+    mapped_terms = {}
+
+    for i in range(len(terms)):
+        mapped_terms[i + 1] = terms[i]
+
+    return mapped_terms
+
+@login_required 
+def term_create(request):
+    """Handles the creation of a term"""
+    form = TermForm()
+
+    if request.method == "POST":
+        form = TermForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.add_message(request, messages.SUCCESS, "The term was successfully created!")
+    terms = map_terms(Term.objects.all())
+    response_data = {"terms": terms, "form": form}
+    
+    return render(request, 'term_create.html', response_data) 
+
+@login_required 
+def term_update(request, term_id):
+    """Handles the updating of a term's start date and end date"""
+    term = Term.objects.get(pk=term_id)
+
+    if request.method == "POST":
+        form = TermForm(request.POST, instance=term)
+        if form.is_valid():
+            form.save()
+            messages.add_message(request, messages.SUCCESS, "The term was succesfully updated!")
+            return redirect('term_create')
+    else:
+        form = TermForm(instance=term)
+
+    terms = map_terms(Term.objects.all())
+
+    term_position = 1
+    for position, current_term in terms.items():
+        if current_term == term:
+            term_position = position 
+
+    response_data = {
+        "terms": terms, 
+        "form": form, 
+        "term_position" : term_position,
+        "term": term
+    }
+
+    return render(request, 'term_update.html', response_data) 
+
+@login_required
+def term_delete(request, term_id):
+    """Handles the deletion of a term"""
+    Term.objects.get(pk=term_id).delete()
+    messages.add_message(request, messages.SUCCESS, "The term was succesfully deleted!")
+    return redirect('term_create') 

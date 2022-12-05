@@ -22,6 +22,9 @@
                             <a class="nav-link" href="{% url 'admin_lessons' %}">
                                 Lessons
                             </a>
+                            <a class="nav-link" href="{% url 'term_create' %}">
+                                Terms
+                            </a>
                         {% endif %}
 
                         {% if user.role == "Director" %}
