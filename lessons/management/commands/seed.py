@@ -2,10 +2,10 @@ from sys import stdout
 from django.contrib.auth.hashers import make_password
 from django.core.management.base import BaseCommand, CommandError
 from faker import Faker
-from lessons.models import User, Student, Teacher, Administrator, Lesson, Invoice, Instrument, Request, Director
+from lessons.models import User, Student, Teacher, Administrator, Lesson, Invoice, Instrument, Request, Director, Term
 import random
 from django.conf import settings
-import datetime
+from datetime import datetime, timedelta
 
 
 class Command(BaseCommand):
@@ -93,8 +93,21 @@ class Command(BaseCommand):
         user.save()
 
     def populate_terms(self):
-        pass
+        self.stdout.write('seeding terms...')
 
+        term_lengths = [8, 10, 12]
+        holiday = [1, 2]
+        current_date = datetime.today() - timedelta(weeks=random.randrange(3, 6))
+
+        for _ in range(random.randrange(3, 5)):
+            end_date = current_date + random.choice(term_lengths)
+
+            Term(
+                start_date = current_date,
+                end_date = end_date,
+            )
+
+            current_date = end_date + timedelta(weeks=random.choice(holiday))
 
     def populate_admin(self):
         self.stdout.write('seeding admin...')
