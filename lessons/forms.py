@@ -202,11 +202,11 @@ class TermForm(forms.ModelForm):
         model = Term
         fields = ["start_date", "end_date"]
         widgets = {
-            "start_date": forms.DateTimeInput(
+            "start_date": forms.DateInput(
                 format=('%Y-%m-%d'),
                 attrs={'type': 'date'}
             ),
-            "end_date": forms.DateTimeInput(
+            "end_date": forms.DateInput(
                 format=('%Y-%m-%d'), 
                 attrs={'type': 'date'}
             )

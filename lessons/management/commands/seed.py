@@ -20,6 +20,7 @@ class Command(BaseCommand):
         self.populate_teacher()
         self.populate_student()
         self.populate_instruments()
+        self.populate_terms()
         self.populate_requests()
         self.populate_lessons()
         self.populate_invoices()
@@ -90,6 +91,10 @@ class Command(BaseCommand):
         user.is_admin = True
         user.role = "Administrator"
         user.save()
+
+    def populate_terms(self):
+        pass
+
 
     def populate_admin(self):
         self.stdout.write('seeding admin...')

@@ -162,8 +162,8 @@ class Invoice(models.Model):
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, blank=False)
 
 class Term(models.Model):
-    start_date = models.DateTimeField(null=True)
-    end_date = models.DateTimeField(null=True)
+    start_date = models.DateField(null=True)
+    end_date = models.DateField(null=True)
 
     class Meta:
         ordering = ('start_date',)
