@@ -98,23 +98,6 @@ def student_requests(request):
     elif request.user.role == 'Administrator' or request.user.role == 'Director':
         return redirect('admin_unapproved_requests')
 
-
-@login_required
-def transactions(request):
-    '''The transactions page of the website.'''
-    if request.user.role == 'Student':
-        return render(request, 'student_transactions_page.html')
-    elif request.user.role == 'Administrator' or request.user.role == 'Director':
-        return render(request, 'admin_transactions_page.html')
-
-@login_required
-def lessons(request):
-    '''The lessons page of the website.'''
-    if request.user.role == 'Student':
-        return redirect('student_lessons')
-    elif request.user.role == 'Administrator' or request.user.role == 'Director':
-        return redirect('admin_lessons')
-
 @login_required
 def admin_request_delete(request, request_id):
     """Handles the deletion of a particular request"""
@@ -287,7 +270,7 @@ def create_admin(request):
         return render(request, 'create_admin.html', {'form': form})
     else:
         messages.add_message(request, messages.ERROR, "You do not have permission to create an admin!")
-        return redirect('manage_admins')
+        return redirect('home')
 
 @login_required
 def manage_admins(request):
@@ -308,7 +291,7 @@ def manage_admins(request):
         return render(request, 'manage_admins.html', response_data)
     else:
         messages.add_message(request, messages.ERROR, "You do not have permission to manage admins!")
-        return redirect('admin_lessons')
+        return redirect('home')
 
 @login_required
 def delete_account(request, account_id):
@@ -321,7 +304,7 @@ def delete_account(request, account_id):
         return redirect("manage_admins")
     else:
         messages.add_message(request, messages.ERROR, "You do not have permission to delete an admin!")
-        return redirect("manage_admins")
+        return redirect("home")
 
 @login_required
 def edit_account(request, account_id):
@@ -339,7 +322,7 @@ def edit_account(request, account_id):
         return render(request, 'edit_account.html', {'form': form, 'account': account})
     else:
         messages.add_message(request, messages.ERROR, "You do not have permission to edit an admin!")
-        return redirect("manage_admins")
+        return redirect("home")
 
 @login_required
 def student_request_create(request):
@@ -434,7 +417,7 @@ def student_lessons(request):
 @login_required 
 def term_create(request):
     """Handles the creation of a term"""
-    if request.user.role != 'Director' and request.user.role != 'Administator':
+    if request.user.role != 'Director' and request.user.role != 'Administrator':
         return redirect('home')
     form = TermForm()
 
@@ -451,7 +434,7 @@ def term_create(request):
 @login_required 
 def term_update(request, term_id):
     """Handles the updating of a term's start date and end date"""
-    if request.user.role != 'Director' and request.user.role != 'Administator':
+    if request.user.role != 'Director' and request.user.role != 'Administrator':
         return redirect('home')
     term = Term.objects.get(pk=term_id)
 
@@ -483,7 +466,7 @@ def term_update(request, term_id):
 @login_required
 def term_delete(request, term_id):
     """Handles the deletion of a term"""
-    if request.user.role != 'Director' and request.user.role != 'Administator':
+    if request.user.role != 'Director' and request.user.role != 'Administrator':
         return redirect('home')
     Term.objects.get(pk=term_id).delete()
     messages.add_message(request, messages.SUCCESS, "The term was succesfully deleted!")
