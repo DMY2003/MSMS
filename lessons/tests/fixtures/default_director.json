@@ -1,0 +1,22 @@
+[
+    {
+        "model": "lessons.User",
+        "pk": 1,
+        "fields": {
+            "first_name": "Alex",
+            "last_name": "Green",
+            "username": "alex_green@email.org",
+            "email": "alex_green@email.org",
+            "role": "Director",
+            "password": "pbkdf2_sha256$260000$4BNvFuAWoTT1XVU8D6hCay$KqDCG+bHl8TwYcvA60SGhOMluAheVOnF1PMz0wClilc=",
+            "is_active": true
+        }
+    },
+    {
+        "model": "lessons.Director",
+        "pk": 1,
+        "fields": {
+          "user_ptr_id": 1
+        }
+    }
+]
