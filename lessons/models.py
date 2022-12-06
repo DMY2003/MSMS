@@ -5,6 +5,7 @@ from django.contrib.auth.base_user import BaseUserManager
 import datetime
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.conf import settings
+import sqlite3
 
 
 class UserManager(BaseUserManager):
@@ -85,17 +86,6 @@ class Instrument(models.Model):
         return self.name
 
 
-class Lesson(models.Model):
-    date = models.DateTimeField(null=True)
-    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, blank=False)
-    student = models.ForeignKey(Student, on_delete=models.CASCADE, blank=False)
-    instrument = models.ForeignKey(Instrument, on_delete=models.CASCADE, blank=False)
-    duration = models.IntegerField(choices=settings.LESSON_DURATIONS)
-
-    class Meta:
-        ordering = ('date',)
-
-
 def get_date_from_weekday(weekday, time):
     """Gets the date from the weekday"""
     today = datetime.date.today()
@@ -129,6 +119,8 @@ class Request(models.Model):
 
     paid = models.IntegerField(default=0)
 
+    invoice = None
+
     @property
     def availability(self):
         """Gets the availability in full"""
@@ -151,18 +143,38 @@ class Request(models.Model):
                 student=self.student,
                 date=lesson_datetime,
                 instrument=self.instrument,
-                duration=self.lesson_duration
+                duration=self.lesson_duration,
+                request=self
             )
             lesson.save()
 
             lesson_datetime += datetime.timedelta(weeks=self.lesson_interval)
 
+            # Generate Invoices for the lessons
+            price = self.instrument.base_price * self.lesson_duration / 60
+            invoice = Invoice(price=price, lesson=lesson)
+            invoice.save()
+
         self.save()
 
-        # Generate Invoices for the lessons
-        price = self.instrument.base_price * self.lesson_duration / 60
-        invoice = Invoice(price=price, lesson=lesson)
-        invoice.save()
+
+class Lesson(models.Model):
+    date = models.DateTimeField(null=True)
+    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, blank=False)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, blank=False)
+    instrument = models.ForeignKey(Instrument, on_delete=models.CASCADE, blank=False)
+    duration = models.IntegerField(choices=settings.LESSON_DURATIONS)
+    request = models.ForeignKey(Request, on_delete=models.CASCADE, null=True)
+
+    class Meta:
+        ordering = ('date',)
+
+    def get_invoice(self):
+        db = sqlite3.connect('db.sqlite3')
+        cur = db.cursor()
+        id = self.id
+        data = cur.execute('SELECT paid FROM lessons_invoice WHERE lesson_id = ' + str(id))
+        return bool(data.fetchone()[0])
 
 
 class Invoice(models.Model):
