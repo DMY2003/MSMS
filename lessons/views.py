@@ -6,6 +6,7 @@ from lessons.models import Request, Lesson, Student, Administrator, User, Term
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage
+import datetime
 
 def login_prohibited(function):
     def wrap(request, *args, **kwargs):
@@ -145,7 +146,11 @@ def admin_request(request, request_id):
             return redirect("admin_unapproved_requests")
         messages.add_message(request, messages.ERROR, "The request cannot be approved with the details provided!")
     else:
-        form = AdminRequestForm(instance=lesson_request)
+        terms = Term.objects.filter(end_date__gte=datetime.datetime.now().date())
+        first_term = None
+        if len(terms) > 0:
+            first_term = terms[0]
+        form = AdminRequestForm(instance=lesson_request, initial={"term": first_term})
 
     return render(request, 'admin_request.html', {'form': form, 'request': lesson_request})
 
