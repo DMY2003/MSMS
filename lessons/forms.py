@@ -1,5 +1,5 @@
 from django import forms
-from lessons.models import User, Student, Administrator, Teacher, Instrument, Request, Lesson
+from lessons.models import User, Student, Administrator, Teacher, Instrument, Request, Lesson, Transaction
 from django.forms import ModelChoiceField
 from django.core.validators import RegexValidator
 from django.conf import settings
@@ -176,6 +176,8 @@ class AccountForm(forms.ModelForm):
 
 
 class UpdateBalance(forms.ModelForm):
+    note = forms.CharField(label="Note", required=False, max_length=25)
+
     class Meta:
         model = Student
         fields = ['balance']
@@ -184,19 +186,26 @@ class UpdateBalance(forms.ModelForm):
             'balance': 'Amount',
         }
 
-    def save(self, option):
+    def save(self):
         student = super().save(commit=False)
-
+        transaction_type = ""
         amount = self.cleaned_data["balance"]
 
-        if option == "Change":
+        if "Subtract" in self.data:
+            transaction_type = f"-£{amount}"
+            student.balance = self.initial["balance"] - amount
+        elif "Add" in self.data:
+            transaction_type = f"+£{amount}"
+            student.balance = self.initial["balance"] + amount
+        elif "Change" in self.data:
+            transaction_type = f"Set £{amount}"
             student.balance = amount
 
-        elif option == "Subtract":
-            student.balance = self.initial["balance"] - amount
-
-        elif option == "Add":
-            student.balance = self.initial["balance"] + amount
-
+        Transaction.objects.create(student=student,
+                                   note=self.cleaned_data["note"],
+                                   change=transaction_type,
+                                   old_balance=self.initial["balance"],
+                                   new_balance=student.balance
+                                   )
         student.save()
         return student
