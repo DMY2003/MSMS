@@ -3,7 +3,7 @@ from django.core.validators import RegexValidator
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.base_user import BaseUserManager
 import datetime
-from django.core.validators import MaxValueValidator, MinValueValidator 
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.conf import settings
 
 
@@ -81,9 +81,9 @@ class Instrument(models.Model):
     name = models.CharField(max_length=30, blank=False)
     base_price = models.IntegerField(default=0)
 
-
     def __str__(self):
         return self.name
+
 
 class Lesson(models.Model):
     date = models.DateTimeField(null=True)
@@ -127,6 +127,8 @@ class Request(models.Model):
 
     is_approved = models.BooleanField(default=False)
 
+    paid = models.IntegerField(default=0)
+
     @property
     def availability(self):
         """Gets the availability in full"""
@@ -138,7 +140,7 @@ class Request(models.Model):
         self.is_approved = True
 
         lesson_datetime = get_date_from_weekday(
-            self.day_availability, 
+            self.day_availability,
             self.time_availability
         )
 
@@ -167,6 +169,7 @@ class Invoice(models.Model):
     price = models.IntegerField(blank=False)
     paid = models.BooleanField(default=False)
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, blank=False)
+
 
 class Term(models.Model):
     start_date = models.DateTimeField(null=True)
