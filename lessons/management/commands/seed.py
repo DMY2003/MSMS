@@ -100,7 +100,7 @@ class Command(BaseCommand):
         current_date = datetime.today() - timedelta(weeks=random.randrange(3, 6))
 
         for _ in range(random.randrange(3, 5)):
-            end_date = current_date + random.choice(term_lengths)
+            end_date = current_date + timedelta(weeks=random.choice(term_lengths))
 
             Term(
                 start_date = current_date,
