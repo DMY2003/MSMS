@@ -3,7 +3,7 @@ from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordFo
     CreateAdminsForm, AccountForm, UpdateBalance
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .models import Request, Lesson, User, Student, Administrator
+from .models import Request, Lesson, User, Student, Administrator, Transaction
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage
@@ -397,12 +397,7 @@ def change_balance(request, user_id):
     if request.method == 'POST':
         form = UpdateBalance(request.POST, instance=student)
         if form.is_valid():
-            if "Subtract" in request.POST:
-                form.save("Subtract")
-            elif "Add" in request.POST:
-                form.save("Add")
-            elif "Change" in request.POST:
-                form.save("Change")
+            form.save()
             messages.add_message(request, messages.SUCCESS, "Balance Updated!")
             return redirect('manage_students')
     else:
@@ -411,3 +406,15 @@ def change_balance(request, user_id):
     response_data.update({"form": form})
 
     return render(request, 'change_balance.html', response_data)
+
+
+def transaction_history(request):
+    student = request.user.id
+
+    response_data = {
+        "transactions": Transaction.objects.filter(student_id=student),
+    }
+
+    return render(request, 'student_transaction_history.html', response_data)
+
+
