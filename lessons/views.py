@@ -5,28 +5,18 @@ from django.contrib import messages
 from lessons.models import Request, Lesson, Student, Administrator, User, Term
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
+from lessons.helper import login_prohibited, map_terms
 from django.core.paginator import Paginator, EmptyPage
 
-def login_prohibited(function):
-    def wrap(request, *args, **kwargs):
-        if request.user.is_authenticated:
-            role = request.user.role 
-            if role == "Administrator":
-                return redirect('admin_unapproved_requests')
-            else:
-                return redirect('student_requests')
-        else:
-            return function(request, *args, **kwargs)
-    wrap.__doc__=function.__doc__
-    wrap.__name__=function.__name__
-    return wrap
 
 @login_prohibited
 def home(request):
+    '''The home page of the website.'''
     return render(request, 'home.html')
 
 @login_prohibited
 def sign_up(request):
+    '''The sign up page of the website.'''
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
@@ -40,6 +30,7 @@ def sign_up(request):
 
 @login_prohibited
 def log_in(request):
+    '''The log in page of the website.'''
     if request.method == 'POST':
         form = LogInForm(request.POST)
         if form.is_valid():
@@ -54,11 +45,13 @@ def log_in(request):
     return render(request, 'log_in.html', {'form': form})
 
 def log_out(request):
+    '''Logs the user out.'''
     logout(request)
     return redirect('home')
 
 @login_required
 def password(request):
+    '''The change password page of the website.'''
     current_user = request.user
     if request.method == 'POST':
         form = PasswordForm(data=request.POST)
@@ -76,6 +69,7 @@ def password(request):
 
 @login_required
 def profile(request):
+    '''The edit profile page of the website.'''
     current_user = request.user
     if request.method == 'POST':
         form = UserForm(request.POST, instance=current_user)
@@ -89,6 +83,7 @@ def profile(request):
 
 @login_required
 def student_requests(request):
+    '''The student requests page of the website.'''
     if request.user.role == 'Student':
         student = request.user.id
 
@@ -106,6 +101,7 @@ def student_requests(request):
 
 @login_required
 def transactions(request):
+    '''The transactions page of the website.'''
     if request.user.role == 'Student':
         return render(request, 'student_transactions_page.html')
     elif request.user.role == 'Administrator' or request.user.role == 'Director':
@@ -113,6 +109,7 @@ def transactions(request):
 
 @login_required
 def lessons(request):
+    '''The lessons page of the website.'''
     if request.user.role == 'Student':
         return redirect('student_lessons')
     elif request.user.role == 'Administrator' or request.user.role == 'Director':
@@ -158,6 +155,7 @@ def admin_request(request, request_id):
 
 @login_required 
 def admin_approved_requests(request):
+    '''Handles the display of approved requests'''
     if request.user.role == 'Administrator' or request.user.role == 'Director':
         page_number = request.GET.get('page', 1)
         requests = Request.objects.filter(is_approved=True)
@@ -432,14 +430,6 @@ def student_lessons(request):
         "instrument_search": instrument_search
     }
     return render(request, 'student_lessons.html', response_data)
-    
-def map_terms(terms):
-    mapped_terms = {}
-
-    for i in range(len(terms)):
-        mapped_terms[i + 1] = terms[i]
-
-    return mapped_terms
 
 @login_required 
 def term_create(request):
