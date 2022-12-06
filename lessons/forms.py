@@ -215,7 +215,10 @@ class TermForm(forms.ModelForm):
     def clean(self):
         super().clean()
 
-        if self.cleaned_data.get("start_date") > self.cleaned_data.get("end_date"):
+        start_date = self.cleaned_data.get("start_date")
+        end_date = self.cleaned_data.get("end_date")
+
+        if start_date > end_date:
             self.add_error("start_date", "Start date cannot come after end date!")
             self.add_error("end_date", "End date cannot come before start date!")
             return
@@ -223,7 +226,7 @@ class TermForm(forms.ModelForm):
         current_terms = Term.objects.all()
 
         for term in current_terms:
-            if self.cleaned_data.get("start_date") <= term.end_date and self.cleaned_data.get("end_date") >= term.start_date:
+            if start_date <= term.end_date and end_date >= term.start_date:
                 if self.instance:
                     if self.instance.id == term.id:
                         continue
@@ -231,3 +234,7 @@ class TermForm(forms.ModelForm):
                 self.add_error("start_date", "Dates cannot overlap with current term dates!")
                 self.add_error("end_date", "Dates cannot overlap with current term dates!")
                 return
+
+        term_length = end_date - start_date
+        if term_length.days < 14:
+            self.add_error("end_date", "Term cannot be shorter than 2 weeks!")
