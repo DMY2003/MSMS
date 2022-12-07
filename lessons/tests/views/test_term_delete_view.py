@@ -43,15 +43,3 @@ class TermDeleteViewTestCase(TestCase, LogInTester):
     #     response = self.client.post(self.url, follow=True)
     #     response_url = reverse('home')
     #     self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
-
-    # def test_admin_manage_view_not_logged_in(self):
-    #     response = self.client.get(self.url)
-    #     self.assertEqual(response.status_code, 302)
-    #     self.assertRedirects(response, '/log_in/?next=/director/manage_admins')
-
-    # def test_admin_manage_view_not_director(self):
-    #     self.user2 = Administrator.objects.get(email='"bob_green@email.com')
-    #     self.login(self.user2)
-    #     response = self.client.get(self.url)
-    #     self.assertEqual(response.status_code, 302)
-    #     self.assertRedirects(response, '/')

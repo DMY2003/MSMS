@@ -343,7 +343,7 @@ def student_request_create(request):
     form = StudentRequestForm()
     if request.method == 'POST':
         form = StudentRequestForm(request.POST)
-        
+        # print(form.non_field_errors)
         if form.is_valid():
             lesson_request = form.save(commit=False)
             student = Student.objects.get(email=request.user.email)
@@ -446,7 +446,6 @@ def term_create(request):
 
     if request.method == "POST":
         form = TermForm(request.POST)
-
         if form.is_valid():
             form.save()
             messages.add_message(request, messages.SUCCESS, "The term was successfully created!")
@@ -463,9 +462,10 @@ def term_update(request, term_id):
     if request.user.role != 'Director' and request.user.role != 'Administrator':
         return redirect('home')
     term = Term.objects.get(pk=term_id)
-
+    print(request.POST)
     if request.method == "POST":
         form = TermForm(request.POST, instance=term)
+
         if form.is_valid():
             form.save()
             messages.add_message(request, messages.SUCCESS, "The term was succesfully updated!")

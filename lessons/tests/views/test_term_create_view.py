@@ -44,20 +44,10 @@ class TermCreateViewTestCase(TestCase, LogInTester):
     def test_term_create_view_with_invalid_form(self):
         self.login(self.user)
         before_count = Term.objects.count()
-        response = self.client.get(self.url)
+        self.form_input["start_date"] = date(2023, 4, 1)
+        response = self.client.post(self.url, self.form_input)
         after_count = Term.objects.count()
         self.assertTemplateUsed(response, 'term_create.html')
         self.assertEqual(before_count, after_count)
         messages = list(response.context['messages'])
         self.assertEqual(len(messages), 0)
-
-    # def test_term_delete_view_with_nonexistent_term(self):
-    #     self.login(self.user)
-    #     url = reverse('term_delete', kwargs={"term_id": 10})
-    #     before_count = Term.objects.count()
-    #     response = self.client.post(url, follow=True)
-    #     after_count = Term.objects.count()
-    #     response_url = reverse('term_create')
-    #     self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
-    #     self.assertTemplateUsed(response, 'term_create.html')
-    #     self.assertEqual(before_count, after_count)
