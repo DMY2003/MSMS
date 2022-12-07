@@ -16,17 +16,6 @@ class AdminRequestViewTestCase(TestCase, LogInTester):
     def test_admin_request_url(self):
         self.assertEqual(self.url,'/administrator/requests/1')
 
-    # def test_admin_request_view(self):
-    #     self.login(self.user)
-    #     response = self.client.get(self.url)
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertTemplateUsed(response, 'admin_request.html')
-    #     self.assertContains(response, 'Request Administrator Account')
-    #     self.assertContains(response, 'First name:')
-    #     self.assertContains(response, 'Last name:')
-    #     self.assertContains(response, 'Email:')
-    #     self.assertContains(response, 'Request')
-
     def test_admin_request_view_not_logged_in(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 302)
