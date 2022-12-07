@@ -4,7 +4,7 @@ from django.urls import reverse
 from lessons.models import Student, Administrator, Request, Teacher
 from lessons.tests.helper import LogInTester
 
-class AdminRequestViewTestCase(TestCase, LogInTester):
+class AdminRequestsViewTestCase(TestCase, LogInTester):
     """Tests of the admin requests view."""
 
     fixtures = [
@@ -22,8 +22,3 @@ class AdminRequestViewTestCase(TestCase, LogInTester):
         pass
         
         self.assertEqual(True, True)
-
-    # def test_admin_request_view_not_logged_in(self):
-    #     response = self.client.get(self.url)
-    #     self.assertEqual(response.status_code, 302)
-    #     self.assertRedirects(response, '/log_in/?next=/administrator/requests/1')
