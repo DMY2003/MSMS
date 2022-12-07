@@ -302,9 +302,9 @@ def create_admin(request):
         else:
             form = CreateAdminsForm()
         return render(request, 'create_admin.html', {'form': form})
-    else:
-        messages.add_message(request, messages.ERROR, "You do not have permission to create an admin!")
-        return redirect('home')
+    elif request.user.role == 'Administrator':
+        messages.add_message(request, messages.ERROR, "You do not have permission to manage admins!")
+        return redirect('admin_lessons')
 
 
 @login_required
@@ -348,20 +348,6 @@ def manage_students(request):
     else:
         messages.add_message(request, messages.ERROR, "You do not have permission to manage students!")
         return redirect('home')
-
-
-@login_required
-def delete_account(request, account_id):
-    """Handles the deletion of a particular account"""
-    if request.user.role == 'Director':
-        account = User.objects.get(id=account_id)
-        if account:
-            account.delete()
-        messages.add_message(request, messages.ERROR, "The account has been successfully deleted!")
-        return redirect("manage_admins")
-    else:
-        messages.add_message(request, messages.ERROR, "You do not have permission to delete an admin!")
-        return redirect("home")
 
 
 @login_required

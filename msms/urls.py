@@ -40,7 +40,6 @@ urlpatterns = [
 
     path('director/create_admin', views.create_admin, name='create_admin'),
     path('director/manage_admins', views.manage_admins, name='manage_admins'),
-    path('delete_account/<int:account_id>', views.delete_account, name='delete_account'),
     path('edit_account/<int:account_id>', views.edit_account, name='edit_account'),
 
     path('administrator/term/create', views.term_create, name='term_create'),
