@@ -7,7 +7,7 @@ class InstrumentModelTestCase(TestCase):
 
     fixtures = [
         'lessons/tests/fixtures/default_term.json',
-        ]
+    ]
 
     def setUp(self):
         self.term = Term.objects.get(id=1)
