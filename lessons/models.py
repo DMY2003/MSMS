@@ -138,7 +138,7 @@ class Request(models.Model):
         """Generates lessons on the provided day/time at weekly intervals"""
         self.is_approved = True
 
-        base_date = max(term.start_date, datetime.date)
+        base_date = max(term.start_date, datetime.date.today())
 
         lesson_datetime = get_date_from_weekday(
             base_date,

@@ -138,9 +138,12 @@ def admin_request(request, request_id):
         if form.is_valid():
             form.save()
 
+            teacher = form.cleaned_data.get("teacher")
+            term = form.cleaned_data.get("term")
+
             lesson_request.generate_lessons(
-                form.cleaned_data.get("teacher"),
-                form.cleaned_data.get("term")
+                teacher,
+                term
             )
 
             messages.add_message(request, messages.SUCCESS, "Lessons successfuly booked!")

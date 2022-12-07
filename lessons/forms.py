@@ -126,15 +126,18 @@ class AdminRequestForm(forms.ModelForm):
         lesson_count = self.cleaned_data.get("lesson_count")
         lesson_interval = self.cleaned_data.get("lesson_interval")
         term = self.cleaned_data.get("term")
+        day_availability = self.cleaned_data.get("day_availability")
+        time_availability = self.cleaned_data.get("time_availability")
 
-        lesson_datetime = get_date_from_weekday(
-            self.day_availability, 
-            self.time_availability
+        base_date = max(term.start_date, datetime.date.today())
+
+        start_date = get_date_from_weekday(
+            base_date,
+            day_availability, 
+            time_availability
         )
 
-
-        expected_end_date = term.start_date
-        expected_end_date += datetime.timedelta(weeks=lesson_interval) * lesson_count
+        expected_end_date = start_date + datetime.timedelta(weeks=lesson_interval) * lesson_count
 
         if expected_end_date > term.end_date:
             self.add_error("term", "The last lesson cannot end after the end of the term!")
