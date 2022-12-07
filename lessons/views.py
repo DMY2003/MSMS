@@ -172,7 +172,7 @@ def admin_approved_requests(request):
     if request.user.role == 'Administrator' or request.user.role == 'Director':
         page_number = request.GET.get('page', 1)
         requests = Request.objects.filter(is_approved=True)
-        paginator = Paginator(requests, 9)
+        paginator = Paginator(requests, settings.ADMIN_REQUESTS_PAGE_SIZE)
         requests_page = paginator.page(page_number)
         response_data = {"requests": requests_page}
 
@@ -187,27 +187,11 @@ def admin_unapproved_requests(request):
     '''Handles the display of unapproved requests'''
     if request.user.role == 'Administrator' or request.user.role == 'Director':
         page_number = request.GET.get('page', 1)
-        paginator = Paginator(requests, 9)
+        requests = Request.objects.filter(is_approved=False)
+        paginator = Paginator(requests, settings.ADMIN_REQUESTS_PAGE_SIZE)
         requests_page = paginator.page(page_number)
         response_data = {"requests": requests_page}
-
         return render(request, 'admin_unapproved_requests.html', response_data)
-
-    else:
-        return redirect('home')
-
-
-@login_required
-def admin_requests(request):
-    """Handles the display of admin requests"""
-    if request.user.role == 'Administrator' or request.user.role == 'Director':
-        response_data = {
-            "form": AdminRequestForm(),
-            "fulfilled_requests": Request.objects.filter(is_approved=True),
-            "unfulfilled_requests": Request.objects.filter(is_approved=False)
-        }
-
-        return render(request, 'admin_requests.html', response_data)
 
     else:
         return redirect('home')

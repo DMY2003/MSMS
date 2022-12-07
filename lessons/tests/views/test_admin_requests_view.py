@@ -22,9 +22,11 @@ class AdminRequestsViewTestCase(TestCase, LogInTester):
     def test_get_unapproved_admin_requests(self):
         self.login(self.admin)
         response = self.client.get(self.unapproved_requests_url)
-        # self.assertEqual(response.status_code, 200)
-        # self.assertTemplateUsed(response, 'admin_unapproved_requests.html')
-        # requests = response.content["requests"]
-        # print(requests)
-        # self.assertEqual(len(list(requests)), settings.ADMIN_REQUESTS_PAGE_SIZE)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'admin_unapproved_requests.html')
 
+    def test_get_approved_admin_requests(self):
+        self.login(self.admin)
+        response = self.client.get(self.approved_requests_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'admin_approved_requests.html')
