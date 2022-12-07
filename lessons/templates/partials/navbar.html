@@ -20,10 +20,10 @@
                             </a>
                             <a class="nav-link" href="{% url 'transaction_history' %}">
                                 Transaction History
-                            </a>>
+                            </a>    
                             <a class="nav-link" href="{% url 'add_child' %}">
                                 Add Child
-                            </a>>
+                            </a>
                         {% elif user.role == "Administrator" or user.role == "Director" %}
                             <a class="nav-link" href="{% url 'admin_unapproved_requests' %}">
                                 Requests

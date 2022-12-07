@@ -92,14 +92,6 @@ def profile(request):
 
 
 @login_required
-def requests(request):
-    '''The student requests page of the website.'''
-    if request.user.role == 'Student':
-        return redirect('student_requests')
-    elif request.user.role == 'Administrator' or request.user.role == 'Director':
-        return redirect('admin_unapproved_requests')
-
-@login_required
 def student_requests(request):
     student = request.user.id
 
