@@ -102,7 +102,7 @@ class Command(BaseCommand):
         for _ in range(random.randrange(3, 5)):
             end_date = current_date + timedelta(weeks=random.choice(term_lengths))
 
-            Term(
+            Term.objects.create(
                 start_date = current_date,
                 end_date = end_date,
             )
@@ -177,7 +177,6 @@ class Command(BaseCommand):
         self.stdout.write('seeding requests...')
         students = list(Student.objects.all())
         instruments = list(Instrument.objects.all())
-        teachers = list(Teacher.objects.all())
 
         for _ in students:
             req_made = bool(random.getrandbits(1))
@@ -189,6 +188,7 @@ class Command(BaseCommand):
                     duration = random.choice(settings.LESSON_DURATIONS)[0]
                     preferred_teacher = self.faker.first_name() + " " + self.faker.last_name()
                     les_count = 3 + random.randrange(4)
+
 
                     Request.objects.create(time_availability=time_availability,
                                            day_availability=day_availability,

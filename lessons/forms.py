@@ -4,6 +4,7 @@ from django.forms import ModelChoiceField
 from django.core.validators import RegexValidator
 from django.conf import settings
 import datetime
+from lessons.helpers import get_date_from_weekday
 
 class SignUpForm(forms.ModelForm):
     class Meta:
@@ -107,7 +108,7 @@ class AdminRequestForm(forms.ModelForm):
         ]
 
         widgets = {
-            "time_availability": forms.TimeInput(attrs={'type': 'time'})
+            "time_availability": forms.TimeInput(attrs={'type': 'time'}),
         }
 
     teacher = forms.ModelChoiceField(queryset=Teacher.objects.all(), blank=False)
@@ -121,9 +122,16 @@ class AdminRequestForm(forms.ModelForm):
     def clean(self):
         """Checks if the approval of the lesson fits in the term specified"""
         super().clean()
+
         lesson_count = self.cleaned_data.get("lesson_count")
         lesson_interval = self.cleaned_data.get("lesson_interval")
         term = self.cleaned_data.get("term")
+
+        lesson_datetime = get_date_from_weekday(
+            self.day_availability, 
+            self.time_availability
+        )
+
 
         expected_end_date = term.start_date
         expected_end_date += datetime.timedelta(weeks=lesson_interval) * lesson_count

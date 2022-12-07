@@ -139,7 +139,8 @@ def admin_request(request, request_id):
             form.save()
 
             lesson_request.generate_lessons(
-                form.cleaned_data.get("teacher")
+                form.cleaned_data.get("teacher"),
+                form.cleaned_data.get("term")
             )
 
             messages.add_message(request, messages.SUCCESS, "Lessons successfuly booked!")
@@ -393,10 +394,13 @@ def term_create(request):
 
     if request.method == "POST":
         form = TermForm(request.POST)
+
         if form.is_valid():
             form.save()
             messages.add_message(request, messages.SUCCESS, "The term was successfully created!")
+
     terms = map_terms(Term.objects.all())
+
     response_data = {"terms": terms, "form": form}
     
     return render(request, 'term_create.html', response_data) 
