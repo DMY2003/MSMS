@@ -1,0 +1,22 @@
+{% extends 'base_content.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-6 col-md-6 offset-md-3">
+        <div class="card p-3">
+            <h1>Change Balance for <u>{{ name }}</u></h1></br>
+            <h4 style="text-align:center;"><b>Current Balance: £{{ balance }}</b></h4>
+          <form action="" method="post">
+            {% csrf_token %}
+            {% include 'partials/bootstrap_form.html' with form=form %}
+            <a class="btn btn-primary" href="{% url 'manage_students' %}">
+              Back
+            </a>
+            <input type="submit" name="Set" value="Set Amount" class="btn btn-secondary float-right" href ={% url 'manage_students'%}>
+            <input type="submit" name="Subtract" value="Subtract Amount" class="btn btn-danger float-right" href ={% url 'manage_students'%}>
+            <input type="submit" name="Add" value="Add Amount" class="btn btn-success float-right" href ={% url 'manage_students'%}>
+          </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

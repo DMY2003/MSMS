@@ -1,6 +1,5 @@
 from django import forms
-from lessons.models import User, Student, Administrator, Teacher, Instrument, Request, Lesson, Term
-from django.forms import ModelChoiceField
+from lessons.models import User, Student, Administrator, Teacher, Instrument, Request, Lesson, Term, Transaction, Child
 from django.core.validators import RegexValidator
 from django.conf import settings
 import datetime
@@ -204,6 +203,7 @@ class AccountForm(forms.ModelForm):
 
     role = forms.ChoiceField(choices=settings.ROLES)
 
+
 class TermForm(forms.ModelForm):
     """Form to update school terms"""
 
@@ -218,7 +218,7 @@ class TermForm(forms.ModelForm):
                 attrs={'type': 'date'}
             ),
             "end_date": forms.DateInput(
-                format=('%Y-%m-%d'), 
+                format=('%Y-%m-%d'),
                 attrs={'type': 'date'}
             )
         }
@@ -249,3 +249,69 @@ class TermForm(forms.ModelForm):
         term_length = end_date - start_date
         if term_length.days < 14:
             self.add_error("end_date", "Term cannot be shorter than 2 weeks!")
+
+
+class ChildForm(forms.ModelForm):
+    class Meta:
+        model = Child
+        fields = ["first_name", "last_name", "email"]
+
+
+class ParentRequestForm(StudentRequestForm):
+    def __init__(self, user, *args, **kwargs):
+        super(ParentRequestForm, self).__init__(*args, **kwargs)
+        self.user = user
+        self.fields['student'].queryset = Child.objects.filter(parent=self.user)
+
+    student = forms.ModelChoiceField(queryset=None, empty_label='Me', required=False)
+
+    field_order = ["student"]
+
+    def save(self, commit=True):
+        request = super().save(commit=False)
+
+        student = self.cleaned_data["student"]
+
+        if student is None:
+            request.student = Student.objects.get(id=self.user.id)
+        else:
+            request.student = student
+
+        request.save()
+        return request
+
+
+class UpdateBalance(forms.ModelForm):
+    note = forms.CharField(label="Note", required=False, max_length=25)
+
+    class Meta:
+        model = Student
+        fields = ['balance']
+
+        labels = {
+            'balance': 'Amount',
+        }
+
+    def save(self):
+        student = super().save(commit=False)
+        transaction_type = ""
+        amount = self.cleaned_data["balance"]
+
+        if "Subtract" in self.data:
+            transaction_type = f"-£{amount}"
+            student.balance = self.initial["balance"] - amount
+        elif "Add" in self.data:
+            transaction_type = f"+£{amount}"
+            student.balance = self.initial["balance"] + amount
+        elif "Change" in self.data:
+            transaction_type = f"Set £{amount}"
+            student.balance = amount
+
+        Transaction.objects.create(student=student,
+                                   note=self.cleaned_data["note"],
+                                   change=transaction_type,
+                                   old_balance=self.initial["balance"],
+                                   new_balance=student.balance
+                                   )
+        student.save()
+        return student
