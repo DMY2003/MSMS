@@ -90,33 +90,36 @@ def profile(request):
 
 
 @login_required
-def student_requests(request):
+def requests(request):
     '''The student requests page of the website.'''
     if request.user.role == 'Student':
-        student = request.user.id
-
-        children = Child.objects.filter(parent=student)
-        confirmed_requests = Request.objects.filter(student_id=student, is_approved=True)
-        unconfirmed_requests = Request.objects.filter(student_id=student, is_approved=False)
-
-        for child in children:
-            lesson_list = Request.objects.filter(student_id=child, is_approved=True)
-            confirmed_requests = list(chain(confirmed_requests, lesson_list))
-
-        for child in children:
-            lesson_list = Request.objects.filter(student_id=child, is_approved=False)
-            unconfirmed_requests = list(chain(unconfirmed_requests, lesson_list))
-
-        response_data = {
-            "form": StudentRequestForm(),
-            "confirmed_requests": confirmed_requests,
-            "ongoing_requests": unconfirmed_requests
-        }
-
-        return render(request, 'student_requests.html', response_data)
-
+        return redirect('student_requests')
     elif request.user.role == 'Administrator' or request.user.role == 'Director':
         return redirect('admin_unapproved_requests')
+
+@login_required
+def student_requests(request):
+    student = request.user.id
+
+    children = Child.objects.filter(parent=student)
+    confirmed_requests = Request.objects.filter(student_id=student, is_approved=True)
+    unconfirmed_requests = Request.objects.filter(student_id=student, is_approved=False)
+
+    for child in children:
+        lesson_list = Request.objects.filter(student_id=child, is_approved=True)
+        confirmed_requests = list(chain(confirmed_requests, lesson_list))
+
+    for child in children:
+        lesson_list = Request.objects.filter(student_id=child, is_approved=False)
+        unconfirmed_requests = list(chain(unconfirmed_requests, lesson_list))
+
+    response_data = {
+        "form": StudentRequestForm(),
+        "confirmed_requests": confirmed_requests,
+        "ongoing_requests": unconfirmed_requests
+    }
+
+    return render(request, 'student_requests.html', response_data)
 
 
 def admin_request_delete(request, request_id):
@@ -409,8 +412,9 @@ def student_request_create(request):
     else:
         form = ParentRequestForm(user=request.user)
     if request.method == 'POST':
-        if quantity_children == 0:
-            form = StudentRequestForm(request.POST)
+        form = StudentRequestForm(request.POST)
+        
+        if form.is_valid():
             lesson_request = form.save(commit=False)
             student = Student.objects.get(email=request.user.email)
             lesson_request.student = student

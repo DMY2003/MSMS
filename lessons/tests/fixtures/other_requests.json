@@ -13,5 +13,80 @@
             "student": 2,
             "is_approved": false
         }
+    },
+    {
+        "model": "lessons.request",
+        "pk": 3000,
+        "fields": {
+            "time_availability": "17:30:00",
+            "day_availability": 3,
+            "lesson_interval": 2,
+            "lesson_count": 4,
+            "lesson_duration": 60,
+            "preferred_teacher": "John Smith",
+            "instrument": 3,
+            "student": 1,
+            "is_approved": true
+        }
+    },
+    {
+        "model": "lessons.request",
+        "pk": 4000,
+        "fields": {
+            "time_availability": "16:30:00",
+            "day_availability": 2,
+            "lesson_interval": 1,
+            "lesson_count": 6,
+            "lesson_duration": 45,
+            "preferred_teacher": "Big Show",
+            "instrument": 1,
+            "student": 1,
+            "is_approved": false
+        }
+    },
+    {
+        "model": "lessons.request",
+        "pk": 1234,
+        "fields": {
+            "time_availability": "15:00:00",
+            "day_availability": 2,
+            "lesson_interval": 1,
+            "lesson_count": 3,
+            "lesson_duration": 30,
+            "preferred_teacher": "Henry Mark",
+            "instrument": 1,
+            "student": 2,
+            "is_approved": false
+        }
+    },
+    {
+        "model": "lessons.request",
+        "pk": 6666,
+        "fields": {
+            "time_availability": "15:00:00",
+            "day_availability": 2,
+            "lesson_interval": 1,
+            "lesson_count": 3,
+            "lesson_duration": 30,
+            "preferred_teacher": "Juice Wrld",
+            "instrument": 1,
+            "student": 2,
+            "is_approved": false
+        }
+    },
+    {
+        "model": "lessons.request",
+        "pk": 6667,
+        "fields": {
+            "time_availability": "15:00:00",
+            "day_availability": 2,
+            "lesson_interval": 1,
+            "lesson_count": 3,
+            "lesson_duration": 30,
+            "preferred_teacher": "XXXtentacion",
+            "instrument": 1,
+            "student": 2,
+            "is_approved": false
+        }
     }
 ]
