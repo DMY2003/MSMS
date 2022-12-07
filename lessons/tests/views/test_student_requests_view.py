@@ -43,3 +43,29 @@ class StudentRequestsViewTestCase(TestCase):
         response = self.client.get(self.url)
         self.assertContains(response, request3.id)
         self.assertNotContains(response, request2.id)
+
+    def test_student_request_uses_correct_templates(self):
+        self.client.login(email=self.user.email, password='Password123')
+        response = self.client.get(self.url)
+        templates = response.templates
+        template_names = [template.name for template in templates]
+        self.assertIn("student_requests.html", template_names)
+        self.assertIn("base.html", template_names)
+        self.assertIn("base_content.html", template_names)
+        self.assertIn("partials/navbar.html", template_names)
+        self.assertIn("partials/messages.html", template_names)
+        self.assertIn("partials/student_request_table.html", template_names)
+
+    def test_student_request_passes_correct_confirmed_requests_queryset(self):
+        self.client.login(email=self.user.email, password='Password123')
+        response = self.client.get(self.url)
+        confirmed_requests = response.context["confirmed_requests"]
+        self.assertEqual(len(confirmed_requests), 1)
+        self.assertEqual(confirmed_requests[0].id, 3000)
+    
+    def test_student_request_passes_correct_ongoing_requests_queryset(self):
+        self.client.login(email=self.user.email, password='Password123')
+        response = self.client.get(self.url)
+        ongoing_requests = response.context["ongoing_requests"]
+        self.assertEqual(len(ongoing_requests), 1)
+        self.assertEqual(ongoing_requests[0].id, 4000)
