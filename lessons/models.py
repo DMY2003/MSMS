@@ -61,6 +61,7 @@ class User(AbstractUser):
         """Gets the full name of a user"""
         return "%s %s" % (self.first_name, self.last_name)
 
+
 class Term(models.Model):
     start_date = models.DateField(null=True)
     end_date = models.DateField(null=True)
@@ -70,9 +71,10 @@ class Term(models.Model):
 
     def __str__(self):
         return self.start_date.strftime("%d/%m/%Y") + " - " + self.end_date.strftime("%d/%m/%Y")
-class Student(User):
-    balance = models.IntegerField(blank=True, null=True)
 
+
+class Student(User):
+    balance = models.IntegerField(default=0)
     def __str__(self):
         return self.full_name
 
@@ -108,6 +110,7 @@ class Lesson(models.Model):
     class Meta:
         ordering = ('date',)
 
+
 class Request(models.Model):
     """Stores the data of a lesson request"""
 
@@ -138,7 +141,7 @@ class Request(models.Model):
 
         lesson_datetime = get_date_from_weekday(
             base_date,
-            self.day_availability, 
+            self.day_availability,
             self.time_availability,
         )
 
