@@ -6,6 +6,7 @@ from lessons.forms import StudentRequestForm
 from lessons.tests.helper import reverse_with_next
 import datetime
 
+
 class StudentRequestUpdateViewTestCase(TestCase):
     """Tests of the student request update view."""
 
@@ -13,7 +14,7 @@ class StudentRequestUpdateViewTestCase(TestCase):
         'lessons/tests/fixtures/default_student.json',
         'lessons/tests/fixtures/default_instrument.json',
         'lessons/tests/fixtures/default_request.json',
-        ]
+    ]
 
     def setUp(self):
         self.user = Student.objects.get(email='johndoe@example.org')
@@ -25,11 +26,12 @@ class StudentRequestUpdateViewTestCase(TestCase):
             'lesson_count': 5,
             'lesson_duration': 30,
             'preferred_teacher': 'Tom Smith',
-            'instrument': 1
+            'instrument': 1,
+            'paid': 0
         }
-    
+
     def test_student_request_update_url(self):
-        self.assertEqual(self.url,'/requests/1')
+        self.assertEqual(self.url, '/requests/1')
 
     def test_get_student_request_update(self):
         self.client.login(email=self.user.email, password='Password123')

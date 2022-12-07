@@ -52,6 +52,9 @@ urlpatterns = [
     path('requests/<int:request_id>', views.student_request_update, name='student_request_update'),
     path('delete_request/<int:request_id>', views.student_request_delete, name='student_request_delete'),
     path('student/lessons', views.student_lessons, name='student_lessons'),
+
+    path('download/<str:invoice>', views.download, name='download'),
+    
     path('student/add_child', views.add_child, name='add_child'),
 
     path('student/transaction_history/', views.transaction_history, name='transaction_history'),

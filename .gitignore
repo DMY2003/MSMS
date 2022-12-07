@@ -882,4 +882,6 @@ FodyWeavers.xsd
 ### VisualStudio Patch ###
 # Additional files built by Visual Studio
 
+*.pdf
+
 # End of https://www.toptal.com/developers/gitignore/api/python,django,venv,macos,linux,windows,sublimetext,visualstudio,visualstudiocode,xcode,pycharm+all

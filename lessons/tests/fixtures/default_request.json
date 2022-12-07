@@ -11,7 +11,8 @@
             "preferred_teacher": "Tom Smith",
             "instrument": 1,
             "student": 1,
-            "is_approved": false
+            "is_approved": false,
+            "paid": 0
         }
     }
 ]

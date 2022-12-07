@@ -23,7 +23,8 @@ class RequestFormTestCase(TestCase):
             'lesson_count': 6,
             'lesson_duration': 30,
             'preferred_teacher': 'Tom Smith',
-            'instrument': Instrument.objects.get(id=1)
+            'instrument': Instrument.objects.get(id=1),
+            'paid': 0
         }
     
     # default test
