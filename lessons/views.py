@@ -7,6 +7,7 @@ from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
 from lessons.helper import login_prohibited, map_terms
 from django.core.paginator import Paginator, EmptyPage
+import datetime
 
 
 @login_prohibited
@@ -389,26 +390,39 @@ def student_lessons(request):
     if request.user.role != 'Student':
         return redirect('home')
     instrument_search = request.GET.get('instrument_search', None)
-    page_number = request.GET.get('page', 1) 
+    page_number1 = request.GET.get('page1', 1) 
+    page_number2 = request.GET.get('page2', 1) 
 
     lessons = Lesson.objects.filter(student=request.user)
+    previous_lessons = Lesson.objects.filter(student=request.user, date__lte=datetime.datetime.now())
+    upcoming_lessons = Lesson.objects.filter(student=request.user, date__gte=datetime.datetime.now())
 
     # Filters lessons by the name provided
     if instrument_search:
-        lessons = Lesson.objects.filter(
+        upcoming_lessons = Lesson.objects.filter(
             instrument__name__contains=instrument_search,
-            student=request.user
+            student=request.user,
+            date__gte=datetime.datetime.now()
+        )
+        previous_lessons = Lesson.objects.filter(
+            instrument__name__contains=instrument_search,
+            student=request.user,
+            date__lte=datetime.datetime.now()
         )
 
-    paginator = Paginator(lessons, 9)
+    paginator1 = Paginator(upcoming_lessons, 6)
+    paginator2 = Paginator(previous_lessons, 6)
     
     try:
-        lessons_page = paginator.page(page_number)
+        upcoming_lessons_page = paginator1.page(page_number1)
+        previous_lessons_page = paginator2.page(page_number2)
     except EmptyPage:
-        lessons_page = []
+        upcoming_lessons_page = []
+        previous_lessons_page = []
 
     response_data = {
-        "lessons": lessons_page,
+        "upcoming_lessons": upcoming_lessons_page,
+        "previous_lessons": previous_lessons_page,
         "lesson_count": len(lessons),
         "instrument_search": instrument_search
     }
