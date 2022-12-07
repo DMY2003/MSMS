@@ -9,6 +9,9 @@
                     <ul class="nav navbar-nav ml-auto">
 
                         {% if user.role == "Student" %}
+                            <a class="nav-link text-white" href="{% url 'transaction_history' %}">
+                                Balance: £{{ user.student.balance }}
+                            </a>>
                             <a class="nav-link" href="{% url 'transaction_history' %}">
                                 Transaction History
                             </a>>
