@@ -39,6 +39,10 @@ urlpatterns = [
     path('delete_account/<int:account_id>', views.delete_account, name='delete_account'),
     path('edit_account/<int:account_id>', views.edit_account, name='edit_account'),
 
+    path('administrator/term/create', views.term_create, name='term_create'),
+    path('administrator/term/update/<int:term_id>', views.term_update, name='term_update'),
+    path('administrator/term/delete/<int:term_id>', views.term_delete, name='term_delete'),
+
     path('requests/', views.student_requests, name='student_requests'),
     path('requests/create', views.student_request_create, name='student_request_create'),
     path('requests/<int:request_id>', views.student_request_update, name='student_request_update'),
