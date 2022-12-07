@@ -115,7 +115,7 @@ def admin_request_delete(request, request_id):
 @login_required
 def admin_request(request, request_id):
     """Handles the display of a particular admin request and the functionality to
-        generate lessons from it"""
+    generate lessons from it"""
     if request.user.role == 'Administrator' or request.user.role == 'Director':
         lesson_request = Request.objects.get(id=request_id)
         if request.method == "POST":
@@ -123,19 +123,28 @@ def admin_request(request, request_id):
             if form.is_valid():
                 form.save()
 
+                teacher = form.cleaned_data.get("teacher")
+                term = form.cleaned_data.get("term")
+
                 lesson_request.generate_lessons(
-                    form.cleaned_data.get("teacher")
+                    teacher,
+                    term
                 )
 
                 messages.add_message(request, messages.SUCCESS, "Lessons successfuly booked!")
                 return redirect("admin_unapproved_requests")
-            messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
+            messages.add_message(request, messages.ERROR, "The request cannot be approved with the details provided!")
         else:
-            form = AdminRequestForm(instance=lesson_request)
+            terms = Term.objects.filter(end_date__gte=datetime.datetime.now().date())
+            first_term = None
+            if len(terms) > 0:
+                first_term = terms[0]
+            form = AdminRequestForm(instance=lesson_request, initial={"term": first_term})
 
         return render(request, 'admin_request.html', {'form': form, 'request': lesson_request})
     else:
         return redirect('home')
+
 
 @login_required 
 def admin_approved_requests(request):
@@ -437,10 +446,13 @@ def term_create(request):
 
     if request.method == "POST":
         form = TermForm(request.POST)
+
         if form.is_valid():
             form.save()
             messages.add_message(request, messages.SUCCESS, "The term was successfully created!")
+
     terms = map_terms(Term.objects.all())
+
     response_data = {"terms": terms, "form": form}
     
     return render(request, 'term_create.html', response_data) 

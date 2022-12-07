@@ -2,10 +2,10 @@ from sys import stdout
 from django.contrib.auth.hashers import make_password
 from django.core.management.base import BaseCommand, CommandError
 from faker import Faker
-from lessons.models import User, Student, Teacher, Administrator, Lesson, Invoice, Instrument, Request, Director
+from lessons.models import User, Student, Teacher, Administrator, Lesson, Invoice, Instrument, Request, Director, Term
 import random
 from django.conf import settings
-import datetime
+from datetime import datetime, timedelta
 
 
 class Command(BaseCommand):
@@ -20,6 +20,7 @@ class Command(BaseCommand):
         self.populate_teacher()
         self.populate_student()
         self.populate_instruments()
+        self.populate_terms()
         self.populate_requests()
         self.populate_lessons()
         self.populate_invoices()
@@ -91,6 +92,23 @@ class Command(BaseCommand):
         user.role = "Administrator"
         user.save()
 
+    def populate_terms(self):
+        self.stdout.write('seeding terms...')
+
+        term_lengths = [8, 10, 12]
+        holiday = [1, 2]
+        current_date = datetime.today() - timedelta(weeks=random.randrange(3, 6))
+
+        for _ in range(random.randrange(3, 5)):
+            end_date = current_date + timedelta(weeks=random.choice(term_lengths))
+
+            Term.objects.create(
+                start_date = current_date,
+                end_date = end_date,
+            )
+
+            current_date = end_date + timedelta(weeks=random.choice(holiday))
+
     def populate_admin(self):
         self.stdout.write('seeding admin...')
         for i in range(10):
@@ -159,7 +177,6 @@ class Command(BaseCommand):
         self.stdout.write('seeding requests...')
         students = list(Student.objects.all())
         instruments = list(Instrument.objects.all())
-        teachers = list(Teacher.objects.all())
 
         for _ in students:
             req_made = bool(random.getrandbits(1))
@@ -171,6 +188,7 @@ class Command(BaseCommand):
                     duration = random.choice(settings.LESSON_DURATIONS)[0]
                     preferred_teacher = self.faker.first_name() + " " + self.faker.last_name()
                     les_count = 3 + random.randrange(4)
+
 
                     Request.objects.create(time_availability=time_availability,
                                            day_availability=day_availability,
@@ -185,12 +203,14 @@ class Command(BaseCommand):
     def populate_lessons(self):
         self.stdout.write('seeding lessons...')
         teacher_list = list(Teacher.objects.all())
+        term_list = list(Term.objects.all())
 
         for request in Request.objects.all():
             if request.is_approved:
                 pref_teacher = random.choice(teacher_list)
                 request.generate_lessons(
-                    pref_teacher
+                    pref_teacher,
+                    random.choice(term_list)
                 )
 
     def populate_invoices(self):

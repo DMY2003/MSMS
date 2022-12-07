@@ -4,7 +4,7 @@ from django.forms import ModelChoiceField
 from django.core.validators import RegexValidator
 from django.conf import settings
 import datetime
-
+from lessons.helpers import get_date_from_weekday
 
 class SignUpForm(forms.ModelForm):
     class Meta:
@@ -108,10 +108,40 @@ class AdminRequestForm(forms.ModelForm):
         ]
 
         widgets = {
-            "time_availability": forms.TimeInput(attrs={'type': 'time'})
+            "time_availability": forms.TimeInput(attrs={'type': 'time'}),
         }
 
     teacher = forms.ModelChoiceField(queryset=Teacher.objects.all(), blank=False)
+    term = forms.ModelChoiceField(
+        queryset=(
+            Term.objects.filter(end_date__gte=datetime.datetime.now().date())
+        ), 
+        blank=False
+    )
+
+    def clean(self):
+        """Checks if the approval of the lesson fits in the term specified"""
+        super().clean()
+
+        lesson_count = self.cleaned_data.get("lesson_count")
+        lesson_interval = self.cleaned_data.get("lesson_interval")
+        term = self.cleaned_data.get("term")
+        day_availability = self.cleaned_data.get("day_availability")
+        time_availability = self.cleaned_data.get("time_availability")
+
+        base_date = max(term.start_date, datetime.date.today())
+
+        start_date = get_date_from_weekday(
+            base_date,
+            day_availability, 
+            time_availability
+        )
+
+        expected_end_date = start_date + datetime.timedelta(weeks=lesson_interval) * lesson_count
+
+        if expected_end_date > term.end_date:
+            self.add_error("term", "The last lesson cannot end after the end of the term!")
+
 
 
 class AdminLessonForm(forms.ModelForm):
@@ -183,11 +213,11 @@ class TermForm(forms.ModelForm):
         model = Term
         fields = ["start_date", "end_date"]
         widgets = {
-            "start_date": forms.DateTimeInput(
+            "start_date": forms.DateInput(
                 format=('%Y-%m-%d'),
                 attrs={'type': 'date'}
             ),
-            "end_date": forms.DateTimeInput(
+            "end_date": forms.DateInput(
                 format=('%Y-%m-%d'), 
                 attrs={'type': 'date'}
             )
@@ -196,7 +226,10 @@ class TermForm(forms.ModelForm):
     def clean(self):
         super().clean()
 
-        if self.cleaned_data.get("start_date") > self.cleaned_data.get("end_date"):
+        start_date = self.cleaned_data.get("start_date")
+        end_date = self.cleaned_data.get("end_date")
+
+        if start_date > end_date:
             self.add_error("start_date", "Start date cannot come after end date!")
             self.add_error("end_date", "End date cannot come before start date!")
             return
@@ -204,7 +237,7 @@ class TermForm(forms.ModelForm):
         current_terms = Term.objects.all()
 
         for term in current_terms:
-            if self.cleaned_data.get("start_date") <= term.end_date and self.cleaned_data.get("end_date") >= term.start_date:
+            if start_date <= term.end_date and end_date >= term.start_date:
                 if self.instance:
                     if self.instance.id == term.id:
                         continue
@@ -212,3 +245,7 @@ class TermForm(forms.ModelForm):
                 self.add_error("start_date", "Dates cannot overlap with current term dates!")
                 self.add_error("end_date", "Dates cannot overlap with current term dates!")
                 return
+
+        term_length = end_date - start_date
+        if term_length.days < 14:
+            self.add_error("end_date", "Term cannot be shorter than 2 weeks!")
