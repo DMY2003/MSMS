@@ -7,7 +7,10 @@ from lessons.tests.helper import LogInTester
 class EditAccountViewTestCase(TestCase, LogInTester):
     """Tests of the edit account view."""
 
-    fixtures = ['lessons/tests/fixtures/default_director.json']
+    fixtures = [
+                'lessons/tests/fixtures/default_director.json',
+                'lessons/tests/fixtures/default_administrator.json'
+               ]
 
     def setUp(self):
         self.url = reverse('edit_account' , args=[1])

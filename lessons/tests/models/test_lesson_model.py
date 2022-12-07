@@ -4,20 +4,22 @@ from django.test import TestCase
 from lessons.models import Lesson, Student, User, Teacher, Instrument
 import datetime
 
-class LessonModelTestCase(TestCase):
 
+class LessonModelTestCase(TestCase):
     fixtures = [
         'lessons/tests/fixtures/default_student.json',
         'lessons/tests/fixtures/default_teacher.json',
         'lessons/tests/fixtures/default_instrument.json',
+        'lessons/tests/fixtures/default_request.json',
         'lessons/tests/fixtures/default_lesson.json',
-        ]
+    ]
 
     def setUp(self):
         self.lesson = Lesson.objects.get(id=1)
-    
+
     # default test
     def test_valid_lesson(self):
+
         self._assert_lesson_is_valid()
 
     # date tests
@@ -37,7 +39,7 @@ class LessonModelTestCase(TestCase):
     def test_teacher_must_not_be_blank(self):
         self.lesson.teacher = None
         self._assert_lesson_is_invalid()
-    
+
     def test_teacher_need_not_be_unique(self):
         second_lesson = Lesson.objects.get(id=2)
         self.lesson.teacher = second_lesson.teacher
@@ -51,7 +53,7 @@ class LessonModelTestCase(TestCase):
     def test_student_must_not_be_blank(self):
         self.lesson.student = None
         self._assert_lesson_is_invalid()
-    
+
     def test_student_need_not_be_unique(self):
         second_lesson = Lesson.objects.get(id=2)
         self.lesson.student = second_lesson.student
@@ -65,7 +67,7 @@ class LessonModelTestCase(TestCase):
     def test_instrument_must_not_be_blank(self):
         self.lesson.instrument = None
         self._assert_lesson_is_invalid()
-    
+
     def test_instrument_need_not_be_unique(self):
         second_lesson = Lesson.objects.get(id=2)
         self.lesson.instrument = second_lesson.instrument
@@ -79,7 +81,7 @@ class LessonModelTestCase(TestCase):
     def test_duration_must_not_be_blank(self):
         self.lesson.duration = ''
         self._assert_lesson_is_invalid()
-    
+
     def test_duration_need_not_be_unique(self):
         second_lesson = Lesson.objects.get(id=2)
         self.lesson.duration = second_lesson.duration
@@ -92,19 +94,19 @@ class LessonModelTestCase(TestCase):
         self._assert_lesson_is_invalid()
         self.lesson.duration = '60'
         self._assert_lesson_is_valid()
-        self.lesson.duration =60
+        self.lesson.duration = 60
         self._assert_lesson_is_valid()
 
     def test_duration_must_be_a_valid_choice(self):
-        self.lesson.duration =60
+        self.lesson.duration = 60
         self._assert_lesson_is_valid()
-        self.lesson.duration =30
+        self.lesson.duration = 30
         self._assert_lesson_is_valid()
-        self.lesson.duration =45
+        self.lesson.duration = 45
         self._assert_lesson_is_valid()
-        self.lesson.duration =50
+        self.lesson.duration = 50
         self._assert_lesson_is_invalid()
-        self.lesson.duration =1
+        self.lesson.duration = 1
         self._assert_lesson_is_invalid()
 
     # helper functions

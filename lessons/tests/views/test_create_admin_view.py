@@ -10,10 +10,14 @@ from lessons.tests.helper import LogInTester
 class CreateAdminTestCase(TestCase, LogInTester):
     """Tests of the create admin view."""
 
-    fixtures = ['lessons/tests/fixtures/default_director.json']
+    fixtures = [
+                'lessons/tests/fixtures/default_director.json',
+                'lessons/tests/fixtures/default_administrator.json'
+               ]
 
     def setUp(self):
         self.url = reverse('create_admin')
+        self.user2 = Administrator.objects.get(email='bob_green@email.com')
         self.user = Director.objects.get(email='alex_green@email.org')
 
     def test_create_admin_url(self):
@@ -37,15 +41,20 @@ class CreateAdminTestCase(TestCase, LogInTester):
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, '/log_in/?next=/director/create_admin')
 
-    # def test_create_admin_view_redirects_to_manage_admins(self):
-    #     self.login(self.user)
-    #     response = self.client.post(self.url, {
-    #         'first_name': 'Test',
-    #         'last_name': 'Admin',
-    #         'email': 'test.admin@example.org',
-    #         'password': 'Password123',
-    #         'confirm_password': 'Password123'
-    #     })
-    #     self.assertEqual(response.status_code, 302)
-    #     self.assertRedirects(response, '/director/manage_admins')
-        
+    def test_admin_manage_view_not_director(self):
+        self.login(self.user2)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, '/administrator/lessons')
+
+    def test_create_admin_view_redirects_to_manage_admins(self):
+        self.login(self.user)
+        response = self.client.post(self.url, {
+            'first_name': 'Test',
+            'last_name': 'Admin',
+            'email': 'test.admin@example.org',
+            'new_password': 'Password123',
+            'confirm_password': 'Password123'
+            })
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, '/director/manage_admins')

@@ -7,7 +7,8 @@
             "teacher": 1,
             "student": 1,
             "instrument": 1,
-            "duration": 30
+            "duration": 30,
+            "request": 1
         }
     },
     {
@@ -18,7 +19,8 @@
             "teacher": 1,
             "student": 1,
             "instrument": 1,
-            "duration": 30
+            "duration": 30,
+            "request": 1
         }
     }
 ]
