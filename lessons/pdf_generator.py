@@ -39,7 +39,7 @@ def generate_invoice_PDF(invoice_id, student, teacher, instrument, lesson_date, 
 
     base.setFont('Helvetica-Bold', 14)
     base.drawString(padding, 245 - 50, "Description:")
-    base.drawRightString(width - padding, 245 - 50, "Ammount")
+    base.drawRightString(width - padding, 245 - 50, "Amount")
     base.setLineWidth(.5)
     base.line(padding - 5, 230 - 50, width - padding + 5, 230 - 50)
 
@@ -47,7 +47,7 @@ def generate_invoice_PDF(invoice_id, student, teacher, instrument, lesson_date, 
     base.drawString(padding, 200 - 50, "1x " + instrument + " lesson on")
     base.drawString(padding, 185 - 50, str(lesson_date))
     base.drawString(padding, 170 - 50, "with " + teacher.first_name + " " + teacher.last_name)
-    base.drawRightString(width - padding - (stringWidth(str("Ammount"), "Helvetica", 12) / 2), 185 - 50,
+    base.drawRightString(width - padding - (stringWidth(str("Amount"), "Helvetica", 12) / 2), 185 - 50,
                          "£" + str(price))
 
     base.save()

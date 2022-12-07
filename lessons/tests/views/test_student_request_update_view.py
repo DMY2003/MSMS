@@ -26,7 +26,8 @@ class StudentRequestUpdateViewTestCase(TestCase):
             'lesson_count': 5,
             'lesson_duration': 30,
             'preferred_teacher': 'Tom Smith',
-            'instrument': 1
+            'instrument': 1,
+            'paid': 0
         }
 
     def test_student_request_update_url(self):
