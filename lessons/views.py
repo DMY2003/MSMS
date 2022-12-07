@@ -7,7 +7,7 @@ from django.contrib import messages
 from lessons.models import Request, Lesson, Student, Administrator, User, Term, Transaction, Child
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
-from lessons.helper import login_prohibited, map_terms
+from lessons.helpers import login_prohibited, map_terms
 from django.core.paginator import Paginator, EmptyPage
 import datetime
 
@@ -90,33 +90,36 @@ def profile(request):
 
 
 @login_required
-def student_requests(request):
+def requests(request):
     '''The student requests page of the website.'''
     if request.user.role == 'Student':
-        student = request.user.id
-
-        children = Child.objects.filter(parent=student)
-        confirmed_requests = Request.objects.filter(student_id=student, is_approved=True)
-        unconfirmed_requests = Request.objects.filter(student_id=student, is_approved=False)
-
-        for child in children:
-            lesson_list = Request.objects.filter(student_id=child, is_approved=True)
-            confirmed_requests = list(chain(confirmed_requests, lesson_list))
-
-        for child in children:
-            lesson_list = Request.objects.filter(student_id=child, is_approved=False)
-            unconfirmed_requests = list(chain(unconfirmed_requests, lesson_list))
-
-        response_data = {
-            "form": StudentRequestForm(),
-            "confirmed_requests": confirmed_requests,
-            "ongoing_requests": unconfirmed_requests
-        }
-
-        return render(request, 'student_requests.html', response_data)
-
+        return redirect('student_requests')
     elif request.user.role == 'Administrator' or request.user.role == 'Director':
         return redirect('admin_unapproved_requests')
+
+@login_required
+def student_requests(request):
+    student = request.user.id
+
+    children = Child.objects.filter(parent=student)
+    confirmed_requests = Request.objects.filter(student_id=student, is_approved=True)
+    unconfirmed_requests = Request.objects.filter(student_id=student, is_approved=False)
+
+    for child in children:
+        lesson_list = Request.objects.filter(student_id=child, is_approved=True)
+        confirmed_requests = list(chain(confirmed_requests, lesson_list))
+
+    for child in children:
+        lesson_list = Request.objects.filter(student_id=child, is_approved=False)
+        unconfirmed_requests = list(chain(unconfirmed_requests, lesson_list))
+
+    response_data = {
+        "form": StudentRequestForm(),
+        "confirmed_requests": confirmed_requests,
+        "ongoing_requests": unconfirmed_requests
+    }
+
+    return render(request, 'student_requests.html', response_data)
 
 
 def admin_request_delete(request, request_id):
@@ -409,8 +412,9 @@ def student_request_create(request):
     else:
         form = ParentRequestForm(user=request.user)
     if request.method == 'POST':
-        if quantity_children == 0:
-            form = StudentRequestForm(request.POST)
+        form = StudentRequestForm(request.POST)
+        
+        if form.is_valid():
             lesson_request = form.save(commit=False)
             student = Student.objects.get(email=request.user.email)
             lesson_request.student = student
@@ -582,6 +586,8 @@ def term_delete(request, term_id):
 @login_required
 def add_child(request):
     """Handles the adding of a child to a student's account"""
+    if request.user.role != 'Director' and request.user.role != 'Administrator':
+        return redirect('home')
     form = ChildForm()
     if request.method == 'POST':
         form = ChildForm(request.POST)
@@ -600,30 +606,35 @@ def add_child(request):
 @login_required
 def change_balance(request, user_id):
     """Handles the changing of a student's balance by an administrator"""
-    student = Student.objects.get(id=user_id)
+    if request.user.role == 'Administrator' or request.user.role == 'Director':
+        student = Student.objects.get(id=user_id)
 
-    response_data = {
-        "balance": student.balance,
-        "name": student.first_name + " " + student.last_name,
-    }
+        response_data = {
+            "balance": student.balance,
+            "name": student.first_name + " " + student.last_name,
+        }
 
-    if request.method == 'POST':
-        form = UpdateBalance(request.POST, instance=student)
-        if form.is_valid():
-            form.save()
-            messages.add_message(request, messages.SUCCESS, "Balance Updated!")
-            return redirect('manage_students')
+        if request.method == 'POST':
+            form = UpdateBalance(request.POST, instance=student)
+            if form.is_valid():
+                form.save()
+                messages.add_message(request, messages.SUCCESS, "Balance Updated!")
+                return redirect('manage_students')
+        else:
+            form = UpdateBalance(instance=student)
+
+        response_data.update({"form": form})
+
+        return render(request, 'change_balance.html', response_data)
     else:
-        form = UpdateBalance(instance=student)
-
-    response_data.update({"form": form})
-
-    return render(request, 'change_balance.html', response_data)
+        return redirect('home')
 
 
 @login_required
 def transaction_history(request):
     """Handles the creation of a student's transaction history page"""
+    if request.user.role != 'Director' and request.user.role != 'Administrator':
+        return redirect('home')
     student = request.user.id
 
     response_data = {
