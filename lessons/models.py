@@ -108,6 +108,7 @@ def get_date_from_weekday(weekday, time):
     return today + datetime.timedelta(days=today.weekday() - weekday)
 
 
+
 class Request(models.Model):
     """Stores the data of a lesson request"""
 
