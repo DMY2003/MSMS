@@ -203,12 +203,14 @@ class Command(BaseCommand):
     def populate_lessons(self):
         self.stdout.write('seeding lessons...')
         teacher_list = list(Teacher.objects.all())
+        term_list = list(Term.objects.all())
 
         for request in Request.objects.all():
             if request.is_approved:
                 pref_teacher = random.choice(teacher_list)
                 request.generate_lessons(
-                    pref_teacher
+                    pref_teacher,
+                    random.choice(term_list)
                 )
 
     def populate_invoices(self):
