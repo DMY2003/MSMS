@@ -5,6 +5,7 @@ from django.conf import settings
 import datetime
 from lessons.helpers import get_date_from_weekday
 
+
 class SignUpForm(forms.ModelForm):
     class Meta:
         model = Student
@@ -120,7 +121,7 @@ class AdminRequestForm(forms.ModelForm):
     term = forms.ModelChoiceField(
         queryset=(
             Term.objects.filter(end_date__gte=datetime.datetime.now().date())
-        ), 
+        ),
         blank=False
     )
 
@@ -138,7 +139,7 @@ class AdminRequestForm(forms.ModelForm):
 
         start_date = get_date_from_weekday(
             base_date,
-            day_availability, 
+            day_availability,
             time_availability
         )
 
@@ -146,7 +147,6 @@ class AdminRequestForm(forms.ModelForm):
 
         if expected_end_date > term.end_date:
             self.add_error("term", "The last lesson cannot end after the end of the term!")
-
 
 
 class AdminLessonForm(forms.ModelForm):

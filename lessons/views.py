@@ -415,10 +415,10 @@ def student_request_create(request):
         form = StudentRequestForm()
     else:
         form = ParentRequestForm(user=request.user)
+
     if request.method == 'POST':
         if quantity_children == 0:
             form = StudentRequestForm(request.POST)
-            print(form.errors)
             lesson_request = form.save(commit=False)
             student = Student.objects.get(email=request.user.email)
             lesson_request.student = student

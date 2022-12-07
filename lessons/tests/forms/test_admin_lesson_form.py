@@ -22,7 +22,8 @@ class AdminLessonFormTestCase(TestCase):
             "date": datetime.datetime(year=2022,month=11,day=9,hour=12,minute=30,second=00),
             "duration": 30,
             "teacher": Teacher.objects.get(id=1),
-            'instrument': Instrument.objects.get(id=1)
+            'instrument': Instrument.objects.get(id=1),
+            'paid': 0
         }
 
     def test_admin_lesson_form_contains_required_fields(self):
