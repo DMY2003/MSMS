@@ -122,10 +122,12 @@ def student_requests(request):
 def admin_request_delete(request, request_id):
     """Handles the deletion of a particular request"""
     if request.user.role == 'Administrator' or request.user.role == 'Director':
-        lesson_request = Request.objects.get(id=request_id)
-        if lesson_request:
+        try:
+            lesson_request = Request.objects.get(id=request_id)
             lesson_request.delete()
-        messages.add_message(request, messages.ERROR, "The request has been successfully deleted!")
+            messages.add_message(request, messages.ERROR, "The request has been successfully deleted!")
+        except Request.DoesNotExist:
+            pass
         return redirect("admin_unapproved_requests")
 
     else:
