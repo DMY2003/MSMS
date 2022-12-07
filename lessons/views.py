@@ -91,27 +91,31 @@ def profile(request):
 
 @login_required
 def student_requests(request):
-    student = request.user.id
+    '''The student requests page of the website.'''
+    if request.user.role == 'Student':
+        student = request.user.id
 
-    children = Child.objects.filter(parent=student)
-    confirmed_requests = Request.objects.filter(student_id=student, is_approved=True)
-    unconfirmed_requests = Request.objects.filter(student_id=student, is_approved=False)
+        children = Child.objects.filter(parent=student)
+        confirmed_requests = Request.objects.filter(student_id=student, is_approved=True)
+        unconfirmed_requests = Request.objects.filter(student_id=student, is_approved=False)
 
-    for child in children:
-        lesson_list = Request.objects.filter(student_id=child, is_approved=True)
-        confirmed_requests = list(chain(confirmed_requests, lesson_list))
+        for child in children:
+            lesson_list = Request.objects.filter(student_id=child, is_approved=True)
+            confirmed_requests = list(chain(confirmed_requests, lesson_list))
 
-    for child in children:
-        lesson_list = Request.objects.filter(student_id=child, is_approved=False)
-        unconfirmed_requests = list(chain(unconfirmed_requests, lesson_list))
+        for child in children:
+            lesson_list = Request.objects.filter(student_id=child, is_approved=False)
+            unconfirmed_requests = list(chain(unconfirmed_requests, lesson_list))
 
-    response_data = {
-        "form": StudentRequestForm(),
-        "confirmed_requests": confirmed_requests,
-        "ongoing_requests": unconfirmed_requests
-    }
+        response_data = {
+            "form": StudentRequestForm(),
+            "confirmed_requests": confirmed_requests,
+            "ongoing_requests": unconfirmed_requests
+        }
 
-    return render(request, 'student_requests.html', response_data)
+        return render(request, 'student_requests.html', response_data)
+    elif request.user.role == 'Administrator' or request.user.role == 'Director':
+        return redirect('admin_lessons')
 
 
 def admin_request_delete(request, request_id):
@@ -320,25 +324,30 @@ def manage_admins(request):
             "email_search": email_search
         }
         return render(request, 'manage_admins.html', response_data)
-    else:
+    elif request.user.role == 'Administrator':
         messages.add_message(request, messages.ERROR, "You do not have permission to manage admins!")
-        return redirect('home')
+        return redirect('admin_lessons')
 
 @login_required
 def manage_students(request):
-    email_search = request.GET.get('email_search', None)
-    accounts = Student.objects.all()
-    if email_search:
-        accounts = Student.objects.filter(
-            email=email_search
-        )
+    """Handles the display of all students"""
+    if request.user.role == 'Director' or request.user.role == 'Administrator':
+        email_search = request.GET.get('email_search', None)
+        accounts = Student.objects.all()
+        if email_search:
+            accounts = Student.objects.filter(
+                email=email_search
+            )
 
-    response_data = {
-        "accounts": accounts,
-        "student_count": len(accounts),
-        "email_search": email_search
-    }
-    return render(request, 'manage_students.html', response_data)
+        response_data = {
+            "accounts": accounts,
+            "student_count": len(accounts),
+            "email_search": email_search
+        }
+        return render(request, 'manage_students.html', response_data)
+    else:
+        messages.add_message(request, messages.ERROR, "You do not have permission to manage students!")
+        return redirect('home')
 
 
 @login_required
