@@ -80,7 +80,7 @@ class LogInViewTestCase(TestCase, LogInTester):
 
     #redirect tests
     def test_get_log_in_with_redirect(self):
-        destination_url = reverse('student_requests')
+        destination_url = reverse('requests')
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'log_in.html')
