@@ -80,14 +80,14 @@ class LogInViewTestCase(TestCase, LogInTester):
 
     #redirect tests
     def test_get_log_in_with_redirect(self):
-        destination_url = reverse('requests')
+        destination_url = reverse('student_requests')
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'log_in.html')
         form = response.context['form']
         self.assertTrue(isinstance(form, LogInForm))
         self.assertFalse(form.is_bound)
-        self.assertEqual('/requests/', destination_url)
+        self.assertEqual('/student/requests', destination_url)
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list), 0)
 
