@@ -18,5 +18,25 @@
         "fields": {
           "user_ptr_id": 2
         }
+      },
+      {
+        "model": "lessons.User",
+        "pk": 3,
+        "fields": {
+          "first_name": "James",
+          "last_name": "Doe",
+          "username": "jamesdoe@example.org",
+          "email": "jamesdoe@example.org",
+          "role": "Student",
+          "password": "pbkdf2_sha256$260000$4BNvFuAWoTT1XVU8D6hCay$KqDCG+bHl8TwYcvA60SGhOMluAheVOnF1PMz0wClilc=",
+          "is_active": true
+        }
+      },
+      {
+        "model": "lessons.Student",
+        "pk": 3,
+        "fields": {
+          "user_ptr_id": 3
+        }
       }
 ]

@@ -1,0 +1,57 @@
+[
+    {
+        "model": "lessons.lesson",
+        "pk": 10,
+        "fields": {
+            "date": "2022-11-05 12:30:00",
+            "teacher": 3,
+            "student": 2,
+            "instrument": 1,
+            "duration": 60
+        }
+    },
+    {
+        "model": "lessons.lesson",
+        "pk": 11,
+        "fields": {
+            "date": "2022-12-09 12:30:00",
+            "teacher": 3,
+            "student": 2,
+            "instrument": 2,
+            "duration": 45
+        }
+    },
+    {
+        "model": "lessons.lesson",
+        "pk": 12,
+        "fields": {
+            "date": "2022-12-09 16:30:00",
+            "teacher": 3,
+            "student": 2,
+            "instrument": 2,
+            "duration": 45
+        }
+    },
+    {
+        "model": "lessons.lesson",
+        "pk": 13,
+        "fields": {
+            "date": "2022-12-09 14:30:00",
+            "teacher": 3,
+            "student": 2,
+            "instrument": 3,
+            "duration": 45
+        }
+    },
+    {
+        "model": "lessons.lesson",
+        "pk": 14,
+        "fields": {
+            "date": "2022-12-09 14:30:00",
+            "teacher": 3,
+            "student": 3,
+            "instrument": 3,
+            "duration": 45
+        }
+    }
+]
