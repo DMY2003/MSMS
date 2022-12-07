@@ -97,6 +97,12 @@ class StudentRequestForm(forms.ModelForm):
             "time_availability": forms.TimeInput(attrs={'type': 'time'})
         }
 
+    def clean(self):
+        super().clean()
+        lesson_count = self.cleaned_data.get("lesson_count")
+        if lesson_count < 3 or lesson_count > 20:
+            self.add_error("lesson_count", "Lesson count must be between 3 and 20 (inclusive)")
+
 
 class AdminRequestForm(forms.ModelForm):
     class Meta:

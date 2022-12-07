@@ -61,6 +61,7 @@ class User(AbstractUser):
         """Gets the full name of a user"""
         return "%s %s" % (self.first_name, self.last_name)
 
+
 class Term(models.Model):
     start_date = models.DateField(null=True)
     end_date = models.DateField(null=True)
@@ -70,8 +71,10 @@ class Term(models.Model):
 
     def __str__(self):
         return self.start_date.strftime("%d/%m/%Y") + " - " + self.end_date.strftime("%d/%m/%Y")
+
+
 class Student(User):
-    balance = models.IntegerField(blank=True, null=True)
+    balance = models.IntegerField(default=0)
 
     def __str__(self):
         return self.full_name
@@ -103,6 +106,7 @@ def get_date_from_weekday(weekday, time):
     today = datetime.date.today()
     today = datetime.datetime.combine(today, time)
     return today + datetime.timedelta(days=today.weekday() - weekday)
+
 
 class Request(models.Model):
     """Stores the data of a lesson request"""
@@ -201,14 +205,6 @@ class Invoice(models.Model):
     paid = models.BooleanField(default=False)
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, blank=False)
 
-
-class Term(models.Model):
-    start_date = models.DateTimeField(null=True)
-    end_date = models.DateTimeField(null=True)
-
-    class Meta:
-        ordering = ('start_date',)
-        
 
 class Transaction(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE, blank=False)
