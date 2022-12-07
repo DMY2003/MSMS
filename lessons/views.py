@@ -492,8 +492,11 @@ def term_update(request, term_id):
 @login_required
 def term_delete(request, term_id):
     """Handles the deletion of a term"""
-    if request.user.role != 'Director' and request.user.role != 'Administrator':
+    if not request.user or request.user.role != 'Director' and request.user.role != 'Administrator':
         return redirect('home')
-    Term.objects.get(pk=term_id).delete()
-    messages.add_message(request, messages.SUCCESS, "The term was succesfully deleted!")
+    try:
+        Term.objects.get(pk=term_id).delete()
+        messages.add_message(request, messages.SUCCESS, "The term was succesfully deleted!")
+    except Term.DoesNotExist:
+        pass
     return redirect('term_create') 
