@@ -1,11 +1,11 @@
 from django.db import models
-from django.core.validators import RegexValidator
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.base_user import BaseUserManager
 import datetime
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.conf import settings
 import sqlite3
+from lessons.pdf_generator import generate_invoice_PDF
 
 
 class UserManager(BaseUserManager):
@@ -174,7 +174,21 @@ class Lesson(models.Model):
         cur = db.cursor()
         id = self.id
         data = cur.execute('SELECT paid FROM lessons_invoice WHERE lesson_id = ' + str(id))
+
         return bool(data.fetchone()[0])
+
+    def generate_invoice(self):
+        db = sqlite3.connect('db.sqlite3')
+        cur = db.cursor()
+
+        invoice_id, price = cur.execute('''SELECT id, price
+                                           FROM lessons_invoice
+                                           WHERE lesson_id = ''' + str(self.id)
+                                        ).fetchone()
+
+        file_name = generate_invoice_PDF(invoice_id, self.student, self.teacher, self.instrument.name, self.date, price)
+
+        return file_name
 
 
 class Invoice(models.Model):

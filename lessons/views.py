@@ -1,5 +1,10 @@
+import mimetypes
+import os
+from django.http.response import HttpResponse
+
 from django.shortcuts import render, redirect
-from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordForm, AdminLessonForm, StudentRequestForm, CreateAdminsForm, AccountForm, TermForm
+from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordForm, AdminLessonForm, StudentRequestForm, \
+    CreateAdminsForm, AccountForm, TermForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from lessons.models import Request, Lesson, Student, Administrator, User, Term
@@ -7,23 +12,27 @@ from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage
 
+
 def login_prohibited(function):
     def wrap(request, *args, **kwargs):
         if request.user.is_authenticated:
-            role = request.user.role 
+            role = request.user.role
             if role == "Administrator":
                 return redirect('admin_unapproved_requests')
             else:
                 return redirect('student_requests')
         else:
             return function(request, *args, **kwargs)
-    wrap.__doc__=function.__doc__
-    wrap.__name__=function.__name__
+
+    wrap.__doc__ = function.__doc__
+    wrap.__name__ = function.__name__
     return wrap
+
 
 @login_prohibited
 def home(request):
     return render(request, 'home.html')
+
 
 @login_prohibited
 def sign_up(request):
@@ -53,9 +62,11 @@ def log_in(request):
     form = LogInForm()
     return render(request, 'log_in.html', {'form': form})
 
+
 def log_out(request):
     logout(request)
     return redirect('home')
+
 
 @login_required
 def password(request):
@@ -74,6 +85,7 @@ def password(request):
     form = PasswordForm()
     return render(request, 'password.html', {'form': form})
 
+
 @login_required
 def profile(request):
     current_user = request.user
@@ -86,6 +98,7 @@ def profile(request):
     else:
         form = UserForm(instance=current_user)
     return render(request, 'profile.html', {'form': form})
+
 
 @login_required
 def student_requests(request):
@@ -111,12 +124,14 @@ def transactions(request):
     elif request.user.role == 'Administrator' or request.user.role == 'Director':
         return render(request, 'admin_transactions_page.html')
 
+
 @login_required
 def lessons(request):
     if request.user.role == 'Student':
         return redirect('student_lessons')
     elif request.user.role == 'Administrator' or request.user.role == 'Director':
         return redirect('admin_lessons')
+
 
 @login_required
 def admin_request_delete(request, request_id):
@@ -126,6 +141,7 @@ def admin_request_delete(request, request_id):
         lesson_request.delete()
     messages.add_message(request, messages.ERROR, "The request has been successfully deleted!")
     return redirect("admin_unapproved_requests")
+
 
 @login_required
 def admin_request(request, request_id):
@@ -150,7 +166,7 @@ def admin_request(request, request_id):
     return render(request, 'admin_request.html', {'form': form, 'request': lesson_request})
 
 
-@login_required 
+@login_required
 def admin_approved_requests(request):
     page_number = request.GET.get('page', 1)
     requests = Request.objects.filter(is_approved=True)
@@ -161,7 +177,7 @@ def admin_approved_requests(request):
     return render(request, 'admin_approved_requests.html', response_data)
 
 
-@login_required 
+@login_required
 def admin_unapproved_requests(request):
     page_number = request.GET.get('page', 1)
     requests = Request.objects.filter(is_approved=False)
@@ -170,6 +186,7 @@ def admin_unapproved_requests(request):
     response_data = {"requests": requests_page}
 
     return render(request, 'admin_unapproved_requests.html', response_data)
+
 
 @login_required
 def admin_requests(request):
@@ -181,11 +198,12 @@ def admin_requests(request):
 
     return render(request, 'admin_requests.html', response_data)
 
+
 @login_required
 def admin_lessons(request):
     """Handles the display of lessons"""
     name_search = request.GET.get('name_search', None)
-    page_number = request.GET.get('page', 1) 
+    page_number = request.GET.get('page', 1)
 
     lessons = Lesson.objects.all()
 
@@ -200,7 +218,7 @@ def admin_lessons(request):
         )
 
     paginator = Paginator(lessons, 9)
-    
+
     try:
         lessons_page = paginator.page(page_number)
     except EmptyPage:
@@ -213,6 +231,7 @@ def admin_lessons(request):
     }
     return render(request, 'admin_lessons.html', response_data)
 
+
 @login_required
 def admin_lesson(request, lesson_id):
     """Handles the display and updating of a particular lesson"""
@@ -220,7 +239,7 @@ def admin_lesson(request, lesson_id):
 
     if request.method == "POST":
         form = AdminLessonForm(request.POST, instance=lesson)
-        
+
         if form.is_valid():
             form.save()
             messages.add_message(request, messages.SUCCESS, "The lesson was successfully updated!")
@@ -233,6 +252,7 @@ def admin_lesson(request, lesson_id):
     }
     return render(request, 'admin_lesson.html', response_data)
 
+
 @login_required
 def admin_lesson_delete(request, lesson_id):
     """Handles the deletion of a particular lesson"""
@@ -241,6 +261,7 @@ def admin_lesson_delete(request, lesson_id):
         lesson.delete()
     messages.add_message(request, messages.ERROR, "The lesson has been successfully deleted!")
     return redirect("admin_lessons")
+
 
 @login_required
 def create_admin(request):
@@ -254,6 +275,7 @@ def create_admin(request):
         form = CreateAdminsForm()
     return render(request, 'create_admin.html', {'form': form})
 
+
 @login_required
 def manage_admins(request):
     """Handles the display of all admins"""
@@ -261,7 +283,7 @@ def manage_admins(request):
     accounts = Administrator.objects.all()
     if email_search:
         accounts = Administrator.objects.filter(
-            email = email_search
+            email=email_search
         )
 
     response_data = {
@@ -271,6 +293,7 @@ def manage_admins(request):
     }
     return render(request, 'manage_admins.html', response_data)
 
+
 @login_required
 def delete_account(request, account_id):
     """Handles the deletion of a particular account"""
@@ -279,6 +302,7 @@ def delete_account(request, account_id):
         account.delete()
     messages.add_message(request, messages.ERROR, "The account has been successfully deleted!")
     return redirect("manage_admins")
+
 
 @login_required
 def edit_account(request, account_id):
@@ -294,13 +318,14 @@ def edit_account(request, account_id):
         form = AccountForm(instance=account)
     return render(request, 'edit_account.html', {'form': form, 'account': account})
 
+
 @login_required
 def student_request_create(request):
     """Handles the creation of a request through the student request form"""
     form = StudentRequestForm()
     if request.method == 'POST':
         form = StudentRequestForm(request.POST)
-        
+
         if form.is_valid():
             lesson_request = form.save(commit=False)
             student = Student.objects.get(email=request.user.email)
@@ -309,6 +334,7 @@ def student_request_create(request):
             return redirect('student_requests')
 
     return render(request, 'student_request_create.html', {'form': form})
+
 
 @login_required
 def student_request_update(request, request_id):
@@ -335,6 +361,7 @@ def student_request_update(request, request_id):
 
     return render(request, 'student_request_update.html', response_data)
 
+
 @login_required
 def student_request_delete(request, request_id):
     """Handles the deletion of a request by the student who has made it"""
@@ -344,11 +371,12 @@ def student_request_delete(request, request_id):
         lesson_request.delete()
     return redirect('student_requests')
 
+
 @login_required
 def student_lessons(request):
     """Handles the display of lessons for students"""
     instrument_search = request.GET.get('instrument_search', None)
-    page_number = request.GET.get('page', 1) 
+    page_number = request.GET.get('page', 1)
 
     lessons = Lesson.objects.filter(student=request.user)
 
@@ -360,7 +388,7 @@ def student_lessons(request):
         )
 
     paginator = Paginator(lessons, 9)
-    
+
     try:
         lessons_page = paginator.page(page_number)
     except EmptyPage:
@@ -372,7 +400,8 @@ def student_lessons(request):
         "instrument_search": instrument_search
     }
     return render(request, 'student_lessons.html', response_data)
-    
+
+
 def map_terms(terms):
     mapped_terms = {}
 
@@ -381,7 +410,8 @@ def map_terms(terms):
 
     return mapped_terms
 
-@login_required 
+
+@login_required
 def term_create(request):
     """Handles the creation of a term"""
     form = TermForm()
@@ -393,10 +423,11 @@ def term_create(request):
             messages.add_message(request, messages.SUCCESS, "The term was successfully created!")
     terms = map_terms(Term.objects.all())
     response_data = {"terms": terms, "form": form}
-    
-    return render(request, 'term_create.html', response_data) 
 
-@login_required 
+    return render(request, 'term_create.html', response_data)
+
+
+@login_required
 def term_update(request, term_id):
     """Handles the updating of a term's start date and end date"""
     term = Term.objects.get(pk=term_id)
@@ -415,20 +446,38 @@ def term_update(request, term_id):
     term_position = 1
     for position, current_term in terms.items():
         if current_term == term:
-            term_position = position 
+            term_position = position
 
     response_data = {
-        "terms": terms, 
-        "form": form, 
-        "term_position" : term_position,
+        "terms": terms,
+        "form": form,
+        "term_position": term_position,
         "term": term
     }
 
-    return render(request, 'term_update.html', response_data) 
+    return render(request, 'term_update.html', response_data)
+
 
 @login_required
 def term_delete(request, term_id):
     """Handles the deletion of a term"""
     Term.objects.get(pk=term_id).delete()
     messages.add_message(request, messages.SUCCESS, "The term was succesfully deleted!")
-    return redirect('term_create') 
+    return redirect('term_create')
+
+
+def download(request, invoice: str):
+    print("\n" + str(request) + "\n")
+    print("\n invoice id: " + str(invoice) + "\n")
+    # Define text file name
+    filename = invoice
+    # Open the file for reading content
+    path = open(filename, 'r')
+    # Set the mime type
+    mime_type, _ = mimetypes.guess_type(filename)
+    # Set the return value of the HttpResponse
+    response = HttpResponse(path, content_type=mime_type)
+    # Set the HTTP header for sending to browser
+    response['Content-Disposition'] = "attachment; filename=%s" % filename
+    # Return the response value
+    return response
