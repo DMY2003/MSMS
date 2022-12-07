@@ -3,7 +3,7 @@ from django import forms
 from django.test import TestCase
 from lessons.forms import TermForm
 from lessons.models import Term
-from datetime import datetime
+from datetime import datetime, date
 
 
 class RequestFormTestCase(TestCase):
@@ -14,8 +14,8 @@ class RequestFormTestCase(TestCase):
 
     def setUp(self):
         self.form_input = {
-            "start_date": datetime(2023, 5, 4),
-            "end_date": datetime(2023, 8, 7)
+            "start_date": date(2023, 5, 4),
+            "end_date": date(2023, 8, 7)
         }
 
         self.term = Term.objects.first()
@@ -44,5 +44,14 @@ class RequestFormTestCase(TestCase):
         form = TermForm(data=self.form_input)
         self.assertFalse(form.is_valid())
         self.form_input["start_date"] = original_date
+
+    def test_form_update_must_save_correctly(self):
+        form = TermForm(instance=self.term, data=self.form_input)
+        before_count = Term.objects.count()
+        form.save()
+        after_count = Term.objects.count()
+        self.assertEqual(after_count, before_count)
+        self.assertEqual(self.term.start_date, self.form_input["start_date"])
+        self.assertEqual(self.term.end_date, self.form_input["end_date"])
 
     
