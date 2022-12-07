@@ -166,6 +166,9 @@ class Request(models.Model):
         invoice = Invoice(price=price, lesson=lesson)
         invoice.save()
 
+    class Meta:
+        ordering = ['-id']
+
 
 class Invoice(models.Model):
     price = models.IntegerField(blank=False)

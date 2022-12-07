@@ -176,7 +176,7 @@ def admin_approved_requests(request):
     if request.user.role == 'Administrator' or request.user.role == 'Director':
         page_number = request.GET.get('page', 1)
         requests = Request.objects.filter(is_approved=True)
-        paginator = Paginator(requests, settings.ADMIN_REQUESTS_PAGE_SIZE)
+        paginator = Paginator(requests, 9)
         requests_page = paginator.page(page_number)
         response_data = {"requests": requests_page}
 
@@ -191,8 +191,7 @@ def admin_unapproved_requests(request):
     '''Handles the display of unapproved requests'''
     if request.user.role == 'Administrator' or request.user.role == 'Director':
         page_number = request.GET.get('page', 1)
-        requests = Request.objects.filter(is_approved=False)
-        paginator = Paginator(requests, settings.ADMIN_REQUESTS_PAGE_SIZE)
+        paginator = Paginator(requests, 9)
         requests_page = paginator.page(page_number)
         response_data = {"requests": requests_page}
 
@@ -237,7 +236,7 @@ def admin_lessons(request):
                 student__last_name__contains=second_name
             )
 
-        paginator = Paginator(lessons, 9)
+        paginator = Paginator(lessons, settings.ADMIN_REQUESTS_PAGE_SIZE)
 
         try:
             lessons_page = paginator.page(page_number)
@@ -412,14 +411,13 @@ def student_request_create(request):
         form = StudentRequestForm()
     else:
         form = ParentRequestForm(user=request.user)
+
     if request.method == 'POST':
-        form = StudentRequestForm(request.POST)
-        
-        if form.is_valid():
+        if quantity_children == 0:
+            form = StudentRequestForm(request.POST)
             lesson_request = form.save(commit=False)
             student = Student.objects.get(email=request.user.email)
             lesson_request.student = student
-
         else:
             form = ParentRequestForm(user=request.user, data=request.POST)
             lesson_request = form
