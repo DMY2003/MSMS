@@ -578,7 +578,7 @@ def term_delete(request, term_id):
 @login_required
 def add_child(request):
     """Handles the adding of a child to a student's account"""
-    if request.user.role != 'Director' and request.user.role != 'Administrator':
+    if request.user.role != 'Student':
         return redirect('home')
     form = ChildForm()
     if request.method == 'POST':
@@ -625,7 +625,7 @@ def change_balance(request, user_id):
 @login_required
 def transaction_history(request):
     """Handles the creation of a student's transaction history page"""
-    if request.user.role != 'Director' and request.user.role != 'Administrator':
+    if request.user.role != 'Student':
         return redirect('home')
     student = request.user.id
 
