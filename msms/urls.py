@@ -47,7 +47,6 @@ urlpatterns = [
     path('administrator/term/update/<int:term_id>', views.term_update, name='term_update'),
     path('administrator/term/delete/<int:term_id>', views.term_delete, name='term_delete'),
 
-    path('requests/', views.requests, name='requests'),
     path('student/requests', views.student_requests, name='student_requests'),
     path('requests/create', views.student_request_create, name='student_request_create'),
     path('requests/<int:request_id>', views.student_request_update, name='student_request_update'),
@@ -55,6 +54,6 @@ urlpatterns = [
     path('student/lessons', views.student_lessons, name='student_lessons'),
     path('student/add_child', views.add_child, name='add_child'),
 
-    path('transaction_history/', views.transaction_history, name='transaction_history'),
+    path('student/transaction_history/', views.transaction_history, name='transaction_history'),
 ]
 

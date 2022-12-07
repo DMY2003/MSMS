@@ -1,7 +1,7 @@
 [
     {
         "model": "lessons.User",
-        "pk": 1,
+        "pk": 2,
         "fields": {
             "first_name": "Alex",
             "last_name": "Green",
@@ -14,9 +14,9 @@
     },
     {
         "model": "lessons.Director",
-        "pk": 1,
+        "pk": 2,
         "fields": {
-          "user_ptr_id": 1
+          "user_ptr_id": 2
         }
     }
 ]
