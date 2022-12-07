@@ -2,7 +2,8 @@ from sys import stdout
 from django.contrib.auth.hashers import make_password
 from django.core.management.base import BaseCommand, CommandError
 from faker import Faker
-from lessons.models import User, Student, Teacher, Administrator, Lesson, Invoice, Instrument, Request, Director, Term
+from lessons.models import User, Student, Teacher, Administrator, Lesson, Invoice, Instrument, Request, Director, Term, \
+    Child, Transaction
 import random
 from django.conf import settings
 from datetime import datetime, timedelta
@@ -38,14 +39,22 @@ class Command(BaseCommand):
         password = "Password123"
         last_lgn = self.faker.past_datetime()
 
-        Student.objects.create(first_name=student_fname,
-                               last_name=student_lname,
-                               email=email,
-                               username=email,
-                               balance=balance,
-                               password=make_password(password, salt=None, hasher='default'),
-                               last_login=last_lgn,
-                               role="Student")
+        student = Student.objects.create(first_name=student_fname,
+                                         last_name=student_lname,
+                                         email=email,
+                                         username=email,
+                                         balance=balance,
+                                         password=make_password(password, salt=None, hasher='default'),
+                                         last_login=last_lgn,
+                                         role="Student")
+
+        self.populate_transactions(student)
+
+        num_children = self.faker.random_int(min=1, max=3)
+
+        for _ in range(num_children):
+            self.add_new_child("joe", student)
+
         # Admin
         admin_fname = "Petra"
         admin_lname = "Pickles"
@@ -103,8 +112,8 @@ class Command(BaseCommand):
             end_date = current_date + timedelta(weeks=random.choice(term_lengths))
 
             Term.objects.create(
-                start_date = current_date,
-                end_date = end_date,
+                start_date=current_date,
+                end_date=end_date,
             )
 
             current_date = end_date + timedelta(weeks=random.choice(holiday))
@@ -142,9 +151,35 @@ class Command(BaseCommand):
                                    is_staff=1,
                                    role="Teacher")
 
+    def add_new_child(self, i, parent):
+        child_fname = self.faker.first_name()
+        child_lname = self.faker.last_name()
+        email = str(i) + "Child_" + self.faker.free_email()
+
+        Child.objects.create(first_name=child_fname,
+                             last_name=child_lname,
+                             parent=parent,
+                             email=email,
+                             role="Student")
+
+    def populate_transactions(self, student):
+        notes = ["Book Lesson", "Penalty", "Instrument hire"]
+        amount = self.faker.random_int(min=0, max=student.balance)
+        diff = "-" + str(amount)
+        new_balance = student.balance - amount
+
+        Transaction.objects.create(student=student,
+                                   note=random.choice(notes),
+                                   change=diff,
+                                   old_balance=student.balance,
+                                   new_balance=new_balance
+                                   )
+        student.balance = new_balance
+        student.save()
+
     def populate_student(self):
         self.stdout.write('seeding student...')
-        for i in range(50):
+        for i in range(25):
             student_fname = self.faker.first_name()
             student_lname = self.faker.last_name()
             email = str(i) + self.faker.free_email()
@@ -152,14 +187,21 @@ class Command(BaseCommand):
             password = self.faker.password(length=12)
             last_lgn = self.faker.past_datetime()
 
-            Student.objects.create(first_name=student_fname,
-                                   last_name=student_lname,
-                                   email=email,
-                                   username=email,
-                                   balance=balance,
-                                   password=make_password(password, salt=None, hasher='default'),
-                                   last_login=last_lgn,
-                                   role="Student")
+            student = Student.objects.create(first_name=student_fname,
+                                             last_name=student_lname,
+                                             email=email,
+                                             username=email,
+                                             balance=balance,
+                                             password=make_password(password, salt=None, hasher='default'),
+                                             last_login=last_lgn,
+                                             role="Student")
+
+            num_children = self.faker.random_int(min=0, max=2)
+
+            for _ in range(num_children):
+                self.add_new_child(i, student)
+
+            self.populate_transactions(student)
 
     def populate_instruments(self):
         self.stdout.write('seeding instruments...')
@@ -188,7 +230,6 @@ class Command(BaseCommand):
                     duration = random.choice(settings.LESSON_DURATIONS)[0]
                     preferred_teacher = self.faker.first_name() + " " + self.faker.last_name()
                     les_count = 3 + random.randrange(4)
-
 
                     Request.objects.create(time_availability=time_availability,
                                            day_availability=day_availability,
