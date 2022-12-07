@@ -521,7 +521,6 @@ def term_create(request):
 
     if request.method == "POST":
         form = TermForm(request.POST)
-
         if form.is_valid():
             form.save()
             messages.add_message(request, messages.SUCCESS, "The term was successfully created!")
@@ -539,9 +538,10 @@ def term_update(request, term_id):
     if request.user.role != 'Director' and request.user.role != 'Administrator':
         return redirect('home')
     term = Term.objects.get(pk=term_id)
-
+    print(request.POST)
     if request.method == "POST":
         form = TermForm(request.POST, instance=term)
+
         if form.is_valid():
             form.save()
             messages.add_message(request, messages.SUCCESS, "The term was succesfully updated!")
@@ -569,11 +569,14 @@ def term_update(request, term_id):
 @login_required
 def term_delete(request, term_id):
     """Handles the deletion of a term"""
-    if request.user.role != 'Director' and request.user.role != 'Administrator':
+    if not request.user or request.user.role != 'Director' and request.user.role != 'Administrator':
         return redirect('home')
-    Term.objects.get(pk=term_id).delete()
-    messages.add_message(request, messages.SUCCESS, "The term was succesfully deleted!")
-    return redirect('term_create')
+    try:
+        Term.objects.get(pk=term_id).delete()
+        messages.add_message(request, messages.SUCCESS, "The term was succesfully deleted!")
+    except Term.DoesNotExist:
+        pass
+    return redirect('term_create') 
 
 
 @login_required
