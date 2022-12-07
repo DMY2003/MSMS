@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
-from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordForm, AdminLessonForm, StudentRequestForm, CreateAdminsForm, AccountForm, TermForm
+from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordForm, AdminLessonForm, StudentRequestForm, \
+    CreateAdminsForm, AccountForm, TermForm, ChildForm, ParentRequestForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from lessons.models import Request, Lesson, Student, Administrator, User, Term
@@ -13,6 +14,7 @@ from django.core.paginator import Paginator, EmptyPage
 def home(request):
     '''The home page of the website.'''
     return render(request, 'home.html')
+
 
 @login_prohibited
 def sign_up(request):
@@ -44,10 +46,12 @@ def log_in(request):
     form = LogInForm()
     return render(request, 'log_in.html', {'form': form})
 
+
 def log_out(request):
     '''Logs the user out.'''
     logout(request)
     return redirect('home')
+
 
 @login_required
 def password(request):
@@ -67,6 +71,7 @@ def password(request):
     form = PasswordForm()
     return render(request, 'password.html', {'form': form})
 
+
 @login_required
 def profile(request):
     '''The edit profile page of the website.'''
@@ -80,6 +85,7 @@ def profile(request):
     else:
         form = UserForm(instance=current_user)
     return render(request, 'profile.html', {'form': form})
+
 
 @login_required
 def student_requests(request):
@@ -98,6 +104,7 @@ def student_requests(request):
     elif request.user.role == 'Administrator' or request.user.role == 'Director':
         return redirect('admin_unapproved_requests')
 
+
 @login_required
 def admin_request_delete(request, request_id):
     """Handles the deletion of a particular request"""
@@ -107,9 +114,10 @@ def admin_request_delete(request, request_id):
             lesson_request.delete()
         messages.add_message(request, messages.ERROR, "The request has been successfully deleted!")
         return redirect("admin_unapproved_requests")
-    
+
     else:
         return redirect('home')
+
 
 @login_required
 def admin_request(request, request_id):
@@ -136,7 +144,8 @@ def admin_request(request, request_id):
     else:
         return redirect('home')
 
-@login_required 
+
+@login_required
 def admin_approved_requests(request):
     '''Handles the display of approved requests'''
     if request.user.role == 'Administrator' or request.user.role == 'Director':
@@ -147,12 +156,12 @@ def admin_approved_requests(request):
         response_data = {"requests": requests_page}
 
         return render(request, 'admin_approved_requests.html', response_data)
-    
+
     else:
         return redirect('home')
 
 
-@login_required 
+@login_required
 def admin_unapproved_requests(request):
     '''Handles the display of unapproved requests'''
     if request.user.role == 'Administrator' or request.user.role == 'Director':
@@ -163,9 +172,10 @@ def admin_unapproved_requests(request):
         response_data = {"requests": requests_page}
 
         return render(request, 'admin_unapproved_requests.html', response_data)
-    
+
     else:
         return redirect('home')
+
 
 @login_required
 def admin_requests(request):
@@ -178,16 +188,17 @@ def admin_requests(request):
         }
 
         return render(request, 'admin_requests.html', response_data)
-    
+
     else:
         return redirect('home')
+
 
 @login_required
 def admin_lessons(request):
     """Handles the display of lessons"""
     if request.user.role == 'Administrator' or request.user.role == 'Director':
         name_search = request.GET.get('name_search', None)
-        page_number = request.GET.get('page', 1) 
+        page_number = request.GET.get('page', 1)
 
         lessons = Lesson.objects.all()
 
@@ -202,7 +213,7 @@ def admin_lessons(request):
             )
 
         paginator = Paginator(lessons, 9)
-        
+
         try:
             lessons_page = paginator.page(page_number)
         except EmptyPage:
@@ -214,9 +225,10 @@ def admin_lessons(request):
             "name_search": name_search
         }
         return render(request, 'admin_lessons.html', response_data)
-    
+
     else:
         return redirect('home')
+
 
 @login_required
 def admin_lesson(request, lesson_id):
@@ -226,7 +238,7 @@ def admin_lesson(request, lesson_id):
 
         if request.method == "POST":
             form = AdminLessonForm(request.POST, instance=lesson)
-            
+
             if form.is_valid():
                 form.save()
                 messages.add_message(request, messages.SUCCESS, "The lesson was successfully updated!")
@@ -238,9 +250,10 @@ def admin_lesson(request, lesson_id):
             "form": form
         }
         return render(request, 'admin_lesson.html', response_data)
-    
+
     else:
         return redirect('home')
+
 
 @login_required
 def admin_lesson_delete(request, lesson_id):
@@ -251,9 +264,10 @@ def admin_lesson_delete(request, lesson_id):
             lesson.delete()
         messages.add_message(request, messages.ERROR, "The lesson has been successfully deleted!")
         return redirect("admin_lessons")
-    
+
     else:
         return redirect('home')
+
 
 @login_required
 def create_admin(request):
@@ -272,6 +286,7 @@ def create_admin(request):
         messages.add_message(request, messages.ERROR, "You do not have permission to create an admin!")
         return redirect('home')
 
+
 @login_required
 def manage_admins(request):
     """Handles the display of all admins"""
@@ -280,7 +295,7 @@ def manage_admins(request):
         accounts = Administrator.objects.all()
         if email_search:
             accounts = Administrator.objects.filter(
-                email = email_search
+                email=email_search
             )
 
         response_data = {
@@ -292,6 +307,7 @@ def manage_admins(request):
     else:
         messages.add_message(request, messages.ERROR, "You do not have permission to manage admins!")
         return redirect('home')
+
 
 @login_required
 def delete_account(request, account_id):
@@ -305,6 +321,7 @@ def delete_account(request, account_id):
     else:
         messages.add_message(request, messages.ERROR, "You do not have permission to delete an admin!")
         return redirect("home")
+
 
 @login_required
 def edit_account(request, account_id):
@@ -329,11 +346,11 @@ def student_request_create(request):
     """Handles the creation of a request through the student request form"""
     if request.user.role != 'Student':
         return redirect('home')
-    
+
     form = StudentRequestForm()
     if request.method == 'POST':
         form = StudentRequestForm(request.POST)
-        
+
         if form.is_valid():
             lesson_request = form.save(commit=False)
             student = Student.objects.get(email=request.user.email)
@@ -348,7 +365,7 @@ def student_request_update(request, request_id):
     """Handles the updating of a request through the student request form"""
     if request.user.role != 'Student':
         return redirect('home')
-    
+
     lesson_request = Request.objects.get(pk=request_id)
 
     response_data = {
@@ -376,7 +393,7 @@ def student_request_delete(request, request_id):
     """Handles the deletion of a request by the student who has made it"""
     if request.user.role != 'Student':
         return redirect('home')
-    
+
     lesson_request = Request.objects.get(id=request_id)
     if lesson_request:
         messages.add_message(request, messages.SUCCESS, "Your request was successfully deleted!")
@@ -389,7 +406,7 @@ def student_lessons(request):
     if request.user.role != 'Student':
         return redirect('home')
     instrument_search = request.GET.get('instrument_search', None)
-    page_number = request.GET.get('page', 1) 
+    page_number = request.GET.get('page', 1)
 
     lessons = Lesson.objects.filter(student=request.user)
 
@@ -401,7 +418,7 @@ def student_lessons(request):
         )
 
     paginator = Paginator(lessons, 9)
-    
+
     try:
         lessons_page = paginator.page(page_number)
     except EmptyPage:
@@ -414,7 +431,7 @@ def student_lessons(request):
     }
     return render(request, 'student_lessons.html', response_data)
 
-@login_required 
+@login_required
 def term_create(request):
     """Handles the creation of a term"""
     if request.user.role != 'Director' and request.user.role != 'Administrator':
@@ -428,10 +445,10 @@ def term_create(request):
             messages.add_message(request, messages.SUCCESS, "The term was successfully created!")
     terms = map_terms(Term.objects.all())
     response_data = {"terms": terms, "form": form}
-    
-    return render(request, 'term_create.html', response_data) 
 
-@login_required 
+    return render(request, 'term_create.html', response_data)
+
+@login_required
 def term_update(request, term_id):
     """Handles the updating of a term's start date and end date"""
     if request.user.role != 'Director' and request.user.role != 'Administrator':
@@ -452,16 +469,16 @@ def term_update(request, term_id):
     term_position = 1
     for position, current_term in terms.items():
         if current_term == term:
-            term_position = position 
+            term_position = position
 
     response_data = {
-        "terms": terms, 
-        "form": form, 
-        "term_position" : term_position,
+        "terms": terms,
+        "form": form,
+        "term_position": term_position,
         "term": term
     }
 
-    return render(request, 'term_update.html', response_data) 
+    return render(request, 'term_update.html', response_data)
 
 @login_required
 def term_delete(request, term_id):
@@ -470,4 +487,20 @@ def term_delete(request, term_id):
         return redirect('home')
     Term.objects.get(pk=term_id).delete()
     messages.add_message(request, messages.SUCCESS, "The term was succesfully deleted!")
-    return redirect('term_create') 
+    return redirect('term_create')
+
+
+@login_required
+def add_child(request):
+    form = ChildForm()
+    if request.method == 'POST':
+        form = ChildForm(request.POST)
+
+        if form.is_valid():
+            child_request = form.save()
+            parent = Student.objects.get(email=request.user.email)
+            child_request.parent = parent
+            child_request.save()
+            return redirect('student_requests')
+
+    return render(request, 'add_child_form.html', {'form': form})
