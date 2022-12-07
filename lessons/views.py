@@ -1,3 +1,5 @@
+from itertools import chain
+
 from django.shortcuts import render, redirect
 from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordForm, AdminLessonForm, StudentRequestForm, \
     CreateAdminsForm, AccountForm, TermForm, ChildForm, ParentRequestForm, UpdateBalance
@@ -93,10 +95,22 @@ def student_requests(request):
     if request.user.role == 'Student':
         student = request.user.id
 
+        children = Child.objects.filter(parent=student)
+        confirmed_requests = Request.objects.filter(student_id=student, is_approved=True)
+        unconfirmed_requests = Request.objects.filter(student_id=student, is_approved=False)
+
+        for child in children:
+            lesson_list = Request.objects.filter(student_id=child, is_approved=True)
+            confirmed_requests = list(chain(confirmed_requests, lesson_list))
+
+        for child in children:
+            lesson_list = Request.objects.filter(student_id=child, is_approved=False)
+            unconfirmed_requests = list(chain(unconfirmed_requests, lesson_list))
+
         response_data = {
             "form": StudentRequestForm(),
-            "confirmed_requests": Request.objects.filter(student_id=student, is_approved=True),
-            "ongoing_requests": Request.objects.filter(student_id=student, is_approved=False)
+            "confirmed_requests": confirmed_requests,
+            "ongoing_requests": unconfirmed_requests
         }
 
         return render(request, 'student_requests.html', response_data)
@@ -385,7 +399,7 @@ def student_request_create(request):
     if quantity_children == 0:
         form = StudentRequestForm()
     else:
-        form = ParentRequestForm(request.user.id)
+        form = ParentRequestForm(user=request.user)
     if request.method == 'POST':
         if quantity_children == 0:
             form = StudentRequestForm(request.POST)
@@ -501,7 +515,6 @@ def term_update(request, term_id):
     if request.user.role != 'Director' and request.user.role != 'Administrator':
         return redirect('home')
     term = Term.objects.get(pk=term_id)
-
 
     if request.method == "POST":
         form = TermForm(request.POST, instance=term)
