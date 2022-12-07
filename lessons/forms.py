@@ -188,7 +188,7 @@ class TermForm(forms.ModelForm):
                 attrs={'type': 'date'}
             ),
             "end_date": forms.DateTimeInput(
-                format=('%Y-%m-%d'), 
+                format=('%Y-%m-%d'),
                 attrs={'type': 'date'}
             )
         }
@@ -204,7 +204,8 @@ class TermForm(forms.ModelForm):
         current_terms = Term.objects.all()
 
         for term in current_terms:
-            if self.cleaned_data.get("start_date") <= term.end_date and self.cleaned_data.get("end_date") >= term.start_date:
+            if self.cleaned_data.get("start_date") <= term.end_date and self.cleaned_data.get(
+                    "end_date") >= term.start_date:
                 if self.instance:
                     if self.instance.id == term.id:
                         continue
@@ -212,3 +213,23 @@ class TermForm(forms.ModelForm):
                 self.add_error("start_date", "Dates cannot overlap with current term dates!")
                 self.add_error("end_date", "Dates cannot overlap with current term dates!")
                 return
+
+
+class ChildForm(forms.ModelForm):
+    class Meta:
+        model = Student
+        fields = ["first_name", "last_name", "email"]
+
+    def save(self):
+        super().save(commit=False)
+        user = Student.objects.create_user(
+            username=self.cleaned_data.get("email"),
+            first_name=self.cleaned_data.get("first_name"),
+            last_name=self.cleaned_data.get("last_name"),
+            email=self.cleaned_data.get("email"),
+        )
+        user.role = "Student"
+        user.save()
+        return user
+
+    field_order = ["first_name", "last_name", "email"]
