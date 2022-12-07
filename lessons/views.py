@@ -1,3 +1,5 @@
+import mimetypes
+from django.http.response import HttpResponse
 from itertools import chain
 from django.shortcuts import render, redirect
 from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordForm, AdminLessonForm, StudentRequestForm, \
@@ -90,36 +92,32 @@ def profile(request):
 
 
 @login_required
-def requests(request):
+def student_requests(request):
     '''The student requests page of the website.'''
     if request.user.role == 'Student':
-        return redirect('student_requests')
+        student = request.user.id
+
+        children = Child.objects.filter(parent=student)
+        confirmed_requests = Request.objects.filter(student_id=student, is_approved=True)
+        unconfirmed_requests = Request.objects.filter(student_id=student, is_approved=False)
+
+        for child in children:
+            lesson_list = Request.objects.filter(student_id=child, is_approved=True)
+            confirmed_requests = list(chain(confirmed_requests, lesson_list))
+
+        for child in children:
+            lesson_list = Request.objects.filter(student_id=child, is_approved=False)
+            unconfirmed_requests = list(chain(unconfirmed_requests, lesson_list))
+
+        response_data = {
+            "form": StudentRequestForm(),
+            "confirmed_requests": confirmed_requests,
+            "ongoing_requests": unconfirmed_requests
+        }
+
+        return render(request, 'student_requests.html', response_data)
     elif request.user.role == 'Administrator' or request.user.role == 'Director':
-        return redirect('admin_unapproved_requests')
-
-@login_required
-def student_requests(request):
-    student = request.user.id
-
-    children = Child.objects.filter(parent=student)
-    confirmed_requests = Request.objects.filter(student_id=student, is_approved=True)
-    unconfirmed_requests = Request.objects.filter(student_id=student, is_approved=False)
-
-    for child in children:
-        lesson_list = Request.objects.filter(student_id=child, is_approved=True)
-        confirmed_requests = list(chain(confirmed_requests, lesson_list))
-
-    for child in children:
-        lesson_list = Request.objects.filter(student_id=child, is_approved=False)
-        unconfirmed_requests = list(chain(unconfirmed_requests, lesson_list))
-
-    response_data = {
-        "form": StudentRequestForm(),
-        "confirmed_requests": confirmed_requests,
-        "ongoing_requests": unconfirmed_requests
-    }
-
-    return render(request, 'student_requests.html', response_data)
+        return redirect('admin_lessons')
 
 
 def admin_request_delete(request, request_id):
@@ -133,6 +131,7 @@ def admin_request_delete(request, request_id):
 
     else:
         return redirect('home')
+
 
 
 @login_required
@@ -201,6 +200,7 @@ def admin_unapproved_requests(request):
         return redirect('home')
 
 
+
 @login_required
 def admin_requests(request):
     """Handles the display of admin requests"""
@@ -217,9 +217,11 @@ def admin_requests(request):
         return redirect('home')
 
 
+
 @login_required
 def admin_lessons(request):
     """Handles the display of lessons"""
+    
     if request.user.role == 'Administrator' or request.user.role == 'Director':
         name_search = request.GET.get('name_search', None)
         page_number = request.GET.get('page', 1)
@@ -279,6 +281,7 @@ def admin_lesson(request, lesson_id):
         return redirect('home')
 
 
+
 @login_required
 def admin_lesson_delete(request, lesson_id):
     """Handles the deletion of a particular lesson"""
@@ -291,6 +294,7 @@ def admin_lesson_delete(request, lesson_id):
 
     else:
         return redirect('home')
+
 
 
 @login_required
@@ -306,9 +310,10 @@ def create_admin(request):
         else:
             form = CreateAdminsForm()
         return render(request, 'create_admin.html', {'form': form})
-    else:
-        messages.add_message(request, messages.ERROR, "You do not have permission to create an admin!")
-        return redirect('home')
+    elif request.user.role == 'Administrator':
+        messages.add_message(request, messages.ERROR, "You do not have permission to manage admins!")
+        return redirect('admin_lessons')
+
 
 
 @login_required
@@ -328,42 +333,35 @@ def manage_admins(request):
             "email_search": email_search
         }
         return render(request, 'manage_admins.html', response_data)
-    else:
+    elif request.user.role == 'Administrator':
         messages.add_message(request, messages.ERROR, "You do not have permission to manage admins!")
-        return redirect('home')
+        return redirect('admin_lessons')
 
 @login_required
 def manage_students(request):
-    email_search = request.GET.get('email_search', None)
-    accounts = Student.objects.all()
-    if email_search:
-        accounts = Student.objects.filter(
-            email=email_search
-        )
+    """Handles the display of all students"""
+    if request.user.role == 'Director' or request.user.role == 'Administrator':
+        email_search = request.GET.get('email_search', None)
+        accounts = Student.objects.all()
+        if email_search:
+            accounts = Student.objects.filter(
+                email=email_search
+            )
 
-    response_data = {
-        "accounts": accounts,
-        "student_count": len(accounts),
-        "email_search": email_search
-    }
-    return render(request, 'manage_students.html', response_data)
-
-
-@login_required
-def delete_account(request, account_id):
-    """Handles the deletion of a particular account"""
-    if request.user.role == 'Director':
-        account = User.objects.get(id=account_id)
-        if account:
-            account.delete()
-        messages.add_message(request, messages.ERROR, "The account has been successfully deleted!")
-        return redirect("manage_admins")
+        response_data = {
+            "accounts": accounts,
+            "student_count": len(accounts),
+            "email_search": email_search
+        }
+        return render(request, 'manage_students.html', response_data)
     else:
-        messages.add_message(request, messages.ERROR, "You do not have permission to delete an admin!")
-        return redirect("home")
+        messages.add_message(request, messages.ERROR, "You do not have permission to manage students!")
+        return redirect('home')
+
 
 
 @login_required
+
 def edit_account(request, account_id):
     """Handles the display and updating of a particular account"""
     if request.user.role == 'Director':
@@ -399,6 +397,7 @@ def manage_user_delete(request, user_id):
             return redirect("manage_students")
 
 
+
 @login_required
 def student_request_create(request):
     """Handles the creation of a request through the student request form"""
@@ -411,10 +410,10 @@ def student_request_create(request):
         form = StudentRequestForm()
     else:
         form = ParentRequestForm(user=request.user)
+
     if request.method == 'POST':
-        form = StudentRequestForm(request.POST)
-        
-        if form.is_valid():
+        if quantity_children == 0:
+            form = StudentRequestForm(request.POST)
             lesson_request = form.save(commit=False)
             student = Student.objects.get(email=request.user.email)
             lesson_request.student = student
@@ -477,6 +476,7 @@ def student_lessons(request):
     if request.user.role != 'Student':
         return redirect('home')
     instrument_search = request.GET.get('instrument_search', None)
+    page_number = request.GET.get('page', 1)
     page_number1 = request.GET.get('page1', 1)
     page_number2 = request.GET.get('page2', 1) 
 
@@ -583,11 +583,26 @@ def term_delete(request, term_id):
     return redirect('term_create') 
 
 
+def download(request, invoice: str):
+    print("\n" + str(request) + "\n")
+    print("\n invoice id: " + str(invoice) + "\n")
+    # Define text file name
+    filename = invoice
+    # Open the file for reading content
+    path = open(filename, 'r')
+    # Set the mime type
+    mime_type, _ = mimetypes.guess_type(filename)
+    # Set the return value of the HttpResponse
+    response = HttpResponse(path, content_type=mime_type)
+    # Set the HTTP header for sending to browser
+    response['Content-Disposition'] = "attachment; filename=%s" % filename
+    # Return the response value
+    return response
+
+
 @login_required
 def add_child(request):
     """Handles the adding of a child to a student's account"""
-    if request.user.role != 'Director' and request.user.role != 'Administrator':
-        return redirect('home')
     form = ChildForm()
     if request.method == 'POST':
         form = ChildForm(request.POST)
@@ -633,8 +648,6 @@ def change_balance(request, user_id):
 @login_required
 def transaction_history(request):
     """Handles the creation of a student's transaction history page"""
-    if request.user.role != 'Director' and request.user.role != 'Administrator':
-        return redirect('home')
     student = request.user.id
 
     response_data = {

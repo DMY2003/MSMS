@@ -9,6 +9,7 @@ class InvoiceModelTestCase(TestCase):
         'lessons/tests/fixtures/default_student.json',
         'lessons/tests/fixtures/default_teacher.json',
         'lessons/tests/fixtures/default_instrument.json',
+        'lessons/tests/fixtures/default_request.json',
         'lessons/tests/fixtures/default_lesson.json',
         'lessons/tests/fixtures/default_invoice.json',
         'lessons/tests/fixtures/other_invoices.json',
