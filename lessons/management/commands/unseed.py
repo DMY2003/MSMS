@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from lessons.models import User, Student, Teacher, Administrator, Lesson, Invoice, Instrument, Request
+from lessons.models import User, Student, Teacher, Administrator, Lesson, Invoice, Instrument, Request, Term
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
@@ -12,4 +12,5 @@ class Command(BaseCommand):
         Invoice.objects.all().delete()
         Instrument.objects.all().delete()
         Request.objects.all().delete()
+        Term.objects.all().delete()
         self.stdout.write('Complete')
