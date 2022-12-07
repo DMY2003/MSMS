@@ -90,14 +90,6 @@ def profile(request):
 
 
 @login_required
-def requests(request):
-    '''The student requests page of the website.'''
-    if request.user.role == 'Student':
-        return redirect('student_requests')
-    elif request.user.role == 'Administrator' or request.user.role == 'Director':
-        return redirect('admin_unapproved_requests')
-
-@login_required
 def student_requests(request):
     student = request.user.id
 
@@ -586,7 +578,7 @@ def term_delete(request, term_id):
 @login_required
 def add_child(request):
     """Handles the adding of a child to a student's account"""
-    if request.user.role != 'Director' and request.user.role != 'Administrator':
+    if request.user.role != 'Student':
         return redirect('home')
     form = ChildForm()
     if request.method == 'POST':
@@ -633,7 +625,7 @@ def change_balance(request, user_id):
 @login_required
 def transaction_history(request):
     """Handles the creation of a student's transaction history page"""
-    if request.user.role != 'Director' and request.user.role != 'Administrator':
+    if request.user.role != 'Student':
         return redirect('home')
     student = request.user.id
 
