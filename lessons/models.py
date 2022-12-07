@@ -1,5 +1,5 @@
 from django.db import models
-from django.core.validators import RegexValidator
+from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.base_user import BaseUserManager
 import datetime
@@ -172,3 +172,10 @@ class Term(models.Model):
 
     class Meta:
         ordering = ('start_date',)
+
+class Transaction(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, blank=False)
+    note = models.CharField(blank=True, max_length=25)
+    change = models.CharField(blank=False, max_length=25)
+    old_balance = models.IntegerField(blank=False)
+    new_balance = models.IntegerField(blank=False)

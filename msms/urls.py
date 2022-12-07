@@ -34,6 +34,10 @@ urlpatterns = [
     path('administrator/unapproved_requests', views.admin_unapproved_requests, name='admin_unapproved_requests'),
     path('administrator/delete_request/<int:request_id>', views.admin_request_delete, name='admin_request_delete'),
     path('administrator/requests/<int:request_id>', views.admin_request, name='admin_request'),
+    path('administrator/manage_students', views.manage_students, name='manage_students'),
+    path('administrator/delete_user/<int:user_id>', views.manage_user_delete, name='manage_user_delete'),
+    path('administrator/change_balance/<int:user_id>', views.change_balance, name='change_balance'),
+
     path('director/create_admin', views.create_admin, name='create_admin'),
     path('director/manage_admins', views.manage_admins, name='manage_admins'),
     path('delete_account/<int:account_id>', views.delete_account, name='delete_account'),
@@ -49,5 +53,9 @@ urlpatterns = [
     path('delete_request/<int:request_id>', views.student_request_delete, name='student_request_delete'),
     path('student/lessons', views.student_lessons, name='student_lessons'),
     path('student/add_child', views.add_child, name='add_child'),
+
+    path('lessons/', views.lessons, name='lessons'),
+    path('transactions/', views.transactions, name='transactions'),
+    path('transaction_history/', views.transaction_history, name='transaction_history'),
 ]
 

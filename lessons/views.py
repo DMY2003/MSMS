@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
 from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordForm, AdminLessonForm, StudentRequestForm, \
-    CreateAdminsForm, AccountForm, TermForm, ChildForm, ParentRequestForm
+    CreateAdminsForm, AccountForm, TermForm, ChildForm, ParentRequestForm, UpdateBalance
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from lessons.models import Request, Lesson, Student, Administrator, User, Term
+from lessons.models import Request, Lesson, Student, Administrator, User, Term, Transaction
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
 from lessons.helper import login_prohibited, map_terms
@@ -105,7 +105,6 @@ def student_requests(request):
         return redirect('admin_unapproved_requests')
 
 
-@login_required
 def admin_request_delete(request, request_id):
     """Handles the deletion of a particular request"""
     if request.user.role == 'Administrator' or request.user.role == 'Director':
@@ -117,6 +116,7 @@ def admin_request_delete(request, request_id):
 
     else:
         return redirect('home')
+
 
 
 @login_required
@@ -177,6 +177,7 @@ def admin_unapproved_requests(request):
         return redirect('home')
 
 
+
 @login_required
 def admin_requests(request):
     """Handles the display of admin requests"""
@@ -191,6 +192,7 @@ def admin_requests(request):
 
     else:
         return redirect('home')
+
 
 
 @login_required
@@ -230,6 +232,7 @@ def admin_lessons(request):
         return redirect('home')
 
 
+
 @login_required
 def admin_lesson(request, lesson_id):
     """Handles the display and updating of a particular lesson"""
@@ -255,6 +258,7 @@ def admin_lesson(request, lesson_id):
         return redirect('home')
 
 
+
 @login_required
 def admin_lesson_delete(request, lesson_id):
     """Handles the deletion of a particular lesson"""
@@ -267,6 +271,7 @@ def admin_lesson_delete(request, lesson_id):
 
     else:
         return redirect('home')
+
 
 
 @login_required
@@ -287,6 +292,7 @@ def create_admin(request):
         return redirect('home')
 
 
+
 @login_required
 def manage_admins(request):
     """Handles the display of all admins"""
@@ -295,7 +301,7 @@ def manage_admins(request):
         accounts = Administrator.objects.all()
         if email_search:
             accounts = Administrator.objects.filter(
-                email=email_search
+                email = email_search
             )
 
         response_data = {
@@ -307,6 +313,22 @@ def manage_admins(request):
     else:
         messages.add_message(request, messages.ERROR, "You do not have permission to manage admins!")
         return redirect('home')
+
+
+def manage_students(request):
+    email_search = request.GET.get('email_search', None)
+    accounts = Student.objects.all()
+    if email_search:
+        accounts = Student.objects.filter(
+            email=email_search
+        )
+
+    response_data = {
+        "accounts": accounts,
+        "student_count": len(accounts),
+        "email_search": email_search
+    }
+    return render(request, 'manage_students.html', response_data)
 
 
 @login_required
@@ -340,6 +362,24 @@ def edit_account(request, account_id):
     else:
         messages.add_message(request, messages.ERROR, "You do not have permission to edit an admin!")
         return redirect("home")
+
+
+
+@login_required
+def manage_user_delete(request, user_id):
+    """Handles the deletion of a particular user"""
+    user = User.objects.get(id=user_id)
+    role = user.role
+    if user:
+        user.delete()
+    messages.add_message(request, messages.ERROR, "The account has been successfully deleted!")
+    if request.user.role == "Administrator":
+        return redirect("manage_students")
+    elif request.user.role == "Director":
+        if role == "Administrator":
+            return redirect("manage_admins")
+        elif role == "Student":
+            return redirect("manage_students")
 
 
 @login_required
@@ -387,8 +427,6 @@ def student_request_update(request, request_id):
 
     if request.method == "POST":
         form = StudentRequestForm(request.POST, instance=lesson_request)
-        print(form.is_valid())
-        print(form.cleaned_data)
         if form.is_valid():
             form.save()
             messages.add_message(request, messages.SUCCESS, "Your request was successfully updated!")
@@ -522,3 +560,34 @@ def add_child(request):
             return redirect('student_requests')
 
     return render(request, 'add_child_form.html', {'form': form})
+
+def change_balance(request, user_id):
+    student = Student.objects.get(id=user_id)
+
+    response_data = {
+        "balance": student.balance,
+        "name": student.first_name + " " + student.last_name,
+    }
+
+    if request.method == 'POST':
+        form = UpdateBalance(request.POST, instance=student)
+        if form.is_valid():
+            form.save()
+            messages.add_message(request, messages.SUCCESS, "Balance Updated!")
+            return redirect('manage_students')
+    else:
+        form = UpdateBalance(instance=student)
+
+    response_data.update({"form": form})
+
+    return render(request, 'change_balance.html', response_data)
+
+
+def transaction_history(request):
+    student = request.user.id
+
+    response_data = {
+        "transactions": Transaction.objects.filter(student_id=student),
+    }
+
+    return render(request, 'student_transaction_history.html', response_data)

@@ -15,6 +15,12 @@
                             <a class="nav-link" href="{% url 'student_lessons' %}">
                                 Lessons
                             </a>
+                            <a class="nav-link text-white" href="{% url 'transaction_history' %}">
+                                Balance: £{{ user.student.balance }}
+                            </a>>
+                            <a class="nav-link" href="{% url 'transaction_history' %}">
+                                Transaction History
+                            </a>>
                         {% elif user.role == "Administrator" or user.role == "Director" %}
                             <a class="nav-link" href="{% url 'admin_unapproved_requests' %}">
                                 Requests
@@ -24,6 +30,8 @@
                             </a>
                             <a class="nav-link" href="{% url 'term_create' %}">
                                 Terms
+                            <a class="nav-link" href="{% url 'manage_students' %}">
+                                Manage Students
                             </a>
                         {% endif %}
 

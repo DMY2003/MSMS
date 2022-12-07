@@ -1,5 +1,5 @@
 from django import forms
-from lessons.models import User, Student, Administrator, Teacher, Instrument, Request, Lesson, Term
+from lessons.models import User, Student, Administrator, Teacher, Instrument, Request, Lesson, Term, Transaction
 from django.core.validators import RegexValidator
 from django.conf import settings
 
@@ -250,3 +250,38 @@ class ParentRequestForm(StudentRequestForm):
 
         request.save()
         return request
+
+class UpdateBalance(forms.ModelForm):
+    note = forms.CharField(label="Note", required=False, max_length=25)
+
+    class Meta:
+        model = Student
+        fields = ['balance']
+
+        labels = {
+            'balance': 'Amount',
+        }
+
+    def save(self):
+        student = super().save(commit=False)
+        transaction_type = ""
+        amount = self.cleaned_data["balance"]
+
+        if "Subtract" in self.data:
+            transaction_type = f"-£{amount}"
+            student.balance = self.initial["balance"] - amount
+        elif "Add" in self.data:
+            transaction_type = f"+£{amount}"
+            student.balance = self.initial["balance"] + amount
+        elif "Change" in self.data:
+            transaction_type = f"Set £{amount}"
+            student.balance = amount
+
+        Transaction.objects.create(student=student,
+                                   note=self.cleaned_data["note"],
+                                   change=transaction_type,
+                                   old_balance=self.initial["balance"],
+                                   new_balance=student.balance
+                                   )
+        student.save()
+        return student
