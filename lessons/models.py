@@ -75,6 +75,7 @@ class Term(models.Model):
 
 class Student(User):
     balance = models.IntegerField(default=0)
+
     def __str__(self):
         return self.full_name
 
