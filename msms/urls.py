@@ -54,8 +54,6 @@ urlpatterns = [
     path('student/lessons', views.student_lessons, name='student_lessons'),
     path('student/add_child', views.add_child, name='add_child'),
 
-    path('lessons/', views.lessons, name='lessons'),
-    path('transactions/', views.transactions, name='transactions'),
     path('transaction_history/', views.transaction_history, name='transaction_history'),
 ]
 
