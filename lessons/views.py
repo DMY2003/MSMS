@@ -302,7 +302,6 @@ def student_request_create(request):
     form = StudentRequestForm()
     if request.method == 'POST':
         form = StudentRequestForm(request.POST)
-        print(form.errors)
         if form.is_valid():
             lesson_request = form.save(commit=False)
             student = Student.objects.get(email=request.user.email)

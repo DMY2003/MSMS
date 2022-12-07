@@ -24,7 +24,7 @@ class StudentRequestCreateViewTestCase(TestCase):
             'lesson_count': 3,
             'lesson_duration': 30,
             'preferred_teacher': 'request_create_view_test',
-            'instrument': Instrument.objects.get(id=2)
+            'instrument': 2
         }
 
     def test_student_request_create_url(self):
