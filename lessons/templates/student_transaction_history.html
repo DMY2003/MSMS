@@ -1,0 +1,35 @@
+{% extends 'base_content.html' %} 
+
+{% block content %}
+<div class="container-sm mt-5">
+    <div class="card p-3 mb-5">
+    <div class="d-flex justify-content-between w-100 align-items-center mb-2">
+      <h3>
+        Transaction history
+      </h3>
+    </div>
+
+    <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Notes</th>
+            <th scope="col">Previous Balance</th>
+              <th scope="col">Activity</th>
+            <th scope="col">New Balance</th>
+        </thead>
+        <tbody>
+          {% for transaction in transactions %}
+            <tr>
+              <th scope="row">{{transaction.id}}</th>
+              <td>{{transaction.note}}</td>
+              <td>£{{transaction.old_balance}}</td>
+              <td>{{transaction.change}}</td>
+              <td>£{{transaction.new_balance}}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+    </table>
+</div>
+</div>
+{% endblock %}
