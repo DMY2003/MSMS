@@ -3,7 +3,7 @@ from django.core.validators import RegexValidator
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.base_user import BaseUserManager
 import datetime
-from django.core.validators import MaxValueValidator, MinValueValidator 
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.conf import settings
 
 
@@ -19,7 +19,8 @@ class UserManager(BaseUserManager):
 
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
-        user.set_password(password)
+        if password is not None:
+            user.set_password(password)
         user.save(using=self._db)
         return user
 
@@ -61,7 +62,11 @@ class User(AbstractUser):
 
 
 class Student(User):
-    balance = models.IntegerField(default=0)
+    balance = models.IntegerField(blank=True, null=True)
+    parent = models.ForeignKey("self", on_delete=models.CASCADE, null=True)
+
+    def __str__(self):
+        return self.full_name
 
 
 class Teacher(User):
@@ -81,9 +86,9 @@ class Instrument(models.Model):
     name = models.CharField(max_length=30, blank=False)
     base_price = models.IntegerField(default=0)
 
-
     def __str__(self):
         return self.name
+
 
 class Lesson(models.Model):
     date = models.DateTimeField(null=True)
@@ -107,24 +112,16 @@ class Request(models.Model):
     """Stores the data of a lesson request"""
 
     time_availability = models.TimeField(blank=False)
-
     day_availability = models.IntegerField(choices=settings.DAYS_OF_THE_WEEK, blank=False)
-
     lesson_interval = models.IntegerField(choices=settings.LESSON_INTERVALS, blank=False)
-
     lesson_count = models.IntegerField(
         blank=False,
         validators=[MinValueValidator(1), MaxValueValidator(20)]
     )
-
     lesson_duration = models.IntegerField(choices=settings.LESSON_DURATIONS, blank=False)
-
     preferred_teacher = models.CharField(blank=True, max_length=50)
-
     instrument = models.ForeignKey(Instrument, on_delete=models.CASCADE, blank=False)
-
     student = models.ForeignKey(Student, on_delete=models.CASCADE, blank=False)
-
     is_approved = models.BooleanField(default=False)
 
     @property
@@ -138,7 +135,7 @@ class Request(models.Model):
         self.is_approved = True
 
         lesson_datetime = get_date_from_weekday(
-            self.day_availability, 
+            self.day_availability,
             self.time_availability
         )
 
@@ -167,6 +164,7 @@ class Invoice(models.Model):
     price = models.IntegerField(blank=False)
     paid = models.BooleanField(default=False)
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, blank=False)
+
 
 class Term(models.Model):
     start_date = models.DateTimeField(null=True)

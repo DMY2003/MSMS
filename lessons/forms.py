@@ -1,9 +1,7 @@
 from django import forms
 from lessons.models import User, Student, Administrator, Teacher, Instrument, Request, Lesson, Term
-from django.forms import ModelChoiceField
 from django.core.validators import RegexValidator
 from django.conf import settings
-import datetime
 
 
 class SignUpForm(forms.ModelForm):
@@ -174,6 +172,7 @@ class AccountForm(forms.ModelForm):
 
     role = forms.ChoiceField(choices=settings.ROLES)
 
+
 class TermForm(forms.ModelForm):
     """Form to update school terms"""
 
@@ -233,3 +232,21 @@ class ChildForm(forms.ModelForm):
         return user
 
     field_order = ["first_name", "last_name", "email"]
+
+
+class ParentRequestForm(StudentRequestForm):
+    def __init__(self, user, *args, **kwargs):
+        super(ParentRequestForm, self).__init__(*args, **kwargs)
+        self.fields['student'].queryset = Student.objects.filter(parent=user)
+
+    student = forms.ModelChoiceField(queryset=None)
+
+    field_order = ["student"]
+
+    def save(self):
+        request = super().save(commit=False)
+
+        request.student = self.cleaned_data["student"]
+
+        request.save()
+        return request

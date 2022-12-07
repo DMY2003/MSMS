@@ -341,24 +341,37 @@ def edit_account(request, account_id):
         messages.add_message(request, messages.ERROR, "You do not have permission to edit an admin!")
         return redirect("home")
 
+
 @login_required
 def student_request_create(request):
     """Handles the creation of a request through the student request form"""
+    quantity_children = len(Student.objects.filter(parent_id=request.user.id).values())
+
     if request.user.role != 'Student':
         return redirect('home')
 
-    form = StudentRequestForm()
+    if quantity_children == 0:
+        form = StudentRequestForm()
+    else:
+        form = ParentRequestForm(request.user.id)
     if request.method == 'POST':
-        form = StudentRequestForm(request.POST)
-
-        if form.is_valid():
+        if quantity_children == 0:
+            form = StudentRequestForm(request.POST)
             lesson_request = form.save(commit=False)
             student = Student.objects.get(email=request.user.email)
             lesson_request.student = student
+
+        else:
+            form = ParentRequestForm(user=request.user, data=request.POST)
+            lesson_request = form
+
+        if form.is_valid():
             lesson_request.save()
+
             return redirect('student_requests')
 
     return render(request, 'student_request_create.html', {'form': form})
+
 
 @login_required
 def student_request_update(request, request_id):
@@ -388,6 +401,7 @@ def student_request_update(request, request_id):
 
     return render(request, 'student_request_update.html', response_data)
 
+
 @login_required
 def student_request_delete(request, request_id):
     """Handles the deletion of a request by the student who has made it"""
@@ -399,6 +413,7 @@ def student_request_delete(request, request_id):
         messages.add_message(request, messages.SUCCESS, "Your request was successfully deleted!")
         lesson_request.delete()
     return redirect('student_requests')
+
 
 @login_required
 def student_lessons(request):
@@ -431,6 +446,7 @@ def student_lessons(request):
     }
     return render(request, 'student_lessons.html', response_data)
 
+
 @login_required
 def term_create(request):
     """Handles the creation of a term"""
@@ -447,6 +463,7 @@ def term_create(request):
     response_data = {"terms": terms, "form": form}
 
     return render(request, 'term_create.html', response_data)
+
 
 @login_required
 def term_update(request, term_id):
@@ -479,6 +496,7 @@ def term_update(request, term_id):
     }
 
     return render(request, 'term_update.html', response_data)
+
 
 @login_required
 def term_delete(request, term_id):
