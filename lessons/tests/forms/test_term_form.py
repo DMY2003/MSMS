@@ -18,8 +18,12 @@ class RequestFormTestCase(TestCase):
             "end_date": date(2023, 8, 7)
         }
 
+        self.form_input_2 = {
+            "start_date": date(2023, 9, 4),
+            "end_date": date(2023, 11, 7)
+        }
+
         self.term = Term.objects.first()
-        self.term_to_delete = Term.objects.last()
 
     def test_valid_form(self):
         form = TermForm(data=self.form_input)
@@ -54,4 +58,15 @@ class RequestFormTestCase(TestCase):
         self.assertEqual(self.term.start_date, self.form_input["start_date"])
         self.assertEqual(self.term.end_date, self.form_input["end_date"])
 
-    
+    def test_form_create_must_save_correctly(self):
+        form = TermForm(data=self.form_input_2)
+        before_count = Term.objects.count()
+        term = form.save()
+        after_count = Term.objects.count()
+        self.assertEqual(after_count, before_count + 1)
+        self.assertEqual(term.start_date, self.form_input_2["start_date"])
+        self.assertEqual(term.end_date, self.form_input_2["end_date"])
+
+    def test_form_term_cannot_overlap(self):
+        form = TermForm(data={"start_date": self.term.start_date, "end_date": self.term.end_date})
+        self.assertFalse(form.is_valid())
