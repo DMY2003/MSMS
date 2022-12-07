@@ -10,6 +10,7 @@ from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
 from lessons.helper import login_prohibited, map_terms
 from django.core.paginator import Paginator, EmptyPage
+import datetime
 
 
 @login_prohibited
@@ -135,7 +136,7 @@ def admin_request_delete(request, request_id):
 @login_required
 def admin_request(request, request_id):
     """Handles the display of a particular admin request and the functionality to
-        generate lessons from it"""
+    generate lessons from it"""
     if request.user.role == 'Administrator' or request.user.role == 'Director':
         lesson_request = Request.objects.get(id=request_id)
         if request.method == "POST":
@@ -143,15 +144,23 @@ def admin_request(request, request_id):
             if form.is_valid():
                 form.save()
 
+                teacher = form.cleaned_data.get("teacher")
+                term = form.cleaned_data.get("term")
+
                 lesson_request.generate_lessons(
-                    form.cleaned_data.get("teacher")
+                    teacher,
+                    term
                 )
 
                 messages.add_message(request, messages.SUCCESS, "Lessons successfuly booked!")
                 return redirect("admin_unapproved_requests")
-            messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
+            messages.add_message(request, messages.ERROR, "The request cannot be approved with the details provided!")
         else:
-            form = AdminRequestForm(instance=lesson_request)
+            terms = Term.objects.filter(end_date__gte=datetime.datetime.now().date())
+            first_term = None
+            if len(terms) > 0:
+                first_term = terms[0]
+            form = AdminRequestForm(instance=lesson_request, initial={"term": first_term})
 
         return render(request, 'admin_request.html', {'form': form, 'request': lesson_request})
     else:
@@ -321,7 +330,7 @@ def manage_admins(request):
         messages.add_message(request, messages.ERROR, "You do not have permission to manage admins!")
         return redirect('home')
 
-
+@login_required
 def manage_students(request):
     email_search = request.GET.get('email_search', None)
     accounts = Student.objects.all()
@@ -465,26 +474,39 @@ def student_lessons(request):
     if request.user.role != 'Student':
         return redirect('home')
     instrument_search = request.GET.get('instrument_search', None)
-    page_number = request.GET.get('page', 1)
+    page_number1 = request.GET.get('page1', 1)
+    page_number2 = request.GET.get('page2', 1) 
 
     lessons = Lesson.objects.filter(student=request.user)
+    previous_lessons = Lesson.objects.filter(student=request.user, date__lte=datetime.datetime.now())
+    upcoming_lessons = Lesson.objects.filter(student=request.user, date__gte=datetime.datetime.now())
 
     # Filters lessons by the name provided
     if instrument_search:
-        lessons = Lesson.objects.filter(
+        upcoming_lessons = Lesson.objects.filter(
             instrument__name__contains=instrument_search,
-            student=request.user
+            student=request.user,
+            date__gte=datetime.datetime.now()
+        )
+        previous_lessons = Lesson.objects.filter(
+            instrument__name__contains=instrument_search,
+            student=request.user,
+            date__lte=datetime.datetime.now()
         )
 
-    paginator = Paginator(lessons, 9)
-
+    paginator1 = Paginator(upcoming_lessons, 6)
+    paginator2 = Paginator(previous_lessons, 6)
+    
     try:
-        lessons_page = paginator.page(page_number)
+        upcoming_lessons_page = paginator1.page(page_number1)
+        previous_lessons_page = paginator2.page(page_number2)
     except EmptyPage:
-        lessons_page = []
+        upcoming_lessons_page = []
+        previous_lessons_page = []
 
     response_data = {
-        "lessons": lessons_page,
+        "upcoming_lessons": upcoming_lessons_page,
+        "previous_lessons": previous_lessons_page,
         "lesson_count": len(lessons),
         "instrument_search": instrument_search
     }
@@ -500,10 +522,13 @@ def term_create(request):
 
     if request.method == "POST":
         form = TermForm(request.POST)
+
         if form.is_valid():
             form.save()
             messages.add_message(request, messages.SUCCESS, "The term was successfully created!")
+
     terms = map_terms(Term.objects.all())
+
     response_data = {"terms": terms, "form": form}
 
     return render(request, 'term_create.html', response_data)
@@ -569,6 +594,7 @@ def add_child(request):
     return render(request, 'add_child_form.html', {'form': form})
 
 
+@login_required
 def change_balance(request, user_id):
     student = Student.objects.get(id=user_id)
 
@@ -591,6 +617,7 @@ def change_balance(request, user_id):
     return render(request, 'change_balance.html', response_data)
 
 
+@login_required
 def transaction_history(request):
     student = request.user.id
 
