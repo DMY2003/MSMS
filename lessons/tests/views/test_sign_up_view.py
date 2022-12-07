@@ -10,6 +10,8 @@ from lessons.tests.helper import LogInTester
 class SignUpViewTestCase(TestCase, LogInTester):
     """Tests of the sign-up view."""
 
+    fixtures = ['lessons/tests/fixtures/default_student.json']
+
     def setUp(self):
         self.url = reverse('sign_up')
         self.form_input = {
@@ -19,6 +21,7 @@ class SignUpViewTestCase(TestCase, LogInTester):
             'new_password': 'Password123',
             'confirm_password': 'Password123'
         }
+        self.user = Student.objects.get(email='johndoe@example.org')
 
     def test_sign_up_url(self):
         self.assertEqual(self.url, '/sign_up/')
@@ -61,19 +64,9 @@ class SignUpViewTestCase(TestCase, LogInTester):
         self.assertTrue(self._is_logged_in())
 
     # redirect tests
-    # def test_get_sign_up_redirects_when_logged_in(self):
-    #     self.client.login(email=self.form_input['email'], password="Password123")
-    #     response = self.client.get(self.url, follow=True)
-    #     redirect_url = reverse('home')
-    #     self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-    #     self.assertTemplateUsed(response, 'home.html')
-
-    # def test_post_sign_up_redirects_when_logged_in(self):
-    #     self.client.login(email=self.form_input['email'], password="Password123")
-    #     before_count = Student.objects.count()
-    #     response = self.client.post(self.url, self.form_input, follow=True)
-    #     after_count = Student.objects.count()
-    #     self.assertEqual(after_count, before_count)
-    #     redirect_url = reverse('home')
-    #     self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-    #     self.assertTemplateUsed(response, 'home.html')
+    def test_get_sign_up_redirects_when_logged_in(self):
+        self.client.login(email='johndoe@example.org', password="Password123")
+        response = self.client.get(self.url, follow=True)
+        redirect_url = reverse('student_requests')
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, 'student_requests.html')
