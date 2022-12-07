@@ -3,7 +3,7 @@ from django.test import TestCase
 from django import forms
 from lessons.forms import AdminRequestForm
 import datetime
-from lessons.models import Teacher, Instrument, Request
+from lessons.models import Teacher, Instrument, Request, Term
 
 
 class AdminRequestFormTestCase(TestCase):
@@ -14,7 +14,8 @@ class AdminRequestFormTestCase(TestCase):
         'lessons/tests/fixtures/default_teacher.json',
         'lessons/tests/fixtures/default_instrument.json',
         'lessons/tests/fixtures/default_request.json',
-        ]
+        'lessons/tests/fixtures/default_term.json',
+    ]
 
     def setUp(self):
         self.form_input = {
@@ -24,7 +25,8 @@ class AdminRequestFormTestCase(TestCase):
             "lesson_duration": 30,
             'lesson_interval': 1,
             'lesson_count': 6,
-            'instrument': Instrument.objects.get(id=1)
+            'instrument': Instrument.objects.get(id=1),
+            'term': 2
         }
 
     def test_form_contains_required_fields(self):
@@ -57,9 +59,9 @@ class AdminRequestFormTestCase(TestCase):
         self.assertTrue(form.is_valid())
 
     def test_form_uses_model_validation(self):
-        self.form_input['day_availability'] = 8
+        self.form_input['day_availability'] = 6
         form = AdminRequestForm(data=self.form_input)
-        self.assertFalse(form.is_valid())
+        self.assertTrue(form.is_valid())
 
     def test_teacher_field_must_not_be_blank(self):
         self.form_input['teacher'] = None

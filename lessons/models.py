@@ -1,10 +1,11 @@
 from django.db import models
-from django.core.validators import RegexValidator
+from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.base_user import BaseUserManager
 import datetime
-from django.core.validators import MaxValueValidator, MinValueValidator 
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.conf import settings
+from lessons.helpers import get_date_from_weekday
 
 
 class UserManager(BaseUserManager):
@@ -19,7 +20,8 @@ class UserManager(BaseUserManager):
 
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
-        user.set_password(password)
+        if password is not None:
+            user.set_password(password)
         user.save(using=self._db)
         return user
 
@@ -60,8 +62,22 @@ class User(AbstractUser):
         return "%s %s" % (self.first_name, self.last_name)
 
 
+class Term(models.Model):
+    start_date = models.DateField(null=True)
+    end_date = models.DateField(null=True)
+
+    class Meta:
+        ordering = ('start_date',)
+
+    def __str__(self):
+        return self.start_date.strftime("%d/%m/%Y") + " - " + self.end_date.strftime("%d/%m/%Y")
+
+
 class Student(User):
     balance = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.full_name
 
 
 class Teacher(User):
@@ -81,9 +97,9 @@ class Instrument(models.Model):
     name = models.CharField(max_length=30, blank=False)
     base_price = models.IntegerField(default=0)
 
-
     def __str__(self):
         return self.name
+
 
 class Lesson(models.Model):
     date = models.DateTimeField(null=True)
@@ -96,35 +112,20 @@ class Lesson(models.Model):
         ordering = ('date',)
 
 
-def get_date_from_weekday(weekday, time):
-    """Gets the date from the weekday"""
-    today = datetime.date.today()
-    today = datetime.datetime.combine(today, time)
-    return today + datetime.timedelta(days=today.weekday() - weekday)
-
-
 class Request(models.Model):
     """Stores the data of a lesson request"""
 
     time_availability = models.TimeField(blank=False)
-
     day_availability = models.IntegerField(choices=settings.DAYS_OF_THE_WEEK, blank=False)
-
     lesson_interval = models.IntegerField(choices=settings.LESSON_INTERVALS, blank=False)
-
     lesson_count = models.IntegerField(
         blank=False,
-        validators=[MinValueValidator(1), MaxValueValidator(20)]
+        validators=[MinValueValidator(3), MaxValueValidator(20)]
     )
-
     lesson_duration = models.IntegerField(choices=settings.LESSON_DURATIONS, blank=False)
-
     preferred_teacher = models.CharField(blank=True, max_length=50)
-
     instrument = models.ForeignKey(Instrument, on_delete=models.CASCADE, blank=False)
-
     student = models.ForeignKey(Student, on_delete=models.CASCADE, blank=False)
-
     is_approved = models.BooleanField(default=False)
 
     @property
@@ -133,17 +134,20 @@ class Request(models.Model):
         day_of_the_week = settings.DAYS_OF_THE_WEEK[int(self.day_availability)][1]
         return "%s %s" % (day_of_the_week, self.time_availability)
 
-    def generate_lessons(self, teacher):
+    def generate_lessons(self, teacher, term):
         """Generates lessons on the provided day/time at weekly intervals"""
         self.is_approved = True
 
+        base_date = max(term.start_date, datetime.date.today())
+
         lesson_datetime = get_date_from_weekday(
-            self.day_availability, 
-            self.time_availability
+            base_date,
+            self.day_availability,
+            self.time_availability,
         )
 
         # Generate Lessons for the request
-        for i in range(self.lesson_count):
+        for _ in range(self.lesson_count):
             lesson = Lesson(
                 teacher=teacher,
                 student=self.student,
@@ -168,9 +172,14 @@ class Invoice(models.Model):
     paid = models.BooleanField(default=False)
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, blank=False)
 
-class Term(models.Model):
-    start_date = models.DateTimeField(null=True)
-    end_date = models.DateTimeField(null=True)
 
-    class Meta:
-        ordering = ('start_date',)
+class Transaction(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, blank=False)
+    note = models.CharField(blank=True, max_length=25)
+    change = models.CharField(blank=False, max_length=25)
+    old_balance = models.IntegerField(blank=False)
+    new_balance = models.IntegerField(blank=False)
+
+
+class Child(Student):
+    parent = models.ForeignKey(Student, on_delete=models.CASCADE, blank=False, related_name="%(class)s_parent")

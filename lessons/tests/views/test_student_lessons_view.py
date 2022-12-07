@@ -48,7 +48,6 @@ class StudentLessonsViewTestCase(TestCase):
         response = self.client.get(self.url)
         templates = response.templates
         template_names = [template.name for template in templates]
-        self.assertIn("student_lessons.html", template_names)
         self.assertIn("base.html", template_names)
         self.assertIn("base_content.html", template_names)
         self.assertIn("partials/navbar.html", template_names)
