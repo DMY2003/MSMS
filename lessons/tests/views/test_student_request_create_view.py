@@ -1,7 +1,7 @@
 """Tests of the student request create view."""
 from django.test import TestCase
 from django.urls import reverse
-from lessons.models import Student, Request, Instrument
+from lessons.models import Student, Request
 from lessons.forms import StudentRequestForm
 from lessons.tests.helper import reverse_with_next
 import datetime

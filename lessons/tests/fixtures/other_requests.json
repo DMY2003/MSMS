@@ -58,5 +58,35 @@
             "student": 2,
             "is_approved": false
         }
+    },
+    {
+        "model": "lessons.request",
+        "pk": 6666,
+        "fields": {
+            "time_availability": "15:00:00",
+            "day_availability": 2,
+            "lesson_interval": 1,
+            "lesson_count": 3,
+            "lesson_duration": 30,
+            "preferred_teacher": "Juice Wrld",
+            "instrument": 1,
+            "student": 2,
+            "is_approved": false
+        }
+    },
+    {
+        "model": "lessons.request",
+        "pk": 6667,
+        "fields": {
+            "time_availability": "15:00:00",
+            "day_availability": 2,
+            "lesson_interval": 1,
+            "lesson_count": 3,
+            "lesson_duration": 30,
+            "preferred_teacher": "XXXtentacion",
+            "instrument": 1,
+            "student": 2,
+            "is_approved": false
+        }
     }
 ]
