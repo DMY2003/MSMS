@@ -63,7 +63,6 @@ class User(AbstractUser):
 
 class Student(User):
     balance = models.IntegerField(blank=True, null=True)
-    parent = models.ForeignKey("self", on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return self.full_name
@@ -173,9 +172,14 @@ class Term(models.Model):
     class Meta:
         ordering = ('start_date',)
 
+
 class Transaction(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE, blank=False)
     note = models.CharField(blank=True, max_length=25)
     change = models.CharField(blank=False, max_length=25)
     old_balance = models.IntegerField(blank=False)
     new_balance = models.IntegerField(blank=False)
+
+
+class Child(Student):
+    parent = models.ForeignKey(Student, on_delete=models.CASCADE, blank=False, related_name="%(class)s_parent")

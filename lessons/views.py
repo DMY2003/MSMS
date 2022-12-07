@@ -3,7 +3,7 @@ from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordFo
     CreateAdminsForm, AccountForm, TermForm, ChildForm, ParentRequestForm, UpdateBalance
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from lessons.models import Request, Lesson, Student, Administrator, User, Term, Transaction
+from lessons.models import Request, Lesson, Student, Administrator, User, Term, Transaction, Child
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
 from lessons.helper import login_prohibited, map_terms
@@ -118,7 +118,6 @@ def admin_request_delete(request, request_id):
         return redirect('home')
 
 
-
 @login_required
 def admin_request(request, request_id):
     """Handles the display of a particular admin request and the functionality to
@@ -177,7 +176,6 @@ def admin_unapproved_requests(request):
         return redirect('home')
 
 
-
 @login_required
 def admin_requests(request):
     """Handles the display of admin requests"""
@@ -192,7 +190,6 @@ def admin_requests(request):
 
     else:
         return redirect('home')
-
 
 
 @login_required
@@ -232,7 +229,6 @@ def admin_lessons(request):
         return redirect('home')
 
 
-
 @login_required
 def admin_lesson(request, lesson_id):
     """Handles the display and updating of a particular lesson"""
@@ -258,7 +254,6 @@ def admin_lesson(request, lesson_id):
         return redirect('home')
 
 
-
 @login_required
 def admin_lesson_delete(request, lesson_id):
     """Handles the deletion of a particular lesson"""
@@ -271,7 +266,6 @@ def admin_lesson_delete(request, lesson_id):
 
     else:
         return redirect('home')
-
 
 
 @login_required
@@ -292,7 +286,6 @@ def create_admin(request):
         return redirect('home')
 
 
-
 @login_required
 def manage_admins(request):
     """Handles the display of all admins"""
@@ -301,7 +294,7 @@ def manage_admins(request):
         accounts = Administrator.objects.all()
         if email_search:
             accounts = Administrator.objects.filter(
-                email = email_search
+                email=email_search
             )
 
         response_data = {
@@ -364,7 +357,6 @@ def edit_account(request, account_id):
         return redirect("home")
 
 
-
 @login_required
 def manage_user_delete(request, user_id):
     """Handles the deletion of a particular user"""
@@ -385,7 +377,7 @@ def manage_user_delete(request, user_id):
 @login_required
 def student_request_create(request):
     """Handles the creation of a request through the student request form"""
-    quantity_children = len(Student.objects.filter(parent_id=request.user.id).values())
+    quantity_children = len(Child.objects.filter(parent_id=request.user.id).values())
 
     if request.user.role != 'Student':
         return redirect('home')
@@ -510,6 +502,7 @@ def term_update(request, term_id):
         return redirect('home')
     term = Term.objects.get(pk=term_id)
 
+
     if request.method == "POST":
         form = TermForm(request.POST, instance=term)
         if form.is_valid():
@@ -553,13 +546,15 @@ def add_child(request):
         form = ChildForm(request.POST)
 
         if form.is_valid():
-            child_request = form.save()
+            child_request = form.save(commit=False)
             parent = Student.objects.get(email=request.user.email)
             child_request.parent = parent
+            child_request.role = "Student"
             child_request.save()
             return redirect('student_requests')
 
     return render(request, 'add_child_form.html', {'form': form})
+
 
 def change_balance(request, user_id):
     student = Student.objects.get(id=user_id)

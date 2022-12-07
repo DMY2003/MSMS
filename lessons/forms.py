@@ -1,5 +1,5 @@
 from django import forms
-from lessons.models import User, Student, Administrator, Teacher, Instrument, Request, Lesson, Term, Transaction
+from lessons.models import User, Student, Administrator, Teacher, Instrument, Request, Lesson, Term, Transaction, Child
 from django.core.validators import RegexValidator
 from django.conf import settings
 
@@ -216,40 +216,33 @@ class TermForm(forms.ModelForm):
 
 class ChildForm(forms.ModelForm):
     class Meta:
-        model = Student
+        model = Child
         fields = ["first_name", "last_name", "email"]
-
-    def save(self):
-        super().save(commit=False)
-        user = Student.objects.create_user(
-            username=self.cleaned_data.get("email"),
-            first_name=self.cleaned_data.get("first_name"),
-            last_name=self.cleaned_data.get("last_name"),
-            email=self.cleaned_data.get("email"),
-        )
-        user.role = "Student"
-        user.save()
-        return user
-
-    field_order = ["first_name", "last_name", "email"]
 
 
 class ParentRequestForm(StudentRequestForm):
     def __init__(self, user, *args, **kwargs):
         super(ParentRequestForm, self).__init__(*args, **kwargs)
-        self.fields['student'].queryset = Student.objects.filter(parent=user)
+        self.user = user
+        self.fields['student'].queryset = Child.objects.filter(parent=self.user)
 
-    student = forms.ModelChoiceField(queryset=None)
+    student = forms.ModelChoiceField(queryset=None, empty_label='Me', required=False)
 
     field_order = ["student"]
 
-    def save(self):
+    def save(self, commit=True):
         request = super().save(commit=False)
 
-        request.student = self.cleaned_data["student"]
+        student = self.cleaned_data["student"]
+
+        if student is None:
+            request.student = Student.objects.get(id=self.user.id)
+        else:
+            request.student = student
 
         request.save()
         return request
+
 
 class UpdateBalance(forms.ModelForm):
     note = forms.CharField(label="Note", required=False, max_length=25)
