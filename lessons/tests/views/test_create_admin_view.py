@@ -36,3 +36,16 @@ class CreateAdminTestCase(TestCase, LogInTester):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, '/log_in/?next=/director/create_admin')
+
+    # def test_create_admin_view_redirects_to_manage_admins(self):
+    #     self.login(self.user)
+    #     response = self.client.post(self.url, {
+    #         'first_name': 'Test',
+    #         'last_name': 'Admin',
+    #         'email': 'test.admin@example.org',
+    #         'password': 'Password123',
+    #         'confirm_password': 'Password123'
+    #     })
+    #     self.assertEqual(response.status_code, 302)
+    #     self.assertRedirects(response, '/director/manage_admins')
+        
