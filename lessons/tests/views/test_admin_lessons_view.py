@@ -50,7 +50,6 @@ class AdminLessonsViewTestCase(TestCase):
         self.assertEqual(len(lessons),5)
 
     def test_get_admin_lessons_returns_queryset_with_correct_student_lessons(self):
-        self.user = Administrator.objects.get(id=1)
         self.client.login(email=self.user.email, password='Password123')
         data = {"name_search":"Jane Doe"}
         response = self.client.get(self.url, data)
