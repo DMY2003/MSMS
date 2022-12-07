@@ -217,10 +217,8 @@ class TermForm(forms.ModelForm):
                 format=('%Y-%m-%d'),
                 attrs={'type': 'date'}
             ),
-            "end_date": forms.DateTimeInput(
-                format=('%Y-%m-%d'),
             "end_date": forms.DateInput(
-                format=('%Y-%m-%d'), 
+                format=('%Y-%m-%d'),
                 attrs={'type': 'date'}
             )
         }
@@ -239,8 +237,6 @@ class TermForm(forms.ModelForm):
         current_terms = Term.objects.all()
 
         for term in current_terms:
-            if self.cleaned_data.get("start_date") <= term.end_date and self.cleaned_data.get(
-                    "end_date") >= term.start_date:
             if start_date <= term.end_date and end_date >= term.start_date:
                 if self.instance:
                     if self.instance.id == term.id:
@@ -251,8 +247,8 @@ class TermForm(forms.ModelForm):
                 return
 
         term_length = end_date - start_date
-                if term_length.days < 14:
-                    self.add_error("end_date", "Term cannot be shorter than 2 weeks!")
+        if term_length.days < 14:
+            self.add_error("end_date", "Term cannot be shorter than 2 weeks!")
 
 
 class ChildForm(forms.ModelForm):
