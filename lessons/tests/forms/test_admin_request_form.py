@@ -26,7 +26,8 @@ class AdminRequestFormTestCase(TestCase):
             'lesson_interval': 1,
             'lesson_count': 6,
             'instrument': Instrument.objects.get(id=1),
-            'term': 2
+            'term': 2,
+            'paid':0
         }
 
     def test_form_contains_required_fields(self):
@@ -47,15 +48,18 @@ class AdminRequestFormTestCase(TestCase):
         lesson_count_field = form.fields['lesson_count']
         self.assertTrue(isinstance(lesson_count_field, forms.IntegerField))
         self.assertIn('lesson_interval', form.fields)
-        lesson_interval_field= form.fields['lesson_interval']
+        lesson_interval_field = form.fields['lesson_interval']
         self.assertTrue(isinstance(lesson_interval_field, forms.TypedChoiceField))
         self.assertIn('instrument', form.fields)
         instrument_field = form.fields['instrument']
         self.assertTrue(isinstance(instrument_field, forms.ModelChoiceField))
-
+        self.assertIn('paid', form.fields)
+        lesson_count_field = form.fields['lesson_count']
+        self.assertTrue(isinstance(lesson_count_field, forms.IntegerField))
 
     def test_form_accepts_valid_input(self):
         form = AdminRequestForm(data=self.form_input)
+        print(form.errors)
         self.assertTrue(form.is_valid())
 
     def test_form_uses_model_validation(self):
@@ -67,7 +71,7 @@ class AdminRequestFormTestCase(TestCase):
         self.form_input['teacher'] = None
         form = AdminRequestForm(data=self.form_input)
         self.assertFalse(form.is_valid())
-    
+
     def test_form_must_save_correctly(self):
         request = Request.objects.get(id=1)
         form = AdminRequestForm(instance=request, data=self.form_input)
