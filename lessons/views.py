@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 from lessons.helpers import login_prohibited, map_terms
 from django.core.paginator import Paginator, EmptyPage
 import datetime
+from django.conf import settings
 
 
 @login_prohibited
@@ -175,7 +176,7 @@ def admin_approved_requests(request):
     if request.user.role == 'Administrator' or request.user.role == 'Director':
         page_number = request.GET.get('page', 1)
         requests = Request.objects.filter(is_approved=True)
-        paginator = Paginator(requests, 9)
+        paginator = Paginator(requests, settings.ADMIN_REQUESTS_PAGE_SIZE)
         requests_page = paginator.page(page_number)
         response_data = {"requests": requests_page}
 
@@ -191,7 +192,7 @@ def admin_unapproved_requests(request):
     if request.user.role == 'Administrator' or request.user.role == 'Director':
         page_number = request.GET.get('page', 1)
         requests = Request.objects.filter(is_approved=False)
-        paginator = Paginator(requests, 9)
+        paginator = Paginator(requests, settings.ADMIN_REQUESTS_PAGE_SIZE)
         requests_page = paginator.page(page_number)
         response_data = {"requests": requests_page}
 

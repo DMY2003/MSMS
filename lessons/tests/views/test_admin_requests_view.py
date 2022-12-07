@@ -18,7 +18,7 @@ class AdminRequestsViewTestCase(TestCase, LogInTester):
         self.approved_requests_url = reverse('admin_approved_requests')
         self.user = Administrator.objects.get(email='bob_green@email.com')
 
-    def test_admin_request_url(self):
-        pass
-        
-        self.assertEqual(True, True)
+    def test_get_unapproved_admin_requests(self):
+        response = self.get(self.unapproved_requests_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'admin_unapproved_requests.html')
