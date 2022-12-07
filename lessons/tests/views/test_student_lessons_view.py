@@ -4,6 +4,7 @@ from django.urls import reverse
 from lessons.models import Student, Lesson
 from lessons.tests.helper import reverse_with_next
 
+
 class StudentLessonsViewTestCase(TestCase):
     """Tests of the student lessons view."""
 
@@ -13,14 +14,14 @@ class StudentLessonsViewTestCase(TestCase):
         'lessons/tests/fixtures/default_instrument.json',
         'lessons/tests/fixtures/default_teacher.json',
         'lessons/tests/fixtures/other_lessons.json',
-        ]
+    ]
 
     def setUp(self):
         self.user = Student.objects.get(id=1)
         self.url = reverse('student_lessons')
 
     def test_student_lessons_url(self):
-        self.assertEqual(self.url,'/student/lessons')
+        self.assertEqual(self.url, '/student/lessons')
 
     # def test_get_student_lessons(self):
     #     self.client.login(email=self.user.email, password='Password123')
@@ -61,7 +62,7 @@ class StudentLessonsViewTestCase(TestCase):
     #     confirmed_requests = response.context["confirmed_requests"]
     #     self.assertEqual(len(confirmed_requests), 1)
     #     self.assertEqual(confirmed_requests[0].id, 3000)
-    
+
     # def test_student_request_passes_correct_ongoing_requests_queryset(self):
     #     self.client.login(email=self.user.email, password='Password123')
     #     response = self.client.get(self.url)

@@ -598,8 +598,6 @@ def term_delete(request, term_id):
 
 
 def download(request, invoice: str):
-    print("\n" + str(request) + "\n")
-    print("\n invoice id: " + str(invoice) + "\n")
     # Define text file name
     filename = invoice
     # Open the file for reading content
