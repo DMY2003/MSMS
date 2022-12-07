@@ -1,5 +1,4 @@
 from itertools import chain
-
 from django.shortcuts import render, redirect
 from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordForm, AdminLessonForm, StudentRequestForm, \
     CreateAdminsForm, AccountForm, TermForm, ChildForm, ParentRequestForm, UpdateBalance
@@ -579,6 +578,7 @@ def term_delete(request, term_id):
 
 @login_required
 def add_child(request):
+    """Handles the adding of a child to a student's account"""
     form = ChildForm()
     if request.method == 'POST':
         form = ChildForm(request.POST)
@@ -596,6 +596,7 @@ def add_child(request):
 
 @login_required
 def change_balance(request, user_id):
+    """Handles the changing of a student's balance by an administrator"""
     student = Student.objects.get(id=user_id)
 
     response_data = {
@@ -619,6 +620,7 @@ def change_balance(request, user_id):
 
 @login_required
 def transaction_history(request):
+    """Handles the creation of a student's transaction history page"""
     student = request.user.id
 
     response_data = {
