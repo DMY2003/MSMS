@@ -21,6 +21,7 @@
             <th scope="col">Interval</th>
             <th scope="col">Duration</th>
             <th scope="col">Availability</th>
+            <th scope="col">Paid</th>
             {% if requests == ongoing_requests %}
               <th scope="col">Action</th>
             {% endif %}
@@ -36,6 +37,7 @@
               <td>{{request.lesson_interval}} week(s)</td>
               <td>{{request.lesson_duration}} minutes</td>
               <td>{{request.availability}}</td>
+              <td>{{request.paid}} / {{request.lesson_count}}</td>
               {% if requests == ongoing_requests %}
               <td>
                   <a class="btn btn-primary btn-sm" href="{% url 'student_request_update' request.id %}">

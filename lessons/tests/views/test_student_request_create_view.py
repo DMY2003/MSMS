@@ -6,13 +6,14 @@ from lessons.forms import StudentRequestForm
 from lessons.tests.helper import reverse_with_next
 import datetime
 
+
 class StudentRequestCreateViewTestCase(TestCase):
     """Tests of the student request create view."""
 
     fixtures = [
         'lessons/tests/fixtures/default_student.json',
         'lessons/tests/fixtures/default_instrument.json',
-        ]
+    ]
 
     def setUp(self):
         self.user = Student.objects.get(email='johndoe@example.org')
@@ -24,11 +25,12 @@ class StudentRequestCreateViewTestCase(TestCase):
             'lesson_count': 3,
             'lesson_duration': 30,
             'preferred_teacher': 'request_create_view_test',
-            'instrument': 2
+            'instrument': 2,
+            'paid': 0
         }
 
     def test_student_request_create_url(self):
-        self.assertEqual(self.url,'/requests/create')
+        self.assertEqual(self.url, '/requests/create')
 
     def test_get_student_request_create(self):
         self.client.login(email=self.user.email, password='Password123')
@@ -50,6 +52,7 @@ class StudentRequestCreateViewTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
 
         form = StudentRequestForm(data=self.form_input)
+        print(form.errors)
         self.assertTrue(form.is_valid())
         self.assertEqual(len(form.errors), 0)
 
@@ -63,13 +66,14 @@ class StudentRequestCreateViewTestCase(TestCase):
         if (request):
             request.delete()
 
-    # def test_student_request_create_unsuccessful(self):
-    #     self.client.login(email=self.user.email, password='Password123')
-    #     self.form_input["instrument"] = "Guitar"
-    #     form = StudentRequestForm(data=self.form_input)
-    #     self.assertFalse(form.is_valid())
-    #     self.assertGreater(len(form.errors), 0)
-    #     response = self.client.post(self.url, self.form_input, follow=True)
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertContains(response, "Select a valid choice. That choice is not one of the available choices.")
-    #     self.assertTemplateUsed(response, 'student_request_create.html')
+    def test_student_reqeust_create_unsuccessful(self):
+        self.client.login(email=self.user.email, password='Password123')
+        self.form_input["instrument"] = "Guitar"
+        form = StudentRequestForm(data=self.form_input)
+        print(form.errors)
+        self.assertFalse(form.is_valid())
+        self.assertGreater(len(form.errors), 0)
+        response = self.client.post(self.url, self.form_input, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Select a valid choice. That choice is not one of the available choices.")
+        self.assertTemplateUsed(response, 'student_request_create.html')

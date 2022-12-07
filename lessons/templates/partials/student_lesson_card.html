@@ -23,5 +23,16 @@
             <th>Duration</th>
             <td>{{lesson.duration}} minutes</td>
         </tr>
+        {% if True %}
+        <tr>
+            <th>Paid</th>
+            <td>{{lesson.get_invoice}}</td>
+        </tr>
+        <td>
+            <a class="btn btn-primary btn-sm" href="{% url 'download' lesson.generate_invoice%}">
+                    Download Invoice
+            </a>
+        </td>
+        {% endif %}
     </table>
 </div>

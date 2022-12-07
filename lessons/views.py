@@ -1,3 +1,5 @@
+import mimetypes
+from django.http.response import HttpResponse
 from itertools import chain
 from django.shortcuts import render, redirect
 from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordForm, AdminLessonForm, StudentRequestForm, \
@@ -134,6 +136,7 @@ def admin_request_delete(request, request_id):
         return redirect('home')
 
 
+
 @login_required
 def admin_request(request, request_id):
     """Handles the display of a particular admin request and the functionality to
@@ -200,9 +203,11 @@ def admin_unapproved_requests(request):
         return redirect('home')
 
 
+
 @login_required
 def admin_lessons(request):
     """Handles the display of lessons"""
+    
     if request.user.role == 'Administrator' or request.user.role == 'Director':
         name_search = request.GET.get('name_search', None)
         page_number = request.GET.get('page', 1)
@@ -262,6 +267,7 @@ def admin_lesson(request, lesson_id):
         return redirect('home')
 
 
+
 @login_required
 def admin_lesson_delete(request, lesson_id):
     """Handles the deletion of a particular lesson"""
@@ -274,6 +280,7 @@ def admin_lesson_delete(request, lesson_id):
 
     else:
         return redirect('home')
+
 
 
 @login_required
@@ -289,9 +296,10 @@ def create_admin(request):
         else:
             form = CreateAdminsForm()
         return render(request, 'create_admin.html', {'form': form})
-    else:
-        messages.add_message(request, messages.ERROR, "You do not have permission to create an admin!")
-        return redirect('home')
+    elif request.user.role == 'Administrator':
+        messages.add_message(request, messages.ERROR, "You do not have permission to manage admins!")
+        return redirect('admin_lessons')
+
 
 
 @login_required
@@ -337,21 +345,9 @@ def manage_students(request):
         return redirect('home')
 
 
-@login_required
-def delete_account(request, account_id):
-    """Handles the deletion of a particular account"""
-    if request.user.role == 'Director':
-        account = User.objects.get(id=account_id)
-        if account:
-            account.delete()
-        messages.add_message(request, messages.ERROR, "The account has been successfully deleted!")
-        return redirect("manage_admins")
-    else:
-        messages.add_message(request, messages.ERROR, "You do not have permission to delete an admin!")
-        return redirect("home")
-
 
 @login_required
+
 def edit_account(request, account_id):
     """Handles the display and updating of a particular account"""
     if request.user.role == 'Director':
@@ -385,6 +381,7 @@ def manage_user_delete(request, user_id):
             return redirect("manage_admins")
         elif role == "Student":
             return redirect("manage_students")
+
 
 
 @login_required
@@ -464,6 +461,7 @@ def student_lessons(request):
     if request.user.role != 'Student':
         return redirect('home')
     instrument_search = request.GET.get('instrument_search', None)
+    page_number = request.GET.get('page', 1)
     page_number1 = request.GET.get('page1', 1)
     page_number2 = request.GET.get('page2', 1) 
 
@@ -570,11 +568,26 @@ def term_delete(request, term_id):
     return redirect('term_create') 
 
 
+def download(request, invoice: str):
+    print("\n" + str(request) + "\n")
+    print("\n invoice id: " + str(invoice) + "\n")
+    # Define text file name
+    filename = invoice
+    # Open the file for reading content
+    path = open(filename, 'r')
+    # Set the mime type
+    mime_type, _ = mimetypes.guess_type(filename)
+    # Set the return value of the HttpResponse
+    response = HttpResponse(path, content_type=mime_type)
+    # Set the HTTP header for sending to browser
+    response['Content-Disposition'] = "attachment; filename=%s" % filename
+    # Return the response value
+    return response
+
+
 @login_required
 def add_child(request):
     """Handles the adding of a child to a student's account"""
-    if request.user.role != 'Student':
-        return redirect('home')
     form = ChildForm()
     if request.method == 'POST':
         form = ChildForm(request.POST)
@@ -620,8 +633,6 @@ def change_balance(request, user_id):
 @login_required
 def transaction_history(request):
     """Handles the creation of a student's transaction history page"""
-    if request.user.role != 'Student':
-        return redirect('home')
     student = request.user.id
 
     response_data = {
