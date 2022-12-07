@@ -24,7 +24,6 @@ class StudentLessonsViewTestCase(TestCase):
 
     def test_get_student_lessons(self):
         self.client.login(email=self.user.email, password='Password123')
-        print(self.user.role)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'student_lessons.html')
@@ -56,16 +55,17 @@ class StudentLessonsViewTestCase(TestCase):
         self.assertIn("partials/student_lesson_card.html", template_names)
         self.assertIn('partials/pagination.html', template_names)
 
-    def test_student_lessons_passes_correct_confirmed_requests_queryset(self):
+    def test_student_lessons_passes_correct_upcoming_lessons_queryset(self):
         self.client.login(email=self.user.email, password='Password123')
         response = self.client.get(self.url)
-        confirmed_requests = response.context["confirmed_requests"]
-        self.assertEqual(len(confirmed_requests), 1)
-        self.assertEqual(confirmed_requests[0].id, 3000)
+        upcoming_lessons = response.context["upcoming_lessons"]
+        self.assertEqual(len(upcoming_lessons), 2)
+        self.assertEqual(upcoming_lessons[0].id, 2468)
+        self.assertEqual(upcoming_lessons[1].id, 8642)
     
-    def test_student_request_passes_correct_ongoing_requests_queryset(self):
+    def test_student_request_passes_correct_previous_lessons_queryset(self):
         self.client.login(email=self.user.email, password='Password123')
         response = self.client.get(self.url)
-        ongoing_requests = response.context["ongoing_requests"]
-        self.assertEqual(len(ongoing_requests), 1)
-        self.assertEqual(ongoing_requests[0].id, 4000)
+        previous_lessons = response.context["previous_lessons"]
+        self.assertEqual(len(previous_lessons), 1)
+        self.assertEqual(previous_lessons[0].id, 1234)
