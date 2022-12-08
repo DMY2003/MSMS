@@ -52,7 +52,6 @@ class StudentRequestCreateViewTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
 
         form = StudentRequestForm(data=self.form_input)
-        #print(form.errors)
         self.assertTrue(form.is_valid())
         self.assertEqual(len(form.errors), 0)
 
@@ -70,7 +69,6 @@ class StudentRequestCreateViewTestCase(TestCase):
         self.client.login(email=self.user.email, password='Password123')
         self.form_input["instrument"] = "Guitar"
         form = StudentRequestForm(data=self.form_input)
-        #print(form.errors)
         self.assertFalse(form.is_valid())
         self.assertGreater(len(form.errors), 0)
         response = self.client.post(self.url, self.form_input, follow=True)
