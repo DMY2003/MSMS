@@ -1,7 +1,7 @@
 """Tests of the student lessons view."""
 from django.test import TestCase
 from django.urls import reverse
-from lessons.models import Student, Lesson
+from lessons.models import Student, Lesson, Administrator
 from lessons.tests.helper import reverse_with_next
 
 
@@ -14,15 +14,8 @@ class StudentLessonsViewTestCase(TestCase):
         'lessons/tests/fixtures/default_instrument.json',
         'lessons/tests/fixtures/other_teachers.json',
         'lessons/tests/fixtures/other_lessons.json',
+        'lessons/tests/fixtures/other_administrators.json',
     ]
-
-    # fixtures = [
-    #     'lessons/tests/fixtures/default_student.json',
-    #     'lessons/tests/fixtures/other_students.json',
-    #     'lessons/tests/fixtures/default_instrument.json',
-    #     'lessons/tests/fixtures/other_teachers.json',
-    #     'lessons/tests/fixtures/other_lessons.json',
-    #     ]
 
     def setUp(self):
         self.user = Student.objects.get(id=2)
@@ -73,9 +66,27 @@ class StudentLessonsViewTestCase(TestCase):
         self.assertEqual(upcoming_lessons[1].id, 21)
         self.assertEqual(upcoming_lessons[2].id, 22)
     
-    def test_student_request_passes_correct_previous_lessons_queryset(self):
+    def test_student_lessons_passes_correct_previous_lessons_queryset(self):
         self.client.login(email=self.user.email, password='Password123')
         response = self.client.get(self.url)
         previous_lessons = response.context["previous_lessons"]
         self.assertEqual(len(previous_lessons), 1)
         self.assertEqual(previous_lessons[0].id, 23)
+
+    def test_get_student_lessons_redirects_when_not_student(self):
+        self.user = Administrator.objects.get(id=7)
+        self.client.login(email=self.user.email, password='Password123')
+        response = self.client.get(self.url, follow=True)
+        redirect_url = reverse('admin_unapproved_requests')
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, 'admin_dashboard/admin_unapproved_requests.html')
+
+    def test_get_student_lessons_returns_queryset_with_correct_instruments(self):
+        self.client.login(email=self.user.email, password='Password123')
+        data = {"instrument_search":"Guitar"}
+        response = self.client.get(self.url, data)
+        self.assertEqual(response.status_code, 200)
+        upcoming_lessons = response.context["upcoming_lessons"]
+        self.assertEqual(len(upcoming_lessons), 2)
+        self.assertEqual(upcoming_lessons[0].id, 21)
+        self.assertEqual(upcoming_lessons[1].id, 22)
