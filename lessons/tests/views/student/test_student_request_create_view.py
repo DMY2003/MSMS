@@ -36,7 +36,7 @@ class StudentRequestCreateViewTestCase(TestCase):
         self.client.login(email=self.user.email, password='Password123')
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'student_request_create.html')
+        self.assertTemplateUsed(response, 'student_dashboard/student_request_create.html')
         form = response.context['form']
         self.assertTrue(isinstance(form, StudentRequestForm))
         self.assertFalse(form.is_bound)
@@ -52,7 +52,7 @@ class StudentRequestCreateViewTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
 
         form = StudentRequestForm(data=self.form_input)
-        print(form.errors)
+        #print(form.errors)
         self.assertTrue(form.is_valid())
         self.assertEqual(len(form.errors), 0)
 
@@ -60,9 +60,9 @@ class StudentRequestCreateViewTestCase(TestCase):
         request = Request.objects.get(preferred_teacher="request_create_view_test")
         self.assertTrue(request)
         response_url = reverse('student_requests')
-        self.assertTemplateUsed(response, 'student_requests.html')
+        self.assertTemplateUsed(response, 'student_dashboard/student_requests.html')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'student_requests.html')
+        self.assertTemplateUsed(response, 'student_dashboard/student_requests.html')
         if request:
             request.delete()
 
@@ -70,10 +70,10 @@ class StudentRequestCreateViewTestCase(TestCase):
         self.client.login(email=self.user.email, password='Password123')
         self.form_input["instrument"] = "Guitar"
         form = StudentRequestForm(data=self.form_input)
-        print(form.errors)
+        #print(form.errors)
         self.assertFalse(form.is_valid())
         self.assertGreater(len(form.errors), 0)
         response = self.client.post(self.url, self.form_input, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Select a valid choice. That choice is not one of the available choices.")
-        self.assertTemplateUsed(response, 'student_request_create.html')
+        self.assertTemplateUsed(response, 'student_dashboard/student_request_create.html')

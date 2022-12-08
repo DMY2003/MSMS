@@ -116,7 +116,7 @@ def student_requests(request):
             "ongoing_requests": unconfirmed_requests
         }
 
-        return render(request, 'student_requests.html', response_data)
+        return render(request, 'student_dashboard/student_requests.html', response_data)
 
     elif request.user.role == 'Administrator' or request.user.role == 'Director':
         return redirect('admin_lessons')
@@ -167,7 +167,7 @@ def admin_request(request, request_id):
                 first_term = terms[0]
             form = AdminRequestForm(instance=lesson_request, initial={"term": first_term})
 
-        return render(request, 'admin_request.html', {'form': form, 'request': lesson_request})
+        return render(request, 'admin_dashboard/admin_request.html', {'form': form, 'request': lesson_request})
     else:
         return redirect('home')
 
@@ -182,7 +182,7 @@ def admin_approved_requests(request):
         requests_page = paginator.page(page_number)
         response_data = {"requests": requests_page}
 
-        return render(request, 'admin_approved_requests.html', response_data)
+        return render(request, 'admin_dashboard/admin_approved_requests.html', response_data)
 
     else:
         return redirect('home')
@@ -197,7 +197,7 @@ def admin_unapproved_requests(request):
         paginator = Paginator(requests, settings.ADMIN_REQUESTS_PAGE_SIZE)
         requests_page = paginator.page(page_number)
         response_data = {"requests": requests_page}
-        return render(request, 'admin_unapproved_requests.html', response_data)
+        return render(request, 'admin_dashboard/admin_unapproved_requests.html', response_data)
 
     else:
         return redirect('home')
@@ -235,7 +235,7 @@ def admin_lessons(request):
             "lesson_count": len(lessons),
             "name_search": name_search
         }
-        return render(request, 'admin_lessons.html', response_data)
+        return render(request, 'admin_dashboard/admin_lessons.html', response_data)
 
     else:
         return redirect('home')
@@ -260,7 +260,7 @@ def admin_lesson(request, lesson_id):
             "lesson": lesson,
             "form": form
         }
-        return render(request, 'admin_lesson.html', response_data)
+        return render(request, 'admin_dashboard/admin_lesson.html', response_data)
 
     else:
         return redirect('home')
@@ -292,7 +292,7 @@ def create_admin(request):
                 return redirect('manage_admins')
         else:
             form = CreateAdminsForm()
-        return render(request, 'create_admin.html', {'form': form})
+        return render(request, 'admin_dashboard/create_admin.html', {'form': form})
     elif request.user.role == 'Administrator':
         messages.add_message(request, messages.ERROR, "You do not have permission to manage admins!")
         return redirect('admin_lessons')
@@ -314,7 +314,7 @@ def manage_admins(request):
             "account_count": len(accounts),
             "email_search": email_search
         }
-        return render(request, 'manage_admins.html', response_data)
+        return render(request, 'admin_dashboard/manage_admins.html', response_data)
     elif request.user.role == 'Administrator':
         messages.add_message(request, messages.ERROR, "You do not have permission to manage admins!")
         return redirect('admin_lessons')
@@ -336,7 +336,7 @@ def manage_students(request):
             "student_count": len(accounts),
             "email_search": email_search
         }
-        return render(request, 'manage_students.html', response_data)
+        return render(request, 'admin_dashboard/manage_students.html', response_data)
     else:
         messages.add_message(request, messages.ERROR, "You do not have permission to manage students!")
         return redirect('home')
@@ -355,7 +355,7 @@ def edit_account(request, account_id):
                 return redirect('manage_admins')
         else:
             form = AccountForm(instance=account)
-        return render(request, 'edit_account.html', {'form': form, 'account': account})
+        return render(request, 'admin_dashboard/edit_account.html', {'form': form, 'account': account})
     else:
         messages.add_message(request, messages.ERROR, "You do not have permission to edit an admin!")
         return redirect("home")
@@ -403,7 +403,7 @@ def student_request_create(request):
             lesson_request.save()
             return redirect('student_requests')
 
-    return render(request, 'student_request_create.html', {'form': form})
+    return render(request, 'student_dashboard/student_request_create.html', {'form': form})
 
 
 @login_required
@@ -424,13 +424,13 @@ def student_request_update(request, request_id):
             form.save()
             messages.add_message(request, messages.SUCCESS, "Your request was successfully updated!")
             response_data["form"] = form
-            return render(request, 'student_request_update.html', response_data)
+            return render(request, 'student_dashboard/student_request_update.html', response_data)
         messages.add_message(request, messages.ERROR, "Your request is not valid!")
     else:
         form = StudentRequestForm(instance=lesson_request)
         response_data["form"] = form
 
-    return render(request, 'student_request_update.html', response_data)
+    return render(request, 'student_dashboard/student_request_update.html', response_data)
 
 
 @login_required
@@ -489,7 +489,7 @@ def student_lessons(request):
         "lesson_count": len(lessons),
         "instrument_search": instrument_search
     }
-    return render(request, 'student_lessons.html', response_data)
+    return render(request, 'student_dashboard/student_lessons.html', response_data)
 
 
 @login_required
@@ -509,7 +509,7 @@ def term_create(request):
 
     response_data = {"terms": terms, "form": form}
 
-    return render(request, 'term_create.html', response_data)
+    return render(request, 'admin_dashboard/term_create.html', response_data)
 
 
 @login_required
@@ -543,7 +543,7 @@ def term_update(request, term_id):
         "term": term
     }
 
-    return render(request, 'term_update.html', response_data)
+    return render(request, 'admin_dashboard/term_update.html', response_data)
 
 
 @login_required
@@ -589,7 +589,7 @@ def add_child(request):
             child_request.save()
             return redirect('student_requests')
 
-    return render(request, 'add_child_form.html', {'form': form})
+    return render(request, 'student_dashboard/add_child_form.html', {'form': form})
 
 
 @login_required
@@ -614,7 +614,7 @@ def change_balance(request, user_id):
 
         response_data.update({"form": form})
 
-        return render(request, 'change_balance.html', response_data)
+        return render(request, 'admin_dashboard/change_balance.html', response_data)
     else:
         return redirect('home')
 
@@ -637,4 +637,4 @@ def transaction_history(request):
         "transactions": transactions
     }
 
-    return render(request, 'student_transaction_history.html', response_data)
+    return render(request, 'student_dashboard/student_transaction_history.html', response_data)

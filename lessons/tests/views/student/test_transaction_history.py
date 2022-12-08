@@ -24,5 +24,5 @@ class TransactionHistoryViewTestCase(TestCase, LogInTester):
         self.login(self.user)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'student_transaction_history.html')
+        self.assertTemplateUsed(response, 'student_dashboard/student_transaction_history.html')
         self.assertContains(response, 'Transaction History')

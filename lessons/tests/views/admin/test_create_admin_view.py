@@ -27,7 +27,7 @@ class CreateAdminTestCase(TestCase, LogInTester):
         self.login(self.user)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'create_admin.html')
+        self.assertTemplateUsed(response, 'admin_dashboard/create_admin.html')
         self.assertContains(response, 'Create a new Administrator account')
         self.assertContains(response, 'First name:')
         self.assertContains(response, 'Last name:')

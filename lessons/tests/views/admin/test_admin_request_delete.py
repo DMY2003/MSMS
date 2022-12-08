@@ -27,7 +27,7 @@ class AdminRequestDeleteViewTestCase(TestCase, LogInTester):
         after_count = Request.objects.count()
         response_url = reverse('admin_unapproved_requests')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'admin_unapproved_requests.html')
+        self.assertTemplateUsed(response, 'admin_dashboard/admin_unapproved_requests.html')
         self.assertEqual(before_count - 1, after_count)
 
     def test_term_delete_view_with_nonexistent_term(self):
@@ -38,7 +38,7 @@ class AdminRequestDeleteViewTestCase(TestCase, LogInTester):
         after_count = Request.objects.count()
         response_url = reverse('admin_unapproved_requests')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'admin_unapproved_requests.html')
+        self.assertTemplateUsed(response, 'admin_dashboard/admin_unapproved_requests.html')
         self.assertEqual(before_count, after_count)
 
     # def test_redirect_home_if_not_logged_in(self):
