@@ -1,7 +1,7 @@
 """Tests of the term create view."""
 from django.test import TestCase
 from django.urls import reverse
-from lessons.models import Director, Term
+from lessons.models import Director, Term, Student
 from lessons.tests.helper import LogInTester
 from datetime import date
 
@@ -11,6 +11,7 @@ class TermCreateViewTestCase(TestCase, LogInTester):
 
     fixtures = [
         'lessons/tests/fixtures/default_director.json',
+        'lessons/tests/fixtures/default_student.json',
     ]
 
     def setUp(self):
@@ -51,3 +52,11 @@ class TermCreateViewTestCase(TestCase, LogInTester):
         self.assertEqual(before_count, after_count)
         messages = list(response.context['messages'])
         self.assertEqual(len(messages), 0)
+
+    def test_get_admin_lessons_redirects_when_not_director_or_administrator(self):
+        self.user = Student.objects.get(id=1)
+        self.client.login(email=self.user.email, password='Password123')
+        response = self.client.get(self.url, follow=True)
+        redirect_url = reverse('student_requests')
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, 'student_dashboard/student_requests.html')
