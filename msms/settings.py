@@ -165,3 +165,5 @@ ROLES = [
     (1, "Administrator"),
     (2, "Director"),
 ]
+
+ADMIN_REQUESTS_PAGE_SIZE = 9

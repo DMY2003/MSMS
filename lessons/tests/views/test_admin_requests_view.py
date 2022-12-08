@@ -3,8 +3,9 @@ from django.test import TestCase
 from django.urls import reverse
 from lessons.models import Student, Administrator, Request, Teacher
 from lessons.tests.helper import LogInTester
+from django.conf import settings
 
-class AdminRequestViewTestCase(TestCase, LogInTester):
+class AdminRequestsViewTestCase(TestCase, LogInTester):
     """Tests of the admin requests view."""
 
     fixtures = [
@@ -16,14 +17,16 @@ class AdminRequestViewTestCase(TestCase, LogInTester):
     def setUp(self):
         self.unapproved_requests_url = reverse('admin_unapproved_requests')
         self.approved_requests_url = reverse('admin_approved_requests')
-        self.user = Administrator.objects.get(email='bob_green@email.com')
+        self.admin = Administrator.objects.get(email='bob_green@email.com')
 
-    def test_admin_request_url(self):
-        pass
-        
-        self.assertEqual(True, True)
+    def test_get_unapproved_admin_requests(self):
+        self.login(self.admin)
+        response = self.client.get(self.unapproved_requests_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'admin_unapproved_requests.html')
 
-    # def test_admin_request_view_not_logged_in(self):
-    #     response = self.client.get(self.url)
-    #     self.assertEqual(response.status_code, 302)
-    #     self.assertRedirects(response, '/log_in/?next=/administrator/requests/1')
+    def test_get_approved_admin_requests(self):
+        self.login(self.admin)
+        response = self.client.get(self.approved_requests_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'admin_approved_requests.html')

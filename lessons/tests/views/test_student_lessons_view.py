@@ -4,6 +4,7 @@ from django.urls import reverse
 from lessons.models import Student, Lesson
 from lessons.tests.helper import reverse_with_next
 
+
 class StudentLessonsViewTestCase(TestCase):
     """Tests of the student lessons view."""
 
@@ -13,7 +14,7 @@ class StudentLessonsViewTestCase(TestCase):
         'lessons/tests/fixtures/default_instrument.json',
         'lessons/tests/fixtures/other_teachers.json',
         'lessons/tests/fixtures/other_lessons.json',
-        ]
+    ]
 
     # fixtures = [
     #     'lessons/tests/fixtures/default_student.json',
@@ -28,7 +29,7 @@ class StudentLessonsViewTestCase(TestCase):
         self.url = reverse('student_lessons')
 
     def test_student_lessons_url(self):
-        self.assertEqual(self.url,'/student/lessons')
+        self.assertEqual(self.url, '/student/lessons')
 
     def test_get_student_lessons(self):
         self.client.login(email=self.user.email, password='Password123')
@@ -68,9 +69,9 @@ class StudentLessonsViewTestCase(TestCase):
         response = self.client.get(self.url)
         upcoming_lessons = response.context["upcoming_lessons"]
         self.assertEqual(len(upcoming_lessons), 3)
-        self.assertEqual(upcoming_lessons[0].id, 20)
+        self.assertEqual(upcoming_lessons[0].id, 22)
         self.assertEqual(upcoming_lessons[1].id, 21)
-        self.assertEqual(upcoming_lessons[1].id, 21)
+        self.assertEqual(upcoming_lessons[2].id, 20)
     
     def test_student_request_passes_correct_previous_lessons_queryset(self):
         self.client.login(email=self.user.email, password='Password123')

@@ -5,6 +5,7 @@ from lessons.models import Student, Request
 from lessons.forms import StudentRequestForm
 from lessons.tests.helper import reverse_with_next
 
+
 class StudentRequestsViewTestCase(TestCase):
     """Tests of the student requests view."""
 
@@ -13,14 +14,14 @@ class StudentRequestsViewTestCase(TestCase):
         'lessons/tests/fixtures/other_students.json',
         'lessons/tests/fixtures/default_instrument.json',
         'lessons/tests/fixtures/other_requests.json',
-        ]
+    ]
 
     def setUp(self):
         self.user = Student.objects.get(email='johndoe@example.org')
         self.url = reverse('student_requests')
 
     def test_student_requests_url(self):
-        self.assertEqual(self.url,'/student/requests')
+        self.assertEqual(self.url, '/student/requests')
 
     def test_get_student_requests(self):
         self.client.login(email=self.user.email, password='Password123')
@@ -62,7 +63,7 @@ class StudentRequestsViewTestCase(TestCase):
         confirmed_requests = response.context["confirmed_requests"]
         self.assertEqual(len(confirmed_requests), 1)
         self.assertEqual(confirmed_requests[0].id, 3000)
-    
+
     def test_student_request_passes_correct_ongoing_requests_queryset(self):
         self.client.login(email=self.user.email, password='Password123')
         response = self.client.get(self.url)

@@ -12,6 +12,7 @@ from django.contrib.auth.decorators import login_required
 from lessons.helpers import login_prohibited, map_terms
 from django.core.paginator import Paginator, EmptyPage
 import datetime
+from django.conf import settings
 
 
 @login_prohibited
@@ -123,10 +124,12 @@ def student_requests(request):
 def admin_request_delete(request, request_id):
     """Handles the deletion of a particular request"""
     if request.user.role == 'Administrator' or request.user.role == 'Director':
-        lesson_request = Request.objects.get(id=request_id)
-        if lesson_request:
+        try:
+            lesson_request = Request.objects.get(id=request_id)
             lesson_request.delete()
-        messages.add_message(request, messages.ERROR, "The request has been successfully deleted!")
+            messages.add_message(request, messages.ERROR, "The request has been successfully deleted!")
+        except Request.DoesNotExist:
+            pass
         return redirect("admin_unapproved_requests")
 
     else:
@@ -142,6 +145,7 @@ def admin_request(request, request_id):
         lesson_request = Request.objects.get(id=request_id)
         if request.method == "POST":
             form = AdminRequestForm(request.POST, instance=lesson_request)
+
             if form.is_valid():
                 form.save()
 
@@ -174,7 +178,7 @@ def admin_approved_requests(request):
     if request.user.role == 'Administrator' or request.user.role == 'Director':
         page_number = request.GET.get('page', 1)
         requests = Request.objects.filter(is_approved=True)
-        paginator = Paginator(requests, 9)
+        paginator = Paginator(requests, settings.ADMIN_REQUESTS_PAGE_SIZE)
         requests_page = paginator.page(page_number)
         response_data = {"requests": requests_page}
 
@@ -190,28 +194,10 @@ def admin_unapproved_requests(request):
     if request.user.role == 'Administrator' or request.user.role == 'Director':
         page_number = request.GET.get('page', 1)
         requests = Request.objects.filter(is_approved=False)
-        paginator = Paginator(requests, 9)
+        paginator = Paginator(requests, settings.ADMIN_REQUESTS_PAGE_SIZE)
         requests_page = paginator.page(page_number)
         response_data = {"requests": requests_page}
-
         return render(request, 'admin_unapproved_requests.html', response_data)
-
-    else:
-        return redirect('home')
-
-
-
-@login_required
-def admin_requests(request):
-    """Handles the display of admin requests"""
-    if request.user.role == 'Administrator' or request.user.role == 'Director':
-        response_data = {
-            "form": AdminRequestForm(),
-            "fulfilled_requests": Request.objects.filter(is_approved=True),
-            "unfulfilled_requests": Request.objects.filter(is_approved=False)
-        }
-
-        return render(request, 'admin_requests.html', response_data)
 
     else:
         return redirect('home')
@@ -238,7 +224,7 @@ def admin_lessons(request):
                 student__last_name__contains=second_name
             )
 
-        paginator = Paginator(lessons, 9)
+        paginator = Paginator(lessons, settings.ADMIN_REQUESTS_PAGE_SIZE)
 
         try:
             lessons_page = paginator.page(page_number)
@@ -417,7 +403,6 @@ def student_request_create(request):
             lesson_request = form.save(commit=False)
             student = Student.objects.get(email=request.user.email)
             lesson_request.student = student
-
         else:
             form = ParentRequestForm(user=request.user, data=request.POST)
             lesson_request = form
@@ -584,8 +569,6 @@ def term_delete(request, term_id):
 
 
 def download(request, invoice: str):
-    print("\n" + str(request) + "\n")
-    print("\n invoice id: " + str(invoice) + "\n")
     # Define text file name
     filename = invoice
     # Open the file for reading content

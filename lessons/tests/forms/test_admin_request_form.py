@@ -53,7 +53,6 @@ class AdminRequestFormTestCase(TestCase):
         self.assertIn('instrument', form.fields)
         instrument_field = form.fields['instrument']
         self.assertTrue(isinstance(instrument_field, forms.ModelChoiceField))
-        self.assertIn('paid', form.fields)
         lesson_count_field = form.fields['lesson_count']
         self.assertTrue(isinstance(lesson_count_field, forms.IntegerField))
 
