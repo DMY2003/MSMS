@@ -220,7 +220,11 @@ class Command(BaseCommand):
         students = list(Student.objects.all())
         instruments = list(Instrument.objects.all())
 
-        for _ in students:
+        for student in students:
+            if student.email == "john.doe@example.org":
+                approval = 1
+            else:
+                approval = random.getrandbits(1)
             for _ in range(self.faker.random_int(min=1, max=3)):
                 time_availability = self.faker.future_datetime().time()
                 day_availability = random.choice(settings.DAYS_OF_THE_WEEK)[0]
@@ -236,7 +240,7 @@ class Command(BaseCommand):
                                        preferred_teacher=preferred_teacher,
                                        instrument=random.choice(instruments),
                                        student=random.choice(students),
-                                       is_approved=bool(random.getrandbits(1)))
+                                       is_approved=approval)
 
 
 
