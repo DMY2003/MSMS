@@ -326,6 +326,7 @@ def manage_admins(request):
 def manage_students(request):
     """Handles the display of all students"""
     if request.user.role == 'Director' or request.user.role == 'Administrator':
+        page_number = request.GET.get('page', 1)
         email_search = request.GET.get('email_search', None)
         accounts = Student.objects.filter(child__isnull=True)
         if email_search:
@@ -333,11 +334,15 @@ def manage_students(request):
                 email=email_search
             )
 
+        paginator = Paginator(accounts, 8)
+        accounts_page = paginator.get_page(page_number)
+
         response_data = {
-            "accounts": accounts,
+            "accounts": accounts_page,
             "student_count": len(accounts),
             "email_search": email_search
         }
+
         return render(request, 'admin_dashboard/manage_students.html', response_data)
     else:
         messages.add_message(request, messages.ERROR, "You do not have permission to manage students!")

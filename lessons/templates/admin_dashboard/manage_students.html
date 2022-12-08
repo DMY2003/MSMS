@@ -37,7 +37,7 @@
 
     &nbsp;
 
-    <div class="card p-3 mb-5">
+    <div class="card p-3 mb-3">
         <table class="table">
             <thead>
                 <tr>
@@ -72,5 +72,6 @@
             </tbody>
         </table>
     </div>
+    {% include 'partials/pagination.html' with page=accounts %}
 </div>
 {% endblock %}
