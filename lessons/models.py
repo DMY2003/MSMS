@@ -173,6 +173,7 @@ class Request(models.Model):
 
 
 class Lesson(models.Model):
+    """Stores the data of a lesson"""
     date = models.DateTimeField(null=True)
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, blank=False)
     student = models.ForeignKey(Student, on_delete=models.CASCADE, blank=False)
@@ -183,7 +184,8 @@ class Lesson(models.Model):
     class Meta:
         ordering = ('date',)
 
-    def get_invoice(self):
+    def get_invoice_paid(self):
+        """gets the invoice for the lesson and returns whether it has been paid"""
         db = sqlite3.connect('db.sqlite3')
         cur = db.cursor()
         id = self.id
@@ -192,6 +194,7 @@ class Lesson(models.Model):
         return bool(data.fetchone()[0])
 
     def generate_invoice(self):
+        """gets the invoice for the lesson and returns the filename for download"""
         db = sqlite3.connect('db.sqlite3')
         cur = db.cursor()
 
@@ -209,12 +212,14 @@ class Lesson(models.Model):
 
 
 class Invoice(models.Model):
+    """Stores the data of an invoice"""
     price = models.IntegerField(blank=False)
     paid = models.BooleanField(default=False)
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, blank=False)
 
 
 class Transaction(models.Model):
+    """Stores the data for a transaction"""
     student = models.ForeignKey(Student, on_delete=models.CASCADE, blank=False)
     note = models.CharField(blank=True, max_length=25)
     change = models.CharField(blank=False, max_length=25)
@@ -223,4 +228,5 @@ class Transaction(models.Model):
 
 
 class Child(Student):
+    """Stores the data of a child"""
     parent = models.ForeignKey(Student, on_delete=models.CASCADE, blank=False, related_name="%(class)s_parent")
