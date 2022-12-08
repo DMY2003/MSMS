@@ -15,7 +15,7 @@ def generate_invoice_PDF(invoice_id, student, teacher, instrument, lesson_date, 
     padding = 1.5 * cm
     height, width = A5
     file_name = student.first_name + "_" + student.last_name + "_Invoice_" + invoice_ref_id + ".pdf"
-    base = base_in.Canvas(file_name, pagesize=landscape(A5))
+    base = base_in.Canvas("PDFs/" + file_name, pagesize=landscape(A5))
 
     base.setFont('Helvetica-Bold', 18)
     base.drawRightString(width - padding, 380 - 50, "INVOICE")

@@ -61,6 +61,9 @@ class User(AbstractUser):
         """Gets the full name of a user"""
         return "%s %s" % (self.first_name, self.last_name)
 
+    class Meta:
+        ordering = ('id',)
+
 
 class Term(models.Model):
     start_date = models.DateField(null=True)
@@ -202,7 +205,7 @@ class Lesson(models.Model):
         return file_name
 
     class Meta:
-        ordering = ['-id']
+        ordering = ['date']
 
 
 class Invoice(models.Model):
