@@ -258,8 +258,8 @@ def admin_lesson(request, lesson_id):
         elif request.method == "GET":
             form = AdminLessonForm(instance=lesson)
 
-        invoice = Invoice.objects.get(id=lesson.id)
-        print(invoice.id)
+        invoice = Invoice.objects.get(lesson=lesson.id)
+
         response_data = {
             "lesson": lesson,
             "form": form,
@@ -267,14 +267,13 @@ def admin_lesson(request, lesson_id):
         }
 
         return render(request, 'admin_dashboard/admin_lesson.html', response_data)
-
     else:
         return redirect('home')
 
 @login_required
 def admin_lesson_pay(request, lesson_id):
     lesson = Lesson.objects.get(id=lesson_id)
-    invoice = Invoice.objects.get(id=lesson.id)
+    invoice = Invoice.objects.get(lesson=lesson.id)
     lesson_request = Request.objects.get(id=lesson.request.id)
     invoice.paid = True
     invoice.save()

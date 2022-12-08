@@ -159,8 +159,8 @@ class Request(models.Model):
 
             # Generate Invoices for the lessons
             price = self.instrument.base_price * self.lesson_duration / 60
-            # invoice = Invoice(price=price, lesson=lesson)
-            # invoice.save()
+            invoice = Invoice(price=price, lesson=lesson)
+            invoice.save()
 
         self.save()
 
