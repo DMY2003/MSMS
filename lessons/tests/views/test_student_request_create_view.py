@@ -63,7 +63,7 @@ class StudentRequestCreateViewTestCase(TestCase):
         self.assertTemplateUsed(response, 'student_requests.html')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'student_requests.html')
-        if (request):
+        if request:
             request.delete()
 
     def test_student_request_create_unsuccessful(self):
