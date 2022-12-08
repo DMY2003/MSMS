@@ -562,7 +562,7 @@ def download(request, invoice: str):
     # Define text file name
     filename = invoice
     # Open the file for reading content
-    path = open(filename, 'r')
+    path = open("PDFs/" + filename, 'r')
     # Set the mime type
     mime_type, _ = mimetypes.guess_type(filename)
     # Set the return value of the HttpResponse
