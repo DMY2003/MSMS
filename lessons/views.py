@@ -6,7 +6,7 @@ from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordFo
     CreateAdminsForm, AccountForm, TermForm, ChildForm, ParentRequestForm, UpdateBalance
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from lessons.models import Request, Lesson, Student, Administrator, User, Term, Transaction, Child
+from lessons.models import Request, Lesson, Student, Administrator, User, Term, Transaction, Child, Invoice
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
 from lessons.helpers import login_prohibited, map_terms
@@ -156,7 +156,8 @@ def admin_request(request, request_id):
 
                 lesson_request.generate_lessons(
                     teacher,
-                    term
+                    term,
+                    request_id
                 )
 
                 messages.add_message(request, messages.SUCCESS, "Lessons successfully booked!")
@@ -257,16 +258,33 @@ def admin_lesson(request, lesson_id):
                 messages.add_message(request, messages.SUCCESS, "The lesson was successfully updated!")
         elif request.method == "GET":
             form = AdminLessonForm(instance=lesson)
+        print(Invoice.objects.filter(lesson=lesson.id))
+        invoice = Invoice.objects.get(lesson=lesson.id)
 
         response_data = {
             "lesson": lesson,
-            "form": form
+            "form": form,
+            "invoice": invoice
         }
         return render(request, 'admin_dashboard/admin_lesson.html', response_data)
 
     else:
         return redirect('home')
 
+@login_required 
+def admin_lesson_pay(request, lesson_id):
+    if request.user.role == 'Administrator' or request.user.role == 'Director':
+        lesson = Lesson.objects.get(pk=lesson_id)
+        invoice = Invoice.objects.get(lesson=lesson_id)
+        invoice.paid = True
+        invoice.save()
+        request = Request.objects.get(id=lesson.request.id)
+        request.paid += 1
+        request.save()
+
+        return redirect('admin_lesson', lesson_id)
+    else:
+        return redirect('home')
 
 @login_required
 def admin_lesson_delete(request, lesson_id):
