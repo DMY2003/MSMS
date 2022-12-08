@@ -565,6 +565,7 @@ def term_delete(request, term_id):
     return redirect('term_create')
 
 
+@login_required
 def download(request, invoice: str):
     # Define text file name
     filename = invoice
