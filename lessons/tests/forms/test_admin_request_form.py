@@ -58,7 +58,6 @@ class AdminRequestFormTestCase(TestCase):
 
     def test_form_accepts_valid_input(self):
         form = AdminRequestForm(data=self.form_input)
-        #print(form.errors)
         self.assertTrue(form.is_valid())
 
     def test_form_uses_model_validation(self):
