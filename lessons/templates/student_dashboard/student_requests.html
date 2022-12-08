@@ -1,8 +1,12 @@
 {% extends 'base_content.html' %} 
 
 {% block content %}
-<div class="container-sm mt-5">
+<div class="container-sm">
     {% include 'partials/student_request_table.html' with requests=ongoing_requests request_type="Ongoing requests" %}
     {% include 'partials/student_request_table.html' with requests=confirmed_requests request_type="Confirmed requests" %}
 </div>
+{% endblock %}
+
+{% block title %} 
+    Your Requests
 {% endblock %}
