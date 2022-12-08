@@ -29,7 +29,6 @@ urlpatterns = [
 
     path('administrator/lessons', views.admin_lessons, name='admin_lessons'),
     path('administrator/lessons/<int:lesson_id>', views.admin_lesson, name="admin_lesson"),
-    path('administrator/lessons/pay/<int:lesson_id>', views.admin_lesson_pay, name="admin_lesson_pay"),
     path('administrator/delete_lesson/<int:lesson_id>', views.admin_lesson_delete, name='admin_lesson_delete'),
     path('administrator/approved_requests', views.admin_approved_requests, name='admin_approved_requests'),
     path('administrator/unapproved_requests', views.admin_unapproved_requests, name='admin_unapproved_requests'),
