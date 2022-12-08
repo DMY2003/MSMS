@@ -9,14 +9,9 @@
                 <a href="{% url 'admin_lessons' %}">Go back</a>
                 <h3>Lesson #{{lesson.id}} - {{lesson.student.full_name}}</h3>
                 {% include 'partials/bootstrap_form.html' %}
-                <div class="d-flex align-items-center">
+                <div class="d-flex">
                     <input type="submit" value="Save changes" class="btn btn-primary mr-2">
-                    <a class="btn btn-danger mr-2" href="{% url 'admin_lesson_delete' lesson.id  %}">Delete lesson</a>
-                    {% if invoice.paid %}
-                        Lesson paid ✓
-                    {% else %}
-                        <a class="btn btn-warning" href="{% url 'admin_lesson_pay' lesson.id %}">Pay lesson</a>
-                    {% endif %}
+                    <a class="btn btn-danger" href="{% url 'admin_lesson_delete' lesson.id  %}">Delete lesson</a>
                 </div>
             </form>
         </div>
