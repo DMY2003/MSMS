@@ -167,6 +167,8 @@ class Request(models.Model):
 
     class Meta:
         ordering = ('-id',)
+
+
 class Lesson(models.Model):
     date = models.DateTimeField(null=True)
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, blank=False)

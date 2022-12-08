@@ -95,25 +95,6 @@ class LogInForm(forms.Form):
     password = forms.CharField(label="Password", widget=forms.PasswordInput())
 
 
-class StudentRequestForm(PresetAttrsModelForm):
-    class Meta:
-        model = Request
-
-        exclude = [
-            "is_approved", "teacher", "student", "paid"
-        ]
-
-        widgets = {
-            "time_availability": forms.TimeInput(attrs={'type': 'time'})
-        }
-
-    def clean(self):
-        super().clean()
-        lesson_count = self.cleaned_data.get("lesson_count")
-        if lesson_count < 3 or lesson_count > 20:
-            self.add_error("lesson_count", "Lesson count must be between 3 and 20 (inclusive)")
-
-
 class AdminRequestForm(forms.ModelForm):
     class Meta:
         model = Request
@@ -272,6 +253,25 @@ class ChildForm(forms.ModelForm):
         fields = ["first_name", "last_name", "email"]
 
 
+class StudentRequestForm(PresetAttrsModelForm):
+    class Meta:
+        model = Request
+
+        exclude = [
+            "is_approved", "teacher", "student", "paid"
+        ]
+
+        widgets = {
+            "time_availability": forms.TimeInput(attrs={'type': 'time'})
+        }
+
+    def clean(self):
+        super().clean()
+        lesson_count = self.cleaned_data.get("lesson_count")
+        if lesson_count < 3 or lesson_count > 20:
+            self.add_error("lesson_count", "Lesson count must be between 3 and 20 (inclusive)")
+
+
 class ParentRequestForm(StudentRequestForm):
     def __init__(self, user, *args, **kwargs):
         super(ParentRequestForm, self).__init__(*args, **kwargs)
@@ -296,37 +296,45 @@ class ParentRequestForm(StudentRequestForm):
         return request
 
 
-class UpdateBalance(forms.ModelForm):
+class UpdateBalance(forms.Form):
+    def __init__(self, user, *args, **kwargs):
+        super(UpdateBalance, self).__init__(*args, **kwargs)
+        self.user = user
+        self.fields['student'].queryset = Child.objects.filter(parent=self.user)
+
+    student = forms.ModelChoiceField(queryset=None, empty_label="Account Holder", required=False)
     note = forms.CharField(label="Note", required=False, max_length=25)
-
-    class Meta:
-        model = Student
-        fields = ['balance']
-
-        labels = {
-            'balance': 'Amount',
-        }
+    balance = forms.IntegerField(label="Amount", required=True)
 
     def save(self):
-        student = super().save(commit=False)
+        student = Student.objects.get(id=self.user.id)
+
+        if self.cleaned_data["student"] is None:
+            payer = student
+        else:
+            student = self.cleaned_data["student"]
+            payer = student.child.parent
+
+        curr_balance = payer.balance
+
         transaction_type = ""
         amount = self.cleaned_data["balance"]
 
         if "Subtract" in self.data:
             transaction_type = f"-£{amount}"
-            student.balance = self.initial["balance"] - amount
+            payer.balance -= amount
         elif "Add" in self.data:
             transaction_type = f"+£{amount}"
-            student.balance = self.initial["balance"] + amount
+            payer.balance += amount
         elif "Change" in self.data:
             transaction_type = f"Set £{amount}"
-            student.balance = amount
+            payer.balance = amount
+
+        payer.save()
 
         Transaction.objects.create(student=student,
                                    note=self.cleaned_data["note"],
                                    change=transaction_type,
-                                   old_balance=self.initial["balance"],
-                                   new_balance=student.balance
+                                   old_balance=curr_balance,
+                                   new_balance=payer.balance
                                    )
-        student.save()
-        return student
