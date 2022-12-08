@@ -30,3 +30,19 @@ class AdminRequestsViewTestCase(TestCase, LogInTester):
         response = self.client.get(self.approved_requests_url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'admin_dashboard/admin_approved_requests.html')
+
+    def test_get_admin_unapproved_requests_redirects_when_not_director_or_administrator(self):
+        self.user = Student.objects.get(id=2)
+        self.client.login(email=self.user.email, password='Password123')
+        response = self.client.get(self.unapproved_requests_url, follow=True)
+        redirect_url = reverse('student_requests')
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, 'student_dashboard/student_requests.html')
+
+    def test_get_admin_approved_requests_redirects_when_not_director_or_administrator(self):
+        self.user = Student.objects.get(id=2)
+        self.client.login(email=self.user.email, password='Password123')
+        response = self.client.get(self.approved_requests_url, follow=True)
+        redirect_url = reverse('student_requests')
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, 'student_dashboard/student_requests.html')
