@@ -459,7 +459,7 @@ def student_lessons(request):
     lessons = Lesson.objects.filter(student=request.user)
     previous_lessons = Lesson.objects.filter(student=request.user, date__lte=datetime.datetime.now())
     upcoming_lessons = Lesson.objects.filter(student=request.user, date__gte=datetime.datetime.now())
-    
+
     # Filters lessons by the name provided
     if instrument_search:
         upcoming_lessons = Lesson.objects.filter(
@@ -604,13 +604,13 @@ def change_balance(request, user_id):
         }
 
         if request.method == 'POST':
-            form = UpdateBalance(request.POST, instance=student)
+            form = UpdateBalance(data=request.POST, user=student)
             if form.is_valid():
                 form.save()
                 messages.add_message(request, messages.SUCCESS, "Balance Updated!")
                 return redirect('manage_students')
         else:
-            form = UpdateBalance(instance=student)
+            form = UpdateBalance(user=student)
 
         response_data.update({"form": form})
 
@@ -624,8 +624,17 @@ def transaction_history(request):
     """Handles the creation of a student's transaction history page"""
     student = request.user.id
 
+    children = Child.objects.filter(parent=student)
+    transactions = list(Transaction.objects.filter(student_id=student))
+
+    for child in children:
+        child_transactions = Transaction.objects.filter(student_id=child)
+        transactions = list(chain(transactions, child_transactions))
+
+    transactions.sort(key=lambda x: x.id, reverse=False)
+
     response_data = {
-        "transactions": Transaction.objects.filter(student_id=student),
+        "transactions": transactions
     }
 
     return render(request, 'student_transaction_history.html', response_data)
