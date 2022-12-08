@@ -254,7 +254,8 @@ class Command(BaseCommand):
                 pref_teacher = random.choice(teacher_list)
                 request.generate_lessons(
                     pref_teacher,
-                    random.choice(term_list)
+                    random.choice(term_list),
+                    request.id
                 )
 
     def populate_invoices(self):
@@ -265,4 +266,4 @@ class Command(BaseCommand):
             paid = bool(random.getrandbits(1))
             lesson = Lesson.objects.get(id=each)
 
-            Invoice.objects.create(price=price, paid=paid, lesson=lesson)
+            # Invoice.objects.create(price=price, paid=paid, lesson=lesson)

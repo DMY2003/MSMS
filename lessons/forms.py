@@ -1,5 +1,5 @@
 from django import forms
-from lessons.models import User, Student, Administrator, Teacher, Instrument, Request, Lesson, Term, Transaction, Child
+from lessons.models import User, Student, Administrator, Teacher, Instrument, Request, Lesson, Term, Transaction, Child, Invoice
 from django.core.validators import RegexValidator
 from django.conf import settings
 import datetime
