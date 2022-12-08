@@ -69,9 +69,9 @@ class StudentLessonsViewTestCase(TestCase):
         response = self.client.get(self.url)
         upcoming_lessons = response.context["upcoming_lessons"]
         self.assertEqual(len(upcoming_lessons), 3)
-        self.assertEqual(upcoming_lessons[0].id, 22)
+        self.assertEqual(upcoming_lessons[0].id, 20)
         self.assertEqual(upcoming_lessons[1].id, 21)
-        self.assertEqual(upcoming_lessons[2].id, 20)
+        self.assertEqual(upcoming_lessons[2].id, 22)
     
     def test_student_request_passes_correct_previous_lessons_queryset(self):
         self.client.login(email=self.user.email, password='Password123')
