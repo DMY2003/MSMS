@@ -19,13 +19,17 @@ class TestDownloadView(TestCase):
         self.lesson = Lesson.objects.get(id=1)
         self.invoice = Invoice.objects.get(id=1)
 
-        self.file_name = generate_invoice_PDF(self.invoice.id, self.lesson.student, self.lesson.teacher, self.lesson.instrument.name,
-                             self.lesson.date, 50)
+        self.file_name = generate_invoice_PDF(self.invoice.id, self.lesson.student, self.lesson.teacher,
+                                              self.lesson.instrument.name, self.lesson.date, 50
+                                              )
 
     def test_status_code(self):
-        response = self.client.get(reverse("download", args=[self.file_name]))
+        path = self.file_name
+        url = reverse("download", args=[path])
+        response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
     def test_content_type(self):
-        response = self.client.get(reverse("download", args=[self.file_name]))
+        path = self.file_name
+        response = self.client.get(reverse("download", args=[path]))
         self.assertEqual(response.headers['Content-Type'], 'application/pdf')
