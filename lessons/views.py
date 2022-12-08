@@ -356,6 +356,7 @@ def edit_account(request, account_id):
         account = User.objects.get(id=account_id)
         if request.method == 'POST':
             form = AccountForm(request.POST, instance=account)
+            print(form.errors)
             if form.is_valid():
                 form.save()
                 messages.add_message(request, messages.SUCCESS, "Account updated!")
