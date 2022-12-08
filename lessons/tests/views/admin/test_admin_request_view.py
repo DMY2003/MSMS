@@ -1,7 +1,7 @@
 """Tests of the admin request view."""
 from django.test import TestCase
 from django.urls import reverse
-from lessons.models import Director, Request, Term, Lesson
+from lessons.models import Director, Request, Term, Lesson, Student
 from lessons.tests.helper import LogInTester
 from datetime import time
 
@@ -67,3 +67,11 @@ class AdminRequestViewTestCase(TestCase, LogInTester):
         self.assertFalse(form.is_valid())
         self.assertEqual(before_count, after_count)
         self.assertTemplateUsed(response, 'admin_dashboard/admin_request.html')
+
+    def test_get_admin_lesson_redirects_when_not_director_or_administrator(self):
+        self.user = Student.objects.get(id=2)
+        self.client.login(email=self.user.email, password='Password123')
+        response = self.client.get(self.url, follow=True)
+        redirect_url = reverse('student_requests')
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, 'student_dashboard/student_requests.html')
