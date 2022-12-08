@@ -518,12 +518,11 @@ def term_update(request, term_id):
     if request.user.role != 'Director' and request.user.role != 'Administrator':
         return redirect('home')
     term = Term.objects.get(pk=term_id)
-    print(request.POST)
     if request.method == "POST":
         form = TermForm(request.POST, instance=term)
 
         if form.is_valid():
-            form.save()
+            form.save() 
             messages.add_message(request, messages.SUCCESS, "The term was succesfully updated!")
             return redirect('term_create')
     else:

@@ -25,7 +25,6 @@ class TestDownloadView(TestCase):
     def test_status_code(self):
         response = self.client.get(reverse("download", args=[self.file_name]))
         self.assertEqual(response.status_code, 200)
-        #print(response.headers, "\n", response.status_code)
 
     def test_content_type(self):
         response = self.client.get(reverse("download", args=[self.file_name]))
