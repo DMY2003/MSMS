@@ -49,7 +49,7 @@ class LogInViewTestCase(TestCase, LogInTester):
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'student_dashboard/student_requests.html')
         messages_list = list(response.context['messages'])
-        self.assertEqual(len(messages_list), 0)
+        self.assertEqual(len(messages_list), 1)
 
     # test bad inputs
     def test_log_in_with_blank_email(self):
@@ -106,4 +106,4 @@ class LogInViewTestCase(TestCase, LogInTester):
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'student_dashboard/student_requests.html')
         messages_list = list(response.context['messages'])
-        self.assertEqual(len(messages_list), 0)
+        self.assertEqual(len(messages_list), 1)

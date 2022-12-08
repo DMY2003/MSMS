@@ -29,6 +29,7 @@ def sign_up(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
+            messages.add_message(request, messages.SUCCESS, "Your sign up was successful! You have been automatically logged in")
             return redirect('student_requests')
     else:
         form = SignUpForm()
@@ -46,6 +47,7 @@ def log_in(request):
             user = authenticate(email=email, password=password)
             if user is not None:
                 login(request, user)
+                messages.add_message(request, messages.SUCCESS, "You have been logged in successfully!")
                 return redirect('student_requests')
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
     form = LogInForm()
@@ -71,7 +73,7 @@ def password(request):
                 current_user.set_password(new_password)
                 current_user.save()
                 login(request, current_user)
-                messages.add_message(request, messages.SUCCESS, "Password updated!")
+                messages.add_message(request, messages.SUCCESS, "Password successfully updated!")
                 return redirect('student_requests')
     form = PasswordForm()
     return render(request, 'password.html', {'form': form})
@@ -157,7 +159,7 @@ def admin_request(request, request_id):
                     term
                 )
 
-                messages.add_message(request, messages.SUCCESS, "Lessons successfuly booked!")
+                messages.add_message(request, messages.SUCCESS, "Lessons successfully booked!")
                 return redirect("admin_unapproved_requests")
             messages.add_message(request, messages.ERROR, "The request cannot be approved with the details provided!")
         else:
@@ -324,6 +326,7 @@ def manage_admins(request):
 def manage_students(request):
     """Handles the display of all students"""
     if request.user.role == 'Director' or request.user.role == 'Administrator':
+        page_number = request.GET.get('page', 1)
         email_search = request.GET.get('email_search', None)
         accounts = Student.objects.filter(child__isnull=True)
         if email_search:
@@ -331,11 +334,15 @@ def manage_students(request):
                 email=email_search
             )
 
+        paginator = Paginator(accounts, 8)
+        accounts_page = paginator.get_page(page_number)
+
         response_data = {
-            "accounts": accounts,
+            "accounts": accounts_page,
             "student_count": len(accounts),
             "email_search": email_search
         }
+
         return render(request, 'admin_dashboard/manage_students.html', response_data)
     else:
         messages.add_message(request, messages.ERROR, "You do not have permission to manage students!")
@@ -586,6 +593,7 @@ def add_child(request):
             child_request.parent = parent
             child_request.role = "Student"
             child_request.save()
+            messages.add_message(request, messages.SUCCESS, "The child has been added succesfully!")
             return redirect('student_requests')
 
     return render(request, 'student_dashboard/add_child_form.html', {'form': form})
