@@ -567,6 +567,7 @@ def term_delete(request, term_id):
 
 @login_required
 def download(request, invoice: str):
+    """Handles the download of an invoice PDF"""
     # Define text file name
     filename = invoice
     # Open the file for reading content
