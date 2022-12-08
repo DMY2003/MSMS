@@ -25,7 +25,6 @@ class UpdateBalanceFormTestCase(TestCase):
     # default test
     def test_valid_update_balance_form(self):
         form = UpdateBalance(data=self.form_input, user=self.user)
-        print(form.errors)
         self.assertTrue(form.is_valid())
 
     def test_update_balance_form_has_necessary_fields(self):
@@ -114,4 +113,4 @@ class UpdateBalanceFormTestCase(TestCase):
         after_balance = self.user.balance
         after_transactions_count = Transaction.objects.count()
         self.assertEqual(after_balance,10)
-        self.assertEqual(before_transactions_count+1, after_transactions_count)
+        self.assertEqual(before_transactions_count+1, after_transactions_count) 

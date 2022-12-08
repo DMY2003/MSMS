@@ -1,0 +1,22 @@
+[
+    {
+        "model": "lessons.User",
+        "pk": 7,
+        "fields": {
+            "first_name": "Bob",
+            "last_name": "Green",
+            "username": "bob_green@email.com",
+            "email": "bob_green@email.com",
+            "role": "Administrator",
+            "password": "pbkdf2_sha256$260000$4BNvFuAWoTT1XVU8D6hCay$KqDCG+bHl8TwYcvA60SGhOMluAheVOnF1PMz0wClilc=",
+            "is_active": true
+        }
+    },
+    {
+        "model": "lessons.Administrator",
+        "pk": 7,
+        "fields": {
+          "user_ptr_id": 7
+        }
+    }
+]

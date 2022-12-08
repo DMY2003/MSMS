@@ -1,7 +1,7 @@
 """Tests of the student requests view."""
 from django.test import TestCase
 from django.urls import reverse
-from lessons.models import Student, Request
+from lessons.models import Student, Request, Administrator
 from lessons.forms import StudentRequestForm
 from lessons.tests.helper import reverse_with_next
 
@@ -14,6 +14,7 @@ class StudentRequestsViewTestCase(TestCase):
         'lessons/tests/fixtures/other_students.json',
         'lessons/tests/fixtures/default_instrument.json',
         'lessons/tests/fixtures/other_requests.json',
+        'lessons/tests/fixtures/other_administrators.json',
     ]
 
     def setUp(self):
@@ -36,6 +37,14 @@ class StudentRequestsViewTestCase(TestCase):
         redirect_url = reverse_with_next('log_in', self.url)
         response = self.client.get(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+
+    def test_get_admin_lessons_redirects_when_director_or_administrator(self):
+        self.user = Administrator.objects.get(id=7)
+        self.client.login(email=self.user.email, password='Password123')
+        response = self.client.get(self.url, follow=True)
+        redirect_url = reverse('admin_lessons')
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, 'admin_dashboard/admin_lessons.html')
 
     def test_student_requests_displays_requests_belonging_to_correct_student(self):
         self.client.login(email=self.user.email, password='Password123')
