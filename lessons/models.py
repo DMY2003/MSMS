@@ -166,7 +166,8 @@ class Request(models.Model):
 
         self.save()
 
-
+    class Meta:
+        ordering = ('-id',)
 class Lesson(models.Model):
     date = models.DateTimeField(null=True)
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, blank=False)
@@ -198,6 +199,9 @@ class Lesson(models.Model):
         file_name = generate_invoice_PDF(invoice_id, self.student, self.teacher, self.instrument.name, self.date, price)
 
         return file_name
+
+    class Meta:
+        ordering = ['-id']
 
 
 class Invoice(models.Model):
