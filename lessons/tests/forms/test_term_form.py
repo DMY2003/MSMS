@@ -23,6 +23,11 @@ class RequestFormTestCase(TestCase):
             "end_date": date(2023, 11, 7)
         }
 
+        self.form_input_3 = {
+            "start_date": date(2022, 11, 8),
+            "end_date": date(2022, 12, 18)
+        }
+
         self.term = Term.objects.first()
 
     def test_valid_form(self):
@@ -48,6 +53,15 @@ class RequestFormTestCase(TestCase):
         form = TermForm(data=self.form_input)
         self.assertFalse(form.is_valid())
         self.form_input["start_date"] = original_date
+
+    def test_valid_term_length(self):
+        form = TermForm(data=self.form_input)
+        self.assertTrue(form.is_valid())
+
+    def test_invalid_term_length(self):
+        self.form_input["start_date"] = datetime(2023, 8, 5)
+        form = TermForm(data=self.form_input)
+        self.assertFalse(form.is_valid())
 
     def test_form_update_must_save_correctly(self):
         form = TermForm(instance=self.term, data=self.form_input)
