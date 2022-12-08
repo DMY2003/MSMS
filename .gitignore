@@ -87,6 +87,9 @@ docs/_build/
 .pybuilder/
 target/
 
+PDFs/
+
+
 # Jupyter Notebook
 .ipynb_checkpoints
 
