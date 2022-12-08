@@ -483,7 +483,7 @@ def student_lessons(request):
     lessons = Lesson.objects.filter(student=request.user)
     previous_lessons = Lesson.objects.filter(student=request.user, date__lte=datetime.datetime.now())
     upcoming_lessons = Lesson.objects.filter(student=request.user, date__gte=datetime.datetime.now())
-
+    
     # Filters lessons by the name provided
     if instrument_search:
         upcoming_lessons = Lesson.objects.filter(
