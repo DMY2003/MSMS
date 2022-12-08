@@ -46,7 +46,7 @@ class StudentRequestCreateViewTestCase(TestCase):
         response = self.client.get(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
-    def test_student_reqeust_create_successful(self):
+    def test_student_request_create_successful(self):
         self.client.login(email=self.user.email, password='Password123')
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
@@ -66,7 +66,7 @@ class StudentRequestCreateViewTestCase(TestCase):
         if (request):
             request.delete()
 
-    def test_student_reqeust_create_unsuccessful(self):
+    def test_student_request_create_unsuccessful(self):
         self.client.login(email=self.user.email, password='Password123')
         self.form_input["instrument"] = "Guitar"
         form = StudentRequestForm(data=self.form_input)
