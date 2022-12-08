@@ -10,12 +10,12 @@ class AdminManageViewTestCase(TestCase, LogInTester):
 
     fixtures = [
                 'lessons/tests/fixtures/default_director.json',
-                'lessons/tests/fixtures/default_administrator.json'
+                'lessons/tests/fixtures/other_administrators.json'
                ]
 
     def setUp(self):
         self.url = reverse('manage_admins')
-        self.user2 = Administrator.objects.get(email='bob_green@email.com')
+        self.user2 = Administrator.objects.get(id=7)
         self.user = Director.objects.get(email='alex_green@email.org')
 
     def test_admin_manage_url(self):
