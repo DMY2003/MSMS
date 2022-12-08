@@ -6,7 +6,10 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.conf import settings
 import sqlite3
 from lessons.pdf_generator import generate_invoice_PDF
+from lessons.helpers import get_date_from_weekday
 
+class Invoice():
+    pass
 
 class UserManager(BaseUserManager):
     use_in_migrations = True
@@ -103,14 +106,6 @@ class Instrument(models.Model):
     def __str__(self):
         return self.name
 
-
-def get_date_from_weekday(weekday, time):
-    """Gets the date from the weekday"""
-    today = datetime.date.today()
-    today = datetime.datetime.combine(today, time)
-    return today + datetime.timedelta(days=today.weekday() - weekday)
-
-
 class Request(models.Model):
     """Stores the data of a lesson request"""
 
@@ -143,6 +138,7 @@ class Request(models.Model):
         base_date = max(term.start_date, datetime.date.today())
 
         lesson_datetime = get_date_from_weekday(
+            base_date,
             self.day_availability,
             self.time_availability
         )
@@ -163,8 +159,8 @@ class Request(models.Model):
 
             # Generate Invoices for the lessons
             price = self.instrument.base_price * self.lesson_duration / 60
-            invoice = Invoice(price=price, lesson=lesson)
-            invoice.save()
+            # invoice = Invoice(price=price, lesson=lesson)
+            # invoice.save()
 
         self.save()
 
@@ -184,14 +180,18 @@ class Lesson(models.Model):
     class Meta:
         ordering = ('date',)
 
-    def get_invoice_paid(self):
-        """gets the invoice for the lesson and returns whether it has been paid"""
+    def get_lesson_invoice_id(self):
         db = sqlite3.connect('db.sqlite3')
         cur = db.cursor()
         id = self.id
-        data = cur.execute('SELECT paid FROM lessons_invoice WHERE lesson_id = ' + str(id))
-
+        data = cur.execute('SELECT id FROM lessons_invoice WHERE lesson_id = ' + str(id))
         return bool(data.fetchone()[0])
+
+    def get_invoice_paid(self):
+        """gets the invoice for the lesson and returns whether it has been paid"""
+        invoice = Invoice.objects.get(id=self.id)
+
+        return invoice.paid
 
     def generate_invoice(self):
         """gets the invoice for the lesson and returns the filename for download"""

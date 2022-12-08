@@ -11,7 +11,13 @@
                 {% include 'partials/bootstrap_form.html' %}
                 <div class="d-flex">
                     <input type="submit" value="Save changes" class="btn btn-primary mr-2">
-                    <a class="btn btn-danger" href="{% url 'admin_lesson_delete' lesson.id  %}">Delete lesson</a>
+                    <a class="btn btn-danger mr-2" href="{% url 'admin_lesson_delete' lesson.id  %}">Delete lesson</a>
+                    {% if invoice.paid %}
+                        Lesson paid ✓
+                    {% else %}
+                        <a class="btn btn-warning" href="{% url 'admin_lesson_pay' lesson.id %}">Pay Lesson</a>
+                    {% endif %}
+                    
                 </div>
             </form>
         </div>

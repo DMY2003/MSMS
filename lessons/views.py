@@ -6,7 +6,7 @@ from .forms import SignUpForm, LogInForm, AdminRequestForm, UserForm, PasswordFo
     CreateAdminsForm, AccountForm, TermForm, ChildForm, ParentRequestForm, UpdateBalance
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from lessons.models import Request, Lesson, Student, Administrator, User, Term, Transaction, Child
+from lessons.models import Request, Lesson, Student, Administrator, User, Term, Transaction, Child, Invoice
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
 from lessons.helpers import login_prohibited, map_terms
@@ -258,14 +258,30 @@ def admin_lesson(request, lesson_id):
         elif request.method == "GET":
             form = AdminLessonForm(instance=lesson)
 
+        invoice = Invoice.objects.get(id=lesson.id)
+        print(invoice.id)
         response_data = {
             "lesson": lesson,
-            "form": form
+            "form": form,
+            "invoice": invoice
         }
+
         return render(request, 'admin_dashboard/admin_lesson.html', response_data)
 
     else:
         return redirect('home')
+
+@login_required
+def admin_lesson_pay(request, lesson_id):
+    lesson = Lesson.objects.get(id=lesson_id)
+    invoice = Invoice.objects.get(id=lesson.id)
+    lesson_request = Request.objects.get(id=lesson.request.id)
+    invoice.paid = True
+    invoice.save()
+    lesson_request.paid += 1 
+    lesson_request.save()
+    return redirect('admin_lesson', lesson_id)
+
 
 
 @login_required
