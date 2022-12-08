@@ -75,5 +75,5 @@ class StudentRequestCreateViewTestCase(TestCase):
         self.assertGreater(len(form.errors), 0)
         response = self.client.post(self.url, self.form_input, follow=True)
         self.assertEqual(response.status_code, 200)
-        # self.assertContains(response, "Select a valid choice. That choice is not one of the available choices.")
+        self.assertContains(response, "Select a valid choice. That choice is not one of the available choices.")
         self.assertTemplateUsed(response, 'student_request_create.html')
