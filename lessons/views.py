@@ -117,6 +117,7 @@ def student_requests(request):
         }
 
         return render(request, 'student_requests.html', response_data)
+
     elif request.user.role == 'Administrator' or request.user.role == 'Director':
         return redirect('admin_lessons')
 
@@ -134,7 +135,6 @@ def admin_request_delete(request, request_id):
 
     else:
         return redirect('home')
-
 
 
 @login_required
@@ -203,11 +203,10 @@ def admin_unapproved_requests(request):
         return redirect('home')
 
 
-
 @login_required
 def admin_lessons(request):
     """Handles the display of lessons"""
-    
+
     if request.user.role == 'Administrator' or request.user.role == 'Director':
         name_search = request.GET.get('name_search', None)
         page_number = request.GET.get('page', 1)
@@ -267,7 +266,6 @@ def admin_lesson(request, lesson_id):
         return redirect('home')
 
 
-
 @login_required
 def admin_lesson_delete(request, lesson_id):
     """Handles the deletion of a particular lesson"""
@@ -280,7 +278,6 @@ def admin_lesson_delete(request, lesson_id):
 
     else:
         return redirect('home')
-
 
 
 @login_required
@@ -299,7 +296,6 @@ def create_admin(request):
     elif request.user.role == 'Administrator':
         messages.add_message(request, messages.ERROR, "You do not have permission to manage admins!")
         return redirect('admin_lessons')
-
 
 
 @login_required
@@ -323,12 +319,13 @@ def manage_admins(request):
         messages.add_message(request, messages.ERROR, "You do not have permission to manage admins!")
         return redirect('admin_lessons')
 
+
 @login_required
 def manage_students(request):
     """Handles the display of all students"""
     if request.user.role == 'Director' or request.user.role == 'Administrator':
         email_search = request.GET.get('email_search', None)
-        accounts = Student.objects.all()
+        accounts = Student.objects.filter(child__isnull=True)
         if email_search:
             accounts = Student.objects.filter(
                 email=email_search
@@ -345,9 +342,7 @@ def manage_students(request):
         return redirect('home')
 
 
-
 @login_required
-
 def edit_account(request, account_id):
     """Handles the display and updating of a particular account"""
     if request.user.role == 'Director':
@@ -383,7 +378,6 @@ def manage_user_delete(request, user_id):
             return redirect("manage_students")
 
 
-
 @login_required
 def student_request_create(request):
     """Handles the creation of a request through the student request form"""
@@ -399,17 +393,14 @@ def student_request_create(request):
 
     if request.method == 'POST':
         if quantity_children == 0:
-            form = StudentRequestForm(request.POST)
-            lesson_request = form.save(commit=False)
             student = Student.objects.get(email=request.user.email)
-            lesson_request.student = student
+            form = StudentRequestForm(preset_attrs={'student': student}, data=request.POST)
         else:
             form = ParentRequestForm(user=request.user, data=request.POST)
-            lesson_request = form
 
+        lesson_request = form
         if form.is_valid():
             lesson_request.save()
-
             return redirect('student_requests')
 
     return render(request, 'student_request_create.html', {'form': form})
@@ -463,7 +454,7 @@ def student_lessons(request):
     instrument_search = request.GET.get('instrument_search', None)
     page_number = request.GET.get('page', 1)
     page_number1 = request.GET.get('page1', 1)
-    page_number2 = request.GET.get('page2', 1) 
+    page_number2 = request.GET.get('page2', 1)
 
     lessons = Lesson.objects.filter(student=request.user)
     previous_lessons = Lesson.objects.filter(student=request.user, date__lte=datetime.datetime.now())
@@ -484,7 +475,7 @@ def student_lessons(request):
 
     paginator1 = Paginator(upcoming_lessons, 6)
     paginator2 = Paginator(previous_lessons, 6)
-    
+
     try:
         upcoming_lessons_page = paginator1.page(page_number1)
         previous_lessons_page = paginator2.page(page_number2)
@@ -565,7 +556,7 @@ def term_delete(request, term_id):
         messages.add_message(request, messages.SUCCESS, "The term was succesfully deleted!")
     except Term.DoesNotExist:
         pass
-    return redirect('term_create') 
+    return redirect('term_create')
 
 
 def download(request, invoice: str):

@@ -6,6 +6,15 @@ import datetime
 from lessons.helpers import get_date_from_weekday
 
 
+class PresetAttrsModelForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        preset_attrs = kwargs.pop('preset_attrs', None)
+        super(forms.ModelForm, self).__init__(*args, **kwargs)
+        if preset_attrs:
+            for attr, value in preset_attrs.items():
+                setattr(self.instance, attr, value)
+
+
 class SignUpForm(forms.ModelForm):
     class Meta:
         model = Student
@@ -86,7 +95,7 @@ class LogInForm(forms.Form):
     password = forms.CharField(label="Password", widget=forms.PasswordInput())
 
 
-class StudentRequestForm(forms.ModelForm):
+class StudentRequestForm(PresetAttrsModelForm):
     class Meta:
         model = Request
 
