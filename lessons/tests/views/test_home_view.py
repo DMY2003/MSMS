@@ -25,4 +25,4 @@ class HomeViewTestCase(TestCase):
         response = self.client.get(self.url, follow=True)
         redirect_url = reverse('student_requests')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'student_requests.html')
+        self.assertTemplateUsed(response, 'student_dashboard/student_requests.html')

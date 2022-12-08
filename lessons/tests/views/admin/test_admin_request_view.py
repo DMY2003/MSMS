@@ -45,7 +45,7 @@ class AdminRequestViewTestCase(TestCase, LogInTester):
     def test_get_admin_request_view(self):
         self.login(self.user)
         response = self.client.get(self.url)
-        self.assertTemplateUsed(response, 'admin_request.html')
+        self.assertTemplateUsed(response, 'admin_dashboard/admin_request.html')
 
     def test_post_admin_request_view_successful(self):
         self.login(self.user)
@@ -55,7 +55,7 @@ class AdminRequestViewTestCase(TestCase, LogInTester):
         redirect_url = reverse('admin_unapproved_requests')
         self.assertEqual(before_count, after_count - self.form_input["lesson_count"])
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'admin_unapproved_requests.html')
+        self.assertTemplateUsed(response, 'admin_dashboard/admin_unapproved_requests.html')
 
     def test_post_admin_request_view_unsuccessful(self):
         self.login(self.user)
@@ -66,4 +66,4 @@ class AdminRequestViewTestCase(TestCase, LogInTester):
         form = response.context["form"]
         self.assertFalse(form.is_valid())
         self.assertEqual(before_count, after_count)
-        self.assertTemplateUsed(response, 'admin_request.html')
+        self.assertTemplateUsed(response, 'admin_dashboard/admin_request.html')

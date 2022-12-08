@@ -25,7 +25,7 @@ class AdminManageViewTestCase(TestCase, LogInTester):
         self.login(self.user)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'manage_admins.html')
+        self.assertTemplateUsed(response, 'admin_dashboard/manage_admins.html')
         self.assertContains(response, 'Create a new Administrator Account')
         self.assertContains(response, 'Manage Administrators')
 

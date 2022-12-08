@@ -35,7 +35,7 @@ class StudentLessonsViewTestCase(TestCase):
         self.client.login(email=self.user.email, password='Password123')
         response = self.client.get(self.url, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'student_lessons.html')
+        self.assertTemplateUsed(response, 'student_dashboard/student_lessons.html')
 
     def test_student_lessons_redirects_when_not_logged_in(self):
         redirect_url = reverse_with_next('log_in', self.url)

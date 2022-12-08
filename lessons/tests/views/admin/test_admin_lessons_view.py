@@ -26,7 +26,7 @@ class AdminLessonsViewTestCase(TestCase):
         self.client.login(email=self.user.email, password='Password123')
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'admin_lessons.html')
+        self.assertTemplateUsed(response, 'admin_dashboard/admin_lessons.html')
 
     def test_admin_lessons_redirects_when_not_logged_in(self):
         redirect_url = reverse_with_next('log_in', self.url)
@@ -39,7 +39,7 @@ class AdminLessonsViewTestCase(TestCase):
         response = self.client.get(self.url, follow=True)
         redirect_url = reverse('student_requests')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'student_requests.html')
+        self.assertTemplateUsed(response, 'student_dashboard/student_requests.html')
 
     def test_get_admin_lesson_parses_correct_lesson_queryset(self):
         self.user = Administrator.objects.get(id=1)

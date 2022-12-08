@@ -37,7 +37,7 @@ class StudentRequestUpdateViewTestCase(TestCase):
         self.client.login(email=self.user.email, password='Password123')
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'student_request_update.html')
+        self.assertTemplateUsed(response, 'student_dashboard/student_request_update.html')
         form = response.context['form']
         self.assertTrue(isinstance(form, StudentRequestForm))
         self.assertFalse(form.is_bound)
@@ -77,7 +77,7 @@ class StudentRequestUpdateViewTestCase(TestCase):
 
         response = self.client.post(self.url, self.form_input, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'student_request_update.html')
+        self.assertTemplateUsed(response, 'student_dashboard/student_request_update.html')
 
         request = Request.objects.get(id=1)
         self.assertEqual(request.lesson_count, 5)
@@ -100,7 +100,7 @@ class StudentRequestUpdateViewTestCase(TestCase):
 
         response = self.client.post(self.url, self.form_input, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'student_request_update.html')
+        self.assertTemplateUsed(response, 'student_dashboard/student_request_update.html')
 
         request = Request.objects.get(id=1)
         self.assertEqual(request.instrument.name, "Piano")

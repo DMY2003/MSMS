@@ -24,7 +24,7 @@ class TermDeleteViewTestCase(TestCase, LogInTester):
         after_count = Term.objects.count()
         response_url = reverse('term_create')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'term_create.html')
+        self.assertTemplateUsed(response, 'admin_dashboard/term_create.html')
         self.assertEqual(before_count - 1, after_count)
 
     def test_term_delete_view_with_nonexistent_term(self):
@@ -35,7 +35,7 @@ class TermDeleteViewTestCase(TestCase, LogInTester):
         after_count = Term.objects.count()
         response_url = reverse('term_create')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'term_create.html')
+        self.assertTemplateUsed(response, 'admin_dashboard/term_create.html')
         self.assertEqual(before_count, after_count)
 
     # def test_redirect_home_if_not_logged_in(self):

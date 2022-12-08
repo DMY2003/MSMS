@@ -23,7 +23,7 @@ class EditAccountViewTestCase(TestCase, LogInTester):
         self.login(self.user)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'edit_account.html')
+        self.assertTemplateUsed(response, 'admin_dashboard/edit_account.html')
         self.assertContains(response, 'Edit account')
         self.assertContains(response, 'First name:')
         self.assertContains(response, 'Last name:')

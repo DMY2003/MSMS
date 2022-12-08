@@ -34,7 +34,7 @@ class AdminLessonViewTestCase(TestCase):
         self.client.login(email=self.user.email, password='Password123')
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'admin_lesson.html')
+        self.assertTemplateUsed(response, 'admin_dashboard/admin_lesson.html')
         form = response.context['form']
         self.assertTrue(isinstance(form, AdminLessonForm))
 
@@ -49,7 +49,7 @@ class AdminLessonViewTestCase(TestCase):
         response = self.client.get(self.url, follow=True)
         redirect_url = reverse('student_requests')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'student_requests.html')
+        self.assertTemplateUsed(response, 'student_dashboard/student_requests.html')
 
     def test_get_admin_lesson_returns_correct_lesson(self):
         self.user = Administrator.objects.get(id=1)
@@ -81,7 +81,7 @@ class AdminLessonViewTestCase(TestCase):
 
         response = self.client.post(self.url, self.form_input, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'admin_lesson.html')
+        self.assertTemplateUsed(response, 'admin_dashboard/admin_lesson.html')
 
         lesson = Lesson.objects.get(id=10)
         self.assertEqual(lesson.id, 10)
@@ -104,7 +104,7 @@ class AdminLessonViewTestCase(TestCase):
 
         response = self.client.post(self.url, self.form_input, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'admin_lesson.html')
+        self.assertTemplateUsed(response, 'admin_dashboard/admin_lesson.html')
 
         lesson = Lesson.objects.get(id=10)
         self.assertEqual(lesson.instrument.name, "Piano")

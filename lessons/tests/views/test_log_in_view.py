@@ -47,7 +47,7 @@ class LogInViewTestCase(TestCase, LogInTester):
         self.assertTrue(self._is_logged_in())
         response_url = reverse('student_requests')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'student_requests.html')
+        self.assertTemplateUsed(response, 'student_dashboard/student_requests.html')
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list), 0)
 
@@ -96,7 +96,7 @@ class LogInViewTestCase(TestCase, LogInTester):
         response = self.client.get(self.url, follow=True)
         redirect_url = reverse('student_requests')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'student_requests.html')
+        self.assertTemplateUsed(response, 'student_dashboard/student_requests.html')
 
     def test_successful_log_in_with_redirect(self):
         redirect_url = reverse('student_requests')
@@ -104,6 +104,6 @@ class LogInViewTestCase(TestCase, LogInTester):
         response = self.client.post(self.url, form_input, follow=True)
         self.assertTrue(self._is_logged_in())
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'student_requests.html')
+        self.assertTemplateUsed(response, 'student_dashboard/student_requests.html')
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list), 0)

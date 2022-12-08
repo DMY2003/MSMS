@@ -27,7 +27,7 @@ class StudentRequestsViewTestCase(TestCase):
         self.client.login(email=self.user.email, password='Password123')
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'student_requests.html')
+        self.assertTemplateUsed(response, 'student_dashboard/student_requests.html')
         form = response.context['form']
         self.assertTrue(isinstance(form, StudentRequestForm))
         self.assertFalse(form.is_bound)
@@ -50,7 +50,7 @@ class StudentRequestsViewTestCase(TestCase):
         response = self.client.get(self.url)
         templates = response.templates
         template_names = [template.name for template in templates]
-        self.assertIn("student_requests.html", template_names)
+        self.assertIn("student_dashboard/student_requests.html", template_names)
         self.assertIn("base.html", template_names)
         self.assertIn("base_content.html", template_names)
         self.assertIn("partials/navbar.html", template_names)

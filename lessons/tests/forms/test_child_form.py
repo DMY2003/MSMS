@@ -21,7 +21,7 @@ class ChildFormTestCase(TestCase):
     # default test
     def test_valid_child_form(self):
         form = ChildForm(data=self.form_input)
-        print(form.errors)
+        #print(form.errors)
         self.assertTrue(form.is_valid())
     
     def test_request_form_has_necessary_fields(self):

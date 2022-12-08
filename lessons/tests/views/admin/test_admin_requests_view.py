@@ -23,10 +23,10 @@ class AdminRequestsViewTestCase(TestCase, LogInTester):
         self.login(self.admin)
         response = self.client.get(self.unapproved_requests_url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'admin_unapproved_requests.html')
+        self.assertTemplateUsed(response, 'admin_dashboard/admin_unapproved_requests.html')
 
     def test_get_approved_admin_requests(self):
         self.login(self.admin)
         response = self.client.get(self.approved_requests_url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'admin_approved_requests.html')
+        self.assertTemplateUsed(response, 'admin_dashboard/admin_approved_requests.html')
