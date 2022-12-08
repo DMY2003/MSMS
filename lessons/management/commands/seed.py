@@ -25,7 +25,7 @@ class Command(BaseCommand):
         self.populate_terms()
         self.populate_requests()
         self.populate_lessons()
-        self.populate_invoices()
+        # self.populate_invoices()
         self.create_superuser()
         self.stdout.write('done.')
 
@@ -244,18 +244,18 @@ class Command(BaseCommand):
 
 
 
-    # def populate_lessons(self):
-    #     self.stdout.write('seeding lessons...')
-    #     teacher_list = list(Teacher.objects.all())
-    #     term_list = list(Term.objects.all())
-    #
-    #     for request in Request.objects.all():
-    #         if request.is_approved:
-    #             pref_teacher = random.choice(teacher_list)
-    #             request.generate_lessons(
-    #                 pref_teacher,
-    #                 random.choice(term_list)
-    #             )
+    def populate_lessons(self):
+        self.stdout.write('seeding lessons...')
+        teacher_list = list(Teacher.objects.all())
+        term_list = list(Term.objects.all())
+    
+        for request in Request.objects.all():
+            if request.is_approved:
+                pref_teacher = random.choice(teacher_list)
+                request.generate_lessons(
+                    pref_teacher,
+                    random.choice(term_list)
+                )
 
     # def populate_invoices(self):
     #     self.stdout.write('seeding invoices...')
