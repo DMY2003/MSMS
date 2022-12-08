@@ -6,6 +6,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.conf import settings
 import sqlite3
 from lessons.pdf_generator import generate_invoice_PDF
+from lessons.helpers import get_date_from_weekday
 
 
 class UserManager(BaseUserManager):
@@ -104,13 +105,6 @@ class Instrument(models.Model):
         return self.name
 
 
-def get_date_from_weekday(weekday, time):
-    """Gets the date from the weekday"""
-    today = datetime.date.today()
-    today = datetime.datetime.combine(today, time)
-    return today + datetime.timedelta(days=today.weekday() - weekday)
-
-
 class Request(models.Model):
     """Stores the data of a lesson request"""
 
@@ -143,6 +137,7 @@ class Request(models.Model):
         base_date = max(term.start_date, datetime.date.today())
 
         lesson_datetime = get_date_from_weekday(
+            base_date,
             self.day_availability,
             self.time_availability
         )
