@@ -25,7 +25,7 @@ class Command(BaseCommand):
         self.populate_terms()
         self.populate_requests()
         self.populate_lessons()
-        self.populate_invoices()
+        # self.populate_invoices()
         self.create_superuser()
         self.stdout.write('done.')
 
