@@ -1,7 +1,7 @@
 """Tests of the student request create view."""
 from django.test import TestCase
 from django.urls import reverse
-from lessons.models import Student, Request
+from lessons.models import Student, Request, Administrator
 from lessons.forms import StudentRequestForm
 from lessons.tests.helper import reverse_with_next
 import datetime
@@ -13,6 +13,7 @@ class StudentRequestCreateViewTestCase(TestCase):
     fixtures = [
         'lessons/tests/fixtures/default_student.json',
         'lessons/tests/fixtures/default_instrument.json',
+        'lessons/tests/fixtures/other_administrators.json',
     ]
 
     def setUp(self):
@@ -75,3 +76,11 @@ class StudentRequestCreateViewTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Select a valid choice. That choice is not one of the available choices.")
         self.assertTemplateUsed(response, 'student_dashboard/student_request_create.html')
+
+    def test_get_student_request_redirects_when_not_student(self):
+        self.user = Administrator.objects.get(id=7)
+        self.client.login(email=self.user.email, password='Password123')
+        response = self.client.get(self.url, follow=True)
+        redirect_url = reverse('admin_unapproved_requests')
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, 'admin_dashboard/admin_unapproved_requests.html')
