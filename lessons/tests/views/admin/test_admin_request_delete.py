@@ -46,3 +46,11 @@ class AdminRequestDeleteViewTestCase(TestCase, LogInTester):
     #     response = self.client.post(self.url, follow=True)
     #     response_url = reverse('home')
     #     self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
+
+    def test_get_admin_request_delete_redirects_when_not_director_or_administrator(self):
+        self.user = Student.objects.get(id=2)
+        self.client.login(email=self.user.email, password='Password123')
+        response = self.client.get(self.url, follow=True)
+        redirect_url = reverse('student_requests')
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, 'student_dashboard/student_requests.html')
