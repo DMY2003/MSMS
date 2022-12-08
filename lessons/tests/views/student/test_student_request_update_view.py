@@ -1,7 +1,7 @@
 """Tests of the student request update view."""
 from django.test import TestCase
 from django.urls import reverse
-from lessons.models import Student, Request
+from lessons.models import Student, Request, Administrator
 from lessons.forms import StudentRequestForm
 from lessons.tests.helper import reverse_with_next
 import datetime
@@ -14,6 +14,7 @@ class StudentRequestUpdateViewTestCase(TestCase):
         'lessons/tests/fixtures/default_student.json',
         'lessons/tests/fixtures/default_instrument.json',
         'lessons/tests/fixtures/default_request.json',
+        'lessons/tests/fixtures/other_administrators.json',
     ]
 
     def setUp(self):
@@ -107,3 +108,11 @@ class StudentRequestUpdateViewTestCase(TestCase):
         messages = list(response.context['messages'])
         self.assertEqual(len(messages), 1)
         self.assertEqual(str(messages[0]), "Your request is not valid!")
+
+    def test_get_student_request_redirects_when_not_student(self):
+        self.user = Administrator.objects.get(id=7)
+        self.client.login(email=self.user.email, password='Password123')
+        response = self.client.get(self.url, follow=True)
+        redirect_url = reverse('admin_unapproved_requests')
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, 'admin_dashboard/admin_unapproved_requests.html')
