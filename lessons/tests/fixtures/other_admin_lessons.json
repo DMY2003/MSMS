@@ -53,5 +53,38 @@
             "instrument": 3,
             "duration": 45
         }
+    },
+    {
+        "model": "lessons.lesson",
+        "pk": 15,
+        "fields": {
+            "date": "2022-12-09 14:30:00",
+            "teacher": 3,
+            "student": 3,
+            "instrument": 2,
+            "duration": 60
+        }
+    },
+    {
+        "model": "lessons.lesson",
+        "pk": 16,
+        "fields": {
+            "date": "2022-12-09 14:30:00",
+            "teacher": 3,
+            "student": 3,
+            "instrument": 1,
+            "duration": 45
+        }
+    },
+    {
+        "model": "lessons.lesson",
+        "pk": 17,
+        "fields": {
+            "date": "2022-12-19 14:30:00",
+            "teacher": 3,
+            "student": 3,
+            "instrument": 1,
+            "duration": 30
+        }
     }
 ]

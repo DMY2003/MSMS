@@ -1,44 +1,55 @@
 [
     {
         "model": "lessons.lesson",
-        "pk": 1234,
+        "pk": 20,
         "fields": {
-            "date": "2022-11-05 12:30:00",
+            "date": "2023-01-20 12:30:00",
             "teacher": 3,
-            "student": 1,
+            "student": 2,
             "instrument": 1,
             "duration": 60
         }
     },
     {
         "model": "lessons.lesson",
-        "pk": 2468,
+        "pk": 21,
         "fields": {
-            "date": "2022-12-09 12:30:00",
-            "teacher": 3,
-            "student": 1,
-            "instrument": 1,
-            "duration": 45
-        }
-    },
-    {
-        "model": "lessons.lesson",
-        "pk": 8642,
-        "fields": {
-            "date": "2022-12-09 16:30:00",
-            "teacher": 3,
-            "student": 1,
-            "instrument": 1,
-            "duration": 45
-        }
-    },
-    {
-        "model": "lessons.lesson",
-        "pk": 1357,
-        "fields": {
-            "date": "2022-12-09 14:30:00",
+            "date": "2023-01-30 12:30:00",
             "teacher": 3,
             "student": 2,
+            "instrument": 2,
+            "duration": 45
+        }
+    },
+    {
+        "model": "lessons.lesson",
+        "pk": 22,
+        "fields": {
+            "date": "2023-12-31 16:30:00",
+            "teacher": 3,
+            "student": 2,
+            "instrument": 2,
+            "duration": 45
+        }
+    },
+    {
+        "model": "lessons.lesson",
+        "pk": 23,
+        "fields": {
+            "date": "2022-12-05 14:30:00",
+            "teacher": 3,
+            "student": 2,
+            "instrument": 3,
+            "duration": 45
+        }
+    },
+    {
+        "model": "lessons.lesson",
+        "pk": 24,
+        "fields": {
+            "date": "2022-12-25 14:30:00",
+            "teacher": 3,
+            "student": 1,
             "instrument": 1,
             "duration": 45
         }
