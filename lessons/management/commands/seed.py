@@ -244,25 +244,25 @@ class Command(BaseCommand):
 
 
 
-    def populate_lessons(self):
-        self.stdout.write('seeding lessons...')
-        teacher_list = list(Teacher.objects.all())
-        term_list = list(Term.objects.all())
+    # def populate_lessons(self):
+    #     self.stdout.write('seeding lessons...')
+    #     teacher_list = list(Teacher.objects.all())
+    #     term_list = list(Term.objects.all())
+    #
+    #     for request in Request.objects.all():
+    #         if request.is_approved:
+    #             pref_teacher = random.choice(teacher_list)
+    #             request.generate_lessons(
+    #                 pref_teacher,
+    #                 random.choice(term_list)
+    #             )
 
-        for request in Request.objects.all():
-            if request.is_approved:
-                pref_teacher = random.choice(teacher_list)
-                request.generate_lessons(
-                    pref_teacher,
-                    random.choice(term_list)
-                )
-
-    def populate_invoices(self):
-        self.stdout.write('seeding invoices...')
-        lesson_ids = Lesson.objects.values_list('id', flat=True).distinct()
-        for each in lesson_ids:
-            price = random.randint(50, 150)
-            paid = bool(random.getrandbits(1))
-            lesson = Lesson.objects.get(id=each)
-
-            Invoice.objects.create(price=price, paid=paid, lesson=lesson)
+    # def populate_invoices(self):
+    #     self.stdout.write('seeding invoices...')
+    #     lesson_ids = Lesson.objects.values_list('id', flat=True).distinct()
+    #     for each in lesson_ids:
+    #         price = random.randint(50, 150)
+    #         paid = bool(random.getrandbits(1))
+    #         lesson = Lesson.objects.get(id=each)
+    #
+    #         Invoice.objects.create(price=price, paid=paid, lesson=lesson)

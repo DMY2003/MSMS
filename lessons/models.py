@@ -184,6 +184,13 @@ class Lesson(models.Model):
     class Meta:
         ordering = ('date',)
 
+    def get_lesson_invoice_id(self):
+        db = sqlite3.connect('db.sqlite3')
+        cur = db.cursor()
+        id = self.id
+        data = cur.execute('SELECT id FROM lessons_invoice WHERE lesson_id = ' + str(id))
+        return data
+
     def get_invoice_paid(self):
         """gets the invoice for the lesson and returns whether it has been paid"""
         db = sqlite3.connect('db.sqlite3')
