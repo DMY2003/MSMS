@@ -31,7 +31,6 @@ class ParentRequestFormTestCase(TestCase):
     # default test
     def test_valid_parent_request_form(self):
         form = ParentRequestForm(data=self.form_input, user=self.user)
-        print(form.errors)
         self.assertTrue(form.is_valid())
 
     def test_parernt_request_form_has_necessary_fields(self):
