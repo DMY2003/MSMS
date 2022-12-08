@@ -1,7 +1,7 @@
 """Tests of the term delete view."""
 from django.test import TestCase
 from django.urls import reverse
-from lessons.models import Director, Term
+from lessons.models import Director, Term, Student
 from lessons.tests.helper import LogInTester
 
 
@@ -10,7 +10,8 @@ class TermDeleteViewTestCase(TestCase, LogInTester):
 
     fixtures = [
         'lessons/tests/fixtures/default_director.json',
-        'lessons/tests/fixtures/default_term.json'
+        'lessons/tests/fixtures/default_term.json',
+        'lessons/tests/fixtures/other_students_2.json',
     ]
 
     def setUp(self):
@@ -43,3 +44,11 @@ class TermDeleteViewTestCase(TestCase, LogInTester):
     #     response = self.client.post(self.url, follow=True)
     #     response_url = reverse('home')
     #     self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
+
+    def test_get_term_create_redirects_when_not_director_or_administrator(self):
+        self.user = Student.objects.get(id=3)
+        self.client.login(email=self.user.email, password='Password123')
+        response = self.client.get(self.url, follow=True)
+        redirect_url = reverse('student_requests')
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, 'student_dashboard/student_requests.html')
