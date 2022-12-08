@@ -47,7 +47,7 @@ class AdminLessonsViewTestCase(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         lessons = response.context["lessons"]
-        self.assertEqual(len(lessons),5)
+        self.assertEqual(len(lessons),8)
 
     def test_get_admin_lessons_returns_queryset_with_correct_student_lessons(self):
         self.client.login(email=self.user.email, password='Password123')
