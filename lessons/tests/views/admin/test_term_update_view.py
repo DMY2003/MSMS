@@ -1,7 +1,7 @@
 """Tests of the term update view."""
 from django.test import TestCase
 from django.urls import reverse
-from lessons.models import Director, Term
+from lessons.models import Director, Term, Student
 from lessons.tests.helper import LogInTester
 from datetime import date
 
@@ -12,6 +12,7 @@ class TermUpdateViewTestCase(TestCase, LogInTester):
     fixtures = [
         'lessons/tests/fixtures/default_director.json',
         'lessons/tests/fixtures/default_term.json',
+        'lessons/tests/fixtures/default_student.json'
     ]
 
     def setUp(self):
@@ -47,3 +48,11 @@ class TermUpdateViewTestCase(TestCase, LogInTester):
         self.assertNotEqual(self.term.start_date, self.form_input["start_date"])
         self.assertNotEqual(self.term.end_date, self.form_input["end_date"])
         self.assertTemplateUsed(response, 'admin_dashboard/term_update.html')
+
+    def test_get_term_update_redirects_when_not_director_or_administrator(self):
+        self.user = Student.objects.get(id=1)
+        self.client.login(email=self.user.email, password='Password123')
+        response = self.client.get(self.url, follow=True)
+        redirect_url = reverse('student_requests')
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, 'student_dashboard/student_requests.html')

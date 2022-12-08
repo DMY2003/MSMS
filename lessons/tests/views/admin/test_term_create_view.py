@@ -53,7 +53,7 @@ class TermCreateViewTestCase(TestCase, LogInTester):
         messages = list(response.context['messages'])
         self.assertEqual(len(messages), 0)
 
-    def test_get_admin_lessons_redirects_when_not_director_or_administrator(self):
+    def test_get_term_create_redirects_when_not_director_or_administrator(self):
         self.user = Student.objects.get(id=1)
         self.client.login(email=self.user.email, password='Password123')
         response = self.client.get(self.url, follow=True)
