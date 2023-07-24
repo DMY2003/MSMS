@@ -2,17 +2,14 @@
 
 ## Team members
 The members of the team are:
-- DAMIAN MITROFAN
-- GEORGE KORODIMOS
-- MOHAMMED CHOWDHURY
-- SAMIUL ISLAM
-- REIBJOK (Reb) OTHOW
+- *[DAMIAN MITROFAN](https://github.com/DMY2003)*
+- *[GEORGE KORODIMOS](https://github.com/LuxionDev)*
+- *[MOHAMMED CHOWDHURY](https://github.com/ihtasham42)*
+- *[SAMIUL ISLAM](https://github.com/Samiul687)*
+- *[REIBJOK (Reb) OTHOW](https://github.com/Rebjok)*
 
 ## Project structure
 The project is called `msms` (Music School Management System).  It currently consists of a single app `lessons` where all functionality resides.
-
-## Deployed version of the application
-The deployed version of the application can be found at *<[PythonAnywhere](http://dmy2003.pythonanywhere.com/)>*.
 
 ## Installation instructions
 To install the software and use it in your local development environment, you must first set up and activate a local development environment.  From the root of the project:
